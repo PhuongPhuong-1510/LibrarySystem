@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="93c652f5-89f0-4d57-86a4-bfcabd639c69" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/HomePage/view/CustomScrollBarUI.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ManageBook/controller/ManagementBookController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ManageBook/model/ManagementBookModel.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ManageBook/view/ManagementBookView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/HomePage/controller/HomePageController.java" beforeDir="false" afterPath="$PROJECT_DIR$/HomePage/controller/HomePageController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/HomePage/view/HomePageView.java" beforeDir="false" afterPath="$PROJECT_DIR$/HomePage/view/HomePageView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LoginPage/view/LoginView.java" beforeDir="false" afterPath="$PROJECT_DIR$/LoginPage/view/LoginView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MainApp/controller/MainController.java" beforeDir="false" afterPath="$PROJECT_DIR$/MainApp/controller/MainController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MainApp/view/MainView.java" beforeDir="false" afterPath="$PROJECT_DIR$/MainApp/view/MainView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SignupPage/controller/SignupController.java" beforeDir="false" afterPath="$PROJECT_DIR$/SignupPage/controller/SignupController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SignupPage/model/SignupModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/SignupPage/model/SignupModel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SignupPage/view/SignupView.java" beforeDir="false" afterPath="$PROJECT_DIR$/SignupPage/view/SignupView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SignupPage/view/icon/imgLabel.png" beforeDir="false" afterPath="$PROJECT_DIR$/SignupPage/view/icon/imgLabel.png" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 3
+}]]></component>
+  <component name="ProjectId" id="2oIg4a1UIlQNUVT0GOGn3zjIk4g" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "master",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "D:/oop java/LIBRARY"
+  }
+}]]></component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="93c652f5-89f0-4d57-86a4-bfcabd639c69" name="Changes" comment="" />
+      <created>1730562313450</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1730562313450</updated>
+    </task>
+    <servers />
+  </component>
+</project>
