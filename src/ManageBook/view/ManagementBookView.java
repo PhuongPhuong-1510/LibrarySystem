@@ -81,35 +81,57 @@ public class ManagementBookView extends JPanel {
             icon = new ImageIcon(getClass().getResource(path));
         } else {
             System.out.println("Image not found at path: " + path);
-            icon = new ImageIcon(new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB)); // Placeholder
+            icon = new ImageIcon(new BufferedImage(05, 05, BufferedImage.TYPE_INT_ARGB)); // Placeholder
         }
         return new JLabel(icon);
     }
     private JPanel createAction() {
-        JPanel actionPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 0));
+        JPanel actionPanel = new JPanel(new GridBagLayout());
 
-        JButton editButton = new JButton("Edit");
-        JButton deleteButton = new JButton("Delete");
-        editButton.setPreferredSize(new Dimension(80, 30)); // Đặt kích thước chính xác
-        deleteButton.setPreferredSize(new Dimension(80, 30)); // Đặt kích thước chính xác
+        JButton editButton = new JButton();
+        editButton.setIcon(new ImageIcon(getClass().getResource("/ManageBook/icon/pen.jpg")));
+        editButton.setFocusPainted(false);
+        editButton.setBorderPainted(false);
+        editButton.setContentAreaFilled(false);
+        editButton.setOpaque(true);
+        editButton.setBackground(new Color(255, 240, 245));
 
-        editButton.setBackground(Color.RED);
-        deleteButton.setBackground(Color.BLACK);
-        editButton.setForeground(Color.WHITE);
-        deleteButton.setForeground(Color.WHITE);
+        JButton deleteButton = new JButton();
+        deleteButton.setIcon(new ImageIcon(getClass().getResource("/ManageBook/icon/bin.jpg")));
+        deleteButton.setFocusPainted(false);
+        deleteButton.setBorderPainted(false);
+        deleteButton.setContentAreaFilled(false);
+        deleteButton.setOpaque(true);
+        deleteButton.setBackground(new Color(255, 240, 245));
 
-        actionPanel.add(editButton);
-        actionPanel.add(deleteButton);
+
+        editButton.setPreferredSize(new Dimension(20, 20));
+        deleteButton.setPreferredSize(new Dimension(20, 20));
+
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.insets = new Insets(0, 7, 0, 7); // Khoảng cách giữa các nút
+        gbc.anchor = GridBagConstraints.CENTER; // Căn giữa cả theo chiều ngang và chiều dọc
+
+        actionPanel.add(editButton, gbc);
+        gbc.gridx = 1;
+        actionPanel.add(deleteButton, gbc);
+
 
         return actionPanel;
     }
 
 
-
     private JPanel createTablePanel(Object[][] data, String[] columnNames, int rowCount) {
         JTable table = createTable(data, columnNames);
+        table.revalidate();
+        table.repaint();
+
         configureColumnRenderers(table);
         configureTable(table, rowCount);
+
 
         JScrollPane scrollPane = createScrollPane(table);
         JPanel panel = new JPanel(new BorderLayout());
@@ -124,7 +146,7 @@ public class ManagementBookView extends JPanel {
         DefaultTableModel model = new DefaultTableModel(data, columnNames) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return true;
+                return false;
             }
         };
 
@@ -189,20 +211,29 @@ public class ManagementBookView extends JPanel {
         return new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                return (value instanceof JLabel) ? (JLabel) value : super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                JLabel label = (value instanceof JLabel) ? (JLabel) value : (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                label.setBackground(new Color(255, 240, 245));
+
+
+                label.setOpaque(true); // Để màu nền có hiệu lực
+
+                return label;
             }
         };
     }
+
     private TableCellRenderer createPanelRenderer() {
-        return new TableCellRenderer() {
+        return new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 if (value instanceof JPanel) {
                     JPanel panel = (JPanel) value;
-                    panel.setBackground(isSelected ? table.getSelectionBackground() : table.getBackground());
+                    panel.setBackground(new Color(255, 240, 245));
+
+
                     return panel;
                 }
-                return new JLabel("");
+                return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
             }
         };
     }
@@ -211,15 +242,9 @@ public class ManagementBookView extends JPanel {
 
 
 
-    // Tạo nút hành động với màu sắc và hành động được xác định
-    private JButton createButton(String text, Color color, ActionListener action) {
-        JButton button = new JButton(text);
-        button.setBackground(color);
-        button.setForeground(Color.WHITE);
-        button.setFocusPainted(false);
-        button.addActionListener(action);
-        return button;
-    }
+
+
+
 
     // Thiết lập JTextArea để hiển thị dạng ngắt dòng
     private void setupMultiLineAppearance(JTextArea textArea, JTable table, boolean isSelected) {
@@ -277,7 +302,7 @@ public class ManagementBookView extends JPanel {
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
         for (int i = 0; i < table.getColumnCount(); i++) {
-            if (i != 2) {
+            if (i != 2&&i!=9) {
                 table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
             }
 
@@ -315,7 +340,7 @@ public class ManagementBookView extends JPanel {
     private void setTableColumnWidths(JTable table) {
         TableColumn column;
 
-        int[] columnWidths = {80, 380, 120, 80, 100, 80, 70, 80, 70, 200};
+        int[] columnWidths = {80, 380, 120, 80, 100, 80, 70, 80, 70, 100};
 
         for (int i = 0; i < table.getColumnCount(); i++) {
             column = table.getColumnModel().getColumn(i);
