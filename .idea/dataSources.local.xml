@@ -14,7 +14,8 @@
         <introspection-scope>
           <node kind="schema">
             <name qname="@" />
-            <name qname="checkdata" />
+            <name qname="librarymanagee" />
+            <name qname="librarymanage" />
           </node>
         </introspection-scope>
       </schema-mapping>
