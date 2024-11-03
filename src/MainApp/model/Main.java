@@ -6,8 +6,8 @@ public class Main {
         LibraryModelManage libraryModel = new LibraryModelManage();
 
         // Tạo sách mới
-//        Book newBook = new Book("B006", "Effective Java", "path/to/image3.jpg", "Joshua Bloch", "Programming", "English", 20, "Available", "B1", "Borrowable");
-//        libraryModel.addBookToDatabase(newBook);
+        Book newBook = new Book("B006", "Effective Java", "path/to/image3.jpg", "Joshua Bloch", "Programming", "English", 20, "Available", "B1", "Borrowable");
+        libraryModel.addBookToDatabase(newBook);
 
         // Lấy danh sách sách từ LibraryModelManage
         for (Book book : libraryModel.getBooksList()) {
@@ -23,6 +23,9 @@ public class Main {
             System.out.println("Action: " + book.getAction());
             System.out.println("---------------------------");
         }
+
+        Student newStudent = new Student("001", "Tèo", "23020700@vnu.edu.vn", "12345", "0374169035");
+        libraryModel.addStudentToDatabase(newStudent);
 
     }
 }
