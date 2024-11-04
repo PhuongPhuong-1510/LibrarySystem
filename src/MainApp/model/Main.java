@@ -24,8 +24,11 @@ public class Main {
             System.out.println("---------------------------");
         }
 
-        Student newStudent = new Student("001", "Tèo", "23020700@vnu.edu.vn", "12345", "0374169035");
+        Student newStudent = new Student("S002", "Tèo", "23020700@vnu.edu.vn", "12345", "0374169035");
         libraryModel.addStudentToDatabase(newStudent);
+
+        Admin newAdmin = new Admin("A001", "Tài", "23020700@vnu.edu.vn", "12345", "0374169035");
+        libraryModel.addAdminToDatabase(newAdmin);
 
     }
 }

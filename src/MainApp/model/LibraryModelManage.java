@@ -5,10 +5,12 @@ import java.util.ArrayList;
 public class LibraryModelManage {
     private ArrayList<Book> booksList;
     private ArrayList<Student> studentsList;
+    private ArrayList<Admin> adminsList;
 
     public LibraryModelManage() {
         booksList = new ArrayList<>();
         studentsList = new ArrayList<>();
+        adminsList = new ArrayList<>();
     }
 
 
@@ -32,7 +34,7 @@ public class LibraryModelManage {
 
 
     public ArrayList<Student> getStudentsList() {
-        if (booksList.isEmpty()) {
+        if (studentsList.isEmpty()) {
             loadStudentsFromDatabase();
         }
         return studentsList;
@@ -45,6 +47,24 @@ public class LibraryModelManage {
     public void addStudentToDatabase(Student student) {
         StudentDAO studentDAO = new StudentDAO();
         studentDAO.addStudent(student);
+
+    }
+
+
+    public ArrayList<Admin> getAdminsList() {
+        if (adminsList.isEmpty()) {
+            loadAdminsFromDatabase();
+        }
+        return adminsList;
+    }
+    private void loadAdminsFromDatabase() {
+        AdminDAO adminDAO = new AdminDAO();
+        adminDAO.loadAdminsFromDatabase();
+        adminsList = adminDAO.getAdminsList();
+    }
+    public void addAdminToDatabase(Admin admin) {
+        AdminDAO adminDAO = new AdminDAO();
+        adminDAO.addAdmin(admin);
 
     }
 }

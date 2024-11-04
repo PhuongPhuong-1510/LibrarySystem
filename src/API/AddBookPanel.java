@@ -28,6 +28,7 @@ public class AddBookPanel extends JFrame {
 
         JPanel panel = new JPanel();
         contentPane.add(panel, BorderLayout.NORTH);
+        panel.setBackground(new Color(75,0,130));
         panel.setLayout(new BorderLayout(0, 0));
 
         textField = new JTextField();
