@@ -29,7 +29,9 @@ public class LoginController implements ActionListener, MouseListener {
         switch (e.getActionCommand()) {
             case "LOGIN":
                 System.out.println("Login button clicked!");
-                loginView.getMainView().showCard("HomePage");
+                //if(loginView.checkLogin()) {
+                    loginView.getMainView().showCard("HomePage");
+                //}
                 break;
             case "SIGNUP":
                 System.out.println("Signup button clicked!");

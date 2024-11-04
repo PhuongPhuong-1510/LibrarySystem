@@ -19,7 +19,7 @@ public class AdminDAO {
                 String id = resultSet.getString("id");
                 String name = resultSet.getString("name");
                 String email = resultSet.getString("email");
-                String password = resultSet.getString("pasword");
+                String password = resultSet.getString("password");
                 String phone = resultSet.getString("phone");
 
                 Admin admin = new Admin(id, name, email, password, phone);
@@ -50,7 +50,7 @@ public class AdminDAO {
             System.out.println("Đã thêm sv vào cơ sở dữ liệu.");
 
         } catch (SQLException e) {
-            System.out.println("Lỗi khi thêm sv vào cơ sở dữ liệu: " + e.getMessage());
+            System.out.println("Lỗi khi thêm admin vào cơ sở dữ liệu: " + e.getMessage());
         }
     }
 

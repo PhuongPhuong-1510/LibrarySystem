@@ -19,7 +19,7 @@ public class StudentDAO {
                 String id = resultSet.getString("id");
                 String name = resultSet.getString("name");
                 String email = resultSet.getString("email");
-                String password = resultSet.getString("pasword");
+                String password = resultSet.getString("password");
                 String phone = resultSet.getString("phone");
 
                 Student student = new Student(id, name, email, password, phone);
