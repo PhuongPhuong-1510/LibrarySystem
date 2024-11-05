@@ -67,12 +67,14 @@ public class HomePageController implements ActionListener, MouseListener {
                 if (menu==homePageView.getjMenuHomePage())
                 {
                     System.out.println("HomePage clicked");
+                    homePageView.toggleMenuBar();
                     homePageView.setMainHomePanel(homePageView.createMainHome());
                 }
                 if(menu==homePageView.getjMenuMGMTBooks())
                 {
                     System.out.println(("MenuMGMTBooks clicked"));
                     ManagementBookView managementBookView = new ManagementBookView();
+                    homePageView.toggleMenuBar();
                     managementBookView.setPreferredSize(new Dimension(homePageView.getMainHomePanel().getWidth(),homePageView.getMainHomePanel().getHeight()));
                     homePageView.setMainHomePanel(managementBookView);
                 }
