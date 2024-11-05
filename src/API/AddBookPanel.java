@@ -1,10 +1,13 @@
 package API;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.net.URL;
 import java.util.List;
 
 public class AddBookPanel extends JFrame {
@@ -28,7 +31,7 @@ public class AddBookPanel extends JFrame {
 
         JPanel panel = new JPanel();
         contentPane.add(panel, BorderLayout.NORTH);
-        panel.setBackground(new Color(75,0,130));
+        panel.setBackground(new Color(75, 0, 130));
         panel.setLayout(new BorderLayout(0, 0));
 
         textField = new JTextField();
@@ -43,12 +46,11 @@ public class AddBookPanel extends JFrame {
         panel_1.setLayout(new BorderLayout(0, 0));
 
         panel_2 = new JPanel();
-        panel_2.setLayout(new GridLayout(50, 1, 10, 10)); // Adjust layout to fit book titles in a list format
+        panel_2.setLayout(new GridLayout(50, 1, 10, 10));
 
         JScrollPane jscrolpane = new JScrollPane(panel_2);
         panel_1.add(jscrolpane, BorderLayout.CENTER);
 
-        // Set button action
         btnSearch.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -64,29 +66,67 @@ public class AddBookPanel extends JFrame {
 
     private void searchAndDisplayBooks(String query) {
         String jsonResponse = GoogleBooksAPI.searchBooks(query);
-        List<String> bookTitles = BookParser.getBookTitles(jsonResponse);
+        List<String[]> bookDetails = BookParser.getBookDetails(jsonResponse);
 
-        panel_2.removeAll(); // Clear previous search results
+        panel_2.removeAll();
 
-        for (String title : bookTitles) {
-            JLabel bookLabel = new JLabel(title);
-            bookLabel.setFont(new Font("Tahoma", Font.PLAIN, 20));
-            panel_2.add(bookLabel);
+        for (String[] details : bookDetails) {
+            String title = details[0];
+            String authors = details[1];
+            String language = details[2];
+            String genre = details[3];
+            String thumbnailUrl = details.length > 4 ? details[4] : ""; // Check for thumbnail URL
+
+            JLabel titleLabel = new JLabel("Title: " + title);
+            titleLabel.setFont(new Font("Tahoma", Font.BOLD, 16));
+
+            JLabel authorLabel = new JLabel("Author: " + authors);
+            authorLabel.setFont(new Font("Tahoma", Font.PLAIN, 14));
+
+            JLabel languageLabel = new JLabel("Language: " + language);
+            languageLabel.setFont(new Font("Tahoma", Font.PLAIN, 14));
+
+            JLabel genreLabel = new JLabel("Genre: " + genre);
+            genreLabel.setFont(new Font("Tahoma", Font.PLAIN, 14));
+
+            JPanel bookPanel = new JPanel(new GridLayout(4, 1, 5, 5));
+            bookPanel.setBackground(Color.WHITE);
+            bookPanel.add(titleLabel);
+            bookPanel.add(authorLabel);
+            bookPanel.add(languageLabel);
+            bookPanel.add(genreLabel);
+
+            JPanel bookPanelImage = new JPanel(new BorderLayout(10, 10));
+            bookPanelImage.setBackground(Color.WHITE);
+            bookPanelImage.add(bookPanel, BorderLayout.CENTER);
+
+            // Load and display thumbnail
+            if (!thumbnailUrl.isEmpty()) {
+                try {
+                    URL url = new URL(thumbnailUrl);
+                    Image image = ImageIO.read(url);
+                    ImageIcon icon = new ImageIcon(image.getScaledInstance(100, 150, Image.SCALE_SMOOTH));
+                    JLabel imageLabel = new JLabel(icon);
+                    bookPanelImage.add(imageLabel, BorderLayout.WEST);
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+
+            panel_2.add(bookPanelImage);
         }
 
-        panel_2.revalidate(); // Refresh the panel to show new results
+        panel_2.revalidate();
         panel_2.repaint();
     }
 
     public static void main(String[] args) {
-        EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                try {
-                    AddBookPanel frame = new AddBookPanel();
-                    frame.setVisible(true);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+        EventQueue.invokeLater(() -> {
+            try {
+                AddBookPanel frame = new AddBookPanel();
+                frame.setVisible(true);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         });
     }
