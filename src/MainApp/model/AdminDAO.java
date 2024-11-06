@@ -1,13 +1,13 @@
 package MainApp.model;
 
 import dataBase.DatabaseConnection;
-
 import java.sql.*;
 import java.util.ArrayList;
 
 public class AdminDAO {
     private ArrayList<Admin> adminsList = new ArrayList<>();
 
+    // Phương thức tải danh sách admin từ cơ sở dữ liệu
     public void loadAdminsFromDatabase() {
         try (Connection connection = DatabaseConnection.getConnection();
              Statement statement = connection.createStatement()) {
@@ -26,13 +26,14 @@ public class AdminDAO {
                 adminsList.add(admin);
             }
 
-            System.out.println("Dữ liệu đã được tải vào danh sách studentsList.");
+            System.out.println("Dữ liệu đã được tải vào danh sách adminsList.");
 
         } catch (SQLException e) {
             System.out.println("Lỗi khi kết nối đến cơ sở dữ liệu: " + e.getMessage());
         }
     }
 
+    // Phương thức thêm admin vào cơ sở dữ liệu
     public void addAdmin(Admin admin) {
         String query = "INSERT INTO admin (id, name, email, password, phone) VALUES (?, ?, ?, ?, ?)";
 
@@ -45,15 +46,15 @@ public class AdminDAO {
             preparedStatement.setString(4, admin.getPassword());
             preparedStatement.setString(5, admin.getPhone());
 
-
             preparedStatement.executeUpdate();
-            System.out.println("Đã thêm sv vào cơ sở dữ liệu.");
+            System.out.println("Đã thêm admin vào cơ sở dữ liệu.");
 
         } catch (SQLException e) {
             System.out.println("Lỗi khi thêm admin vào cơ sở dữ liệu: " + e.getMessage());
         }
     }
 
+    // Getter để truy cập danh sách admin từ bên ngoài lớp
     public ArrayList<Admin> getAdminsList() {
         return adminsList;
     }

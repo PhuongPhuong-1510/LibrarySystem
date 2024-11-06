@@ -5,13 +5,12 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DatabaseConnection {
-    private static final String URL = "jdbc:mysql://localhost:3306/librarymanage";
-    private static final String USER = "root";
-    private static final String PASSWORD = "13092005";
+    // Đường dẫn đến file SQLite (giả sử trong thư mục resources)
+    private static final String URL = "jdbc:sqlite:resources/librarymanage.db";
 
     public static Connection getConnection() {
         try {
-            return DriverManager.getConnection(URL, USER, PASSWORD);
+            return DriverManager.getConnection(URL);
         } catch (SQLException e) {
             e.printStackTrace();
             return null;

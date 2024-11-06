@@ -6,7 +6,7 @@ public class Main {
         LibraryModelManage libraryModel = new LibraryModelManage();
 
         // Tạo sách mới
-        Book newBook = new Book("B007", "Effective Java", "path/to/image3.jpg", "Joshua Bloch", "Programming", "English", 20, "Available", "B1", "Borrowable");
+        Book newBook = new Book("B009", "Effective Java", "path/to/image3.jpg", "Joshua Bloch", "Programming", "English", 20, "Available", "B1");
         libraryModel.addBookToDatabase(newBook);
 
         // Lấy danh sách sách từ LibraryModelManage
@@ -20,14 +20,13 @@ public class Main {
             System.out.println("Total Copies: " + book.getTotal());
             System.out.println("Current Status: " + book.getCurent());
             System.out.println("Position: " + book.getPosition());
-            System.out.println("Action: " + book.getAction());
             System.out.println("---------------------------");
         }
 
-        Student newStudent = new Student("S004", "Tèo", "23020700@vnu.edu.vn", "12345", "0374169035");
+        Student newStudent = new Student("S007", "Tèo", "23020700@vnu.edu.vn", "12345", "0374169035");
         libraryModel.addStudentToDatabase(newStudent);
 
-        Admin newAdmin = new Admin("A003", "Tài", "23020700@vnu.edu.vn", "12345", "0374169035");
+        Admin newAdmin = new Admin("A007", "Tài", "23020700@vnu.edu.vn", "12345", "0374169035");
         libraryModel.addAdminToDatabase(newAdmin);
 
     }
