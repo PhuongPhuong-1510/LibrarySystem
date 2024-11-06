@@ -13,16 +13,13 @@ import java.awt.image.BufferedImage;
 
 public class ManagementBookView extends JPanel {
     private JPanel managementBooks;
-    private ManagementBookController managementBookController;
-    private JButton editButton;
-    private JButton deleteButton;
-    private JButton addBookButton;
+   private JButton addBookButton;
 
 
     public ManagementBookView() {
         this.setLayout(new BorderLayout());
         this.init();
-        this.managementBookController =new ManagementBookController(this);
+        new ManagementBookController(this);
     }
 
     private void init() {
@@ -62,18 +59,18 @@ public class ManagementBookView extends JPanel {
                         "John Doe",
                         "Nature",
                         "English", 10, 5, "Shelf A1",
-                        null
+                        createAction(1)
                 },
                 {2, convertToHtml("Ocean\nJane Smith's \"Ocean\" takes readers on an adventure across the seas."),
                         createImageLabel("/ManageBook/icon/1.jpg"),
                         "Jane Smith",
                         "Adventure",
                         "English", 15, 7, "Shelf B2",
-                        null
+                        createAction(2)
 
                 },
                 {3, convertToHtml("Mountain\nMike Brown's \"Mountain\" captures the essence of high-altitude travel."), createImageLabel("/ManageBook/icon/1.jpg"), "Mike Brown", "Travel", "Spanish", 8, 4, "Shelf C3",
-                        null}
+                        createAction(3)}
 
         };
 
@@ -94,18 +91,31 @@ public class ManagementBookView extends JPanel {
     }
     private JButton createActionButton(String iconPath, Color bgColor) {
         JButton button = new JButton(new ImageIcon(getClass().getResource(iconPath)));
+
         button.setFocusPainted(false);
         button.setBorderPainted(false);
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
         button.setContentAreaFilled(false);
         button.setOpaque(true);
-        button.setBackground(bgColor);
         button.setPreferredSize(new Dimension(20, 20));
+
+
         return button;
     }
     private JPanel createAction(int row) {
         JPanel actionPanel = new JPanel(new GridBagLayout());
-        editButton = createActionButton("/ManageBook/icon/pen.jpg", new Color(255, 240, 245));
-        deleteButton = createActionButton("/ManageBook/icon/bin.jpg", new Color(255, 240, 245));
+        actionPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        JButton editButton = createActionButton("/ManageBook/icon/pen.jpg", new Color(255, 240, 245));
+        JButton deleteButton = createActionButton("/ManageBook/icon/bin.jpg", new Color(255, 240, 245));
+
+
+        editButton.addActionListener(e ->
+                System.out.println("Edit button clicked at row: " + row)
+        );
+
+        deleteButton.addActionListener(e ->
+                System.out.println("Delete button clicked at row: " + row)
+        );
 
 
 
@@ -116,6 +126,7 @@ public class ManagementBookView extends JPanel {
         gbc.anchor = GridBagConstraints.CENTER;
 
         actionPanel.add(editButton, gbc);
+        actionPanel.add(deleteButton, gbc);
         gbc.gridx = 1;
         actionPanel.add(deleteButton, gbc);
 
@@ -146,8 +157,7 @@ public class ManagementBookView extends JPanel {
         DefaultTableModel model = new DefaultTableModel(data, columnNames) {
             @Override
             public boolean isCellEditable(int row, int column) {
-
-                return false;
+                return column == 9;
             }
         };
 
@@ -171,8 +181,7 @@ public class ManagementBookView extends JPanel {
         table.setDefaultRenderer(Object.class, createMultiLineRenderer());
         table.getColumnModel().getColumn(2).setCellRenderer(createLabelRenderer());
         table.getColumnModel().getColumn(9).setCellRenderer(createPanelRenderer());
-
-
+       table.getColumnModel().getColumn(9).setCellEditor(new PanelEditor());
 
     }
 
@@ -242,13 +251,6 @@ public class ManagementBookView extends JPanel {
     }
 
 
-
-
-
-
-
-
-
     // Thiết lập JTextArea để hiển thị dạng ngắt dòng
     private void setupMultiLineAppearance(JTextArea textArea, JTable table, boolean isSelected) {
         textArea.setWrapStyleWord(true);
@@ -310,9 +312,7 @@ public class ManagementBookView extends JPanel {
             }
 
         }
-        for (int i = 0; i < table.getRowCount(); i++) {
-            table.setValueAt(createAction(i), i, 9); // Cột 9 là cột "Action"
-        }
+
     }
 
     private void setTableHeaderAlignment(JTable table) {
@@ -333,7 +333,6 @@ public class ManagementBookView extends JPanel {
             }
         };
 
-        // Đặt renderer cho tất cả các cột
         for (int i = 0; i < table.getColumnCount(); i++) {
             table.getColumnModel().getColumn(i).setHeaderRenderer(headerRenderer);
         }
@@ -370,6 +369,7 @@ public class ManagementBookView extends JPanel {
         String placeholder = "Search id,author, genre, book title";
 
         JTextField searchField = new JTextField(20);
+        searchField.setBorder(null);
         searchField.setFont(new Font("Arial", Font.PLAIN, 12));
         searchField.setPreferredSize(new Dimension(200, 30));
         searchField.setForeground(Color.GRAY);
@@ -412,16 +412,6 @@ public class ManagementBookView extends JPanel {
         addBookButton.setBorderPainted(false);
         addBookButton.setFocusPainted(false);
         return addBookButton;
-    }
-
-    public JButton getEditButton() {
-        return editButton;
-    }
-
-
-
-    public JButton getDeleteButton() {
-        return deleteButton;
     }
 
 

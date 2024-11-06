@@ -37,15 +37,17 @@ public class AddBookController implements ActionListener, MouseListener {
                 String path = addBook.getImagePath();
                 System.out.println("Image path: " + path);
                 break;
-            case "SUBMIT":
-                System.out.println("Submit button clicked");
-                new AddBook();
-
-                break;
             case "CANCLE":
                 System.out.println("Cancel button clicked");
                 addBook.setVisible(false);
                 break;
+            case "SUBMIT":
+                System.out.println("Submit button clicked");
+                addBook.revalidate();
+                addBook.repaint();
+                break;
+
+
             default:
                 break;
         }
