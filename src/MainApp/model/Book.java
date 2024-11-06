@@ -10,11 +10,11 @@ public class Book {
     private int total;
     private String curent;
     private String Position;
-    private String action;
+
 
     public Book() {}
 
-    public Book(String bookID, String bookName, String image, String author, String category, String language, int total, String curent, String Position, String action) {
+    public Book(String bookID, String bookName, String image, String author, String category, String language, int total, String curent, String Position) {
         this.bookID = bookID;
         this.bookName = bookName;
         this.image = image;
@@ -24,7 +24,7 @@ public class Book {
         this.total = total;
         this.curent = curent;
         this.Position = Position;
-        this.action = action;
+
     }
     public String getBookID() {
         return bookID;
@@ -80,11 +80,6 @@ public class Book {
     public void setPosition(String position) {
         Position = position;
     }
-    public String getAction() {
-        return action;
-    }
-    public void setAction(String action) {
-        this.action = action;
-    }
+
 
 }
