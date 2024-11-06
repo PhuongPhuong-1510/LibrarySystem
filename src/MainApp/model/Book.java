@@ -11,6 +11,7 @@ public class Book {
     private String curent;
     private String Position;
 
+
     public Book() {}
 
     public Book(String bookID, String bookName, String image, String author, String category, String language, int total, String curent, String Position) {
@@ -23,6 +24,7 @@ public class Book {
         this.total = total;
         this.curent = curent;
         this.Position = Position;
+
     }
     public String getBookID() {
         return bookID;
@@ -78,5 +80,6 @@ public class Book {
     public void setPosition(String position) {
         Position = position;
     }
+
 
 }
