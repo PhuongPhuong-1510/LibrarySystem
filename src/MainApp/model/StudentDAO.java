@@ -39,6 +39,13 @@ public class StudentDAO {
 
     // Phương thức để thêm sinh viên vào cơ sở dữ liệu
     public void addStudent(Student student) {
+        // Kiểm tra dữ liệu đầu vào
+        if (student == null || student.getID() == null || student.getName() == null ||
+            student.getEmail() == null || student.getPassword() == null || student.getPhone() == null) {
+            System.out.println("Dữ liệu sinh viên không hợp lệ.");
+            return;
+        }
+
         String query = "INSERT INTO student (id, name, email, password, phone) VALUES (?, ?, ?, ?, ?)";
 
         try (Connection connection = DatabaseConnection.getConnection();
@@ -55,6 +62,36 @@ public class StudentDAO {
 
         } catch (SQLException e) {
             System.out.println("Lỗi khi thêm sinh viên vào cơ sở dữ liệu: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    // Phương thức để xóa sinh viên ở cơ sỡ dữ liệu
+    public void deleteStudent(String studentId) {
+        if (studentId == null || studentId.trim().isEmpty()) {
+            System.out.println("ID sinh viên không hợp lê.");
+            return;
+        }
+
+        String query = "DELETE FROM student WHERE id = ?";
+
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+
+            // Thiệt lập câu lệnh cho sql
+            preparedStatement.setString(1, studentId);
+
+            // Lệnh xóa
+            int rowsAffected = preparedStatement.executeUpdate();
+            if (rowsAffected > 0) {
+                System.out.println("Đã xóa sinh viên khỏi dữ liệu.");
+            } else {
+                System.out.println("Không tìm thấy sinh viên với ID: " + studentId);
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Lỗi khi xóa sinh viên khỏi cơ sỡ dữ liệu: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
