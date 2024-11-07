@@ -12,7 +12,7 @@ public class Book {
     private String Position;
 
 
-    public Book() {}
+    public Book(String id, String title, String imagePath, String author, String language, int total, String current, String position) {}
 
     public Book(String bookID, String bookName, String image, String author, String category, String language, int total, String curent, String Position) {
         this.bookID = bookID;
