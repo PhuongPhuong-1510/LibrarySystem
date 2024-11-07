@@ -1,6 +1,8 @@
 package ManageBook.view;
 
 import LoginPage.view.OvalButton;
+import MainApp.model.Book;
+import MainApp.model.LibraryModelManage;
 import ManageBook.controller.AddBookController;
 
 import javax.swing.*;
@@ -15,10 +17,19 @@ public class AddBook extends JFrame {
     private AddBookController addBookController;
     private JLabel coverLabel;
     private String imagePath;
+    private JTextArea descriptionArea;
+    public JTextField titleField;
+    private LibraryModelManage libraryModelManage;
+    private JTextField authorText;
+    private JTextField languageText;
+    private JTextField totalText;
+    private JTextField currentText;
+    private JTextField positionText;
 
     public AddBook() {
         this.init();
         this.addBookController= new AddBookController(this);
+        this.libraryModelManage = new LibraryModelManage();
     }
 
     private void init() {
@@ -51,14 +62,14 @@ public class AddBook extends JFrame {
         return leftJPanel;
     }
     private JPanel createBook() {
-        JTextField titleField = setCustomTextField();
+        titleField = setCustomTextField();
         return createLabeledTextFieldPanel(new JLabel("Book Title:"), titleField);
     }
 
 
     private JPanel createDescription() {
         JLabel descriptionLabel=new JLabel("Short Description");
-        JTextArea descriptionArea = new JTextArea(3, 20);
+        descriptionArea = new JTextArea(3, 20);
         JScrollPane scrollPane = new JScrollPane(descriptionArea);
         scrollPane.setOpaque(false);
         scrollPane.setBorder(null);
@@ -70,9 +81,9 @@ public class AddBook extends JFrame {
     private JPanel createAuthor() {
         JPanel writerPanel = new JPanel(new GridLayout(1, 4, 10, 10));
         writerPanel.setBackground(new Color(255, 228, 225));
-        JTextField authorText = setCustomTextField();
+        authorText = setCustomTextField();
         JPanel authorPanel=createLabeledTextFieldPanel(new JLabel("Author: "),authorText);
-        JTextField languageText =  setCustomTextField();
+        languageText =  setCustomTextField();
         JPanel languagePanel=createLabeledTextFieldPanel(new JLabel("Language: "),languageText);
         writerPanel.add(authorPanel);
         writerPanel.add(languagePanel);
@@ -83,13 +94,13 @@ public class AddBook extends JFrame {
         JPanel quantityPanel = new JPanel(new GridLayout(1, 3, 10, 10)); // Chia làm 3 cặp nhãn-ô nhập liệu
         quantityPanel.setBackground(new Color(255, 228, 225));
 
-        JTextField totalText = setCustomTextField();
+        totalText = setCustomTextField();
         JPanel totalPanel = createLabeledTextFieldPanel(new JLabel("Tatal: "), totalText);
 
-        JTextField currentText = setCustomTextField();
+        currentText = setCustomTextField();
         JPanel currentPanel = createLabeledTextFieldPanel(new JLabel("Current: "), currentText);
 
-        JTextField positionText = setCustomTextField();
+        positionText = setCustomTextField();
         JPanel positionPanel = createLabeledTextFieldPanel(new JLabel("Position: "), positionText);
 
         quantityPanel.add(totalPanel);
@@ -183,6 +194,19 @@ public class AddBook extends JFrame {
         ImageIcon imageIcon = new ImageIcon(filePath);
         Image image = imageIcon.getImage().getScaledInstance(coverLabel.getWidth(), coverLabel.getHeight(), Image.SCALE_SMOOTH);
         coverLabel.setIcon(new ImageIcon(image));
+    }
+    
+    public void getBookFromPanel(){
+        String id = this.libraryModelManage.creatBookID();
+        String title = this.titleField.getText()+"\n"+"( "+ this.descriptionArea.getText()+" )";
+        String imagePath = getImagePath();
+        String author = this.authorText.getText()+"";
+        String language = this.languageText.getText()+"";
+        int total = Integer.valueOf(totalText.getText()+"");
+        String current = this.currentText.getText()+"";
+        String position = this.positionText.getText()+"";
+        Book book = new Book(id, title,imagePath, author,"Programing", language, total, current, position);
+        libraryModelManage.addBookToDatabase(book);
     }
 
     public JButton getUploadCoverButton() {

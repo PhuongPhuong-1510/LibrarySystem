@@ -32,6 +32,12 @@ public class LibraryModelManage {
         bookDAO.addBook(book);
     }
 
+    public String creatBookID(){
+        BookDAO bookDAO = new BookDAO();
+        String id = bookDAO.creatBookID();
+        return id;
+    }
+
     // Quản lý sinh viên
     public ArrayList<Student> getStudentsList() {
         if (studentsList.isEmpty()) {

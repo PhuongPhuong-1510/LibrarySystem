@@ -43,6 +43,11 @@ public class AddBookController implements ActionListener, MouseListener {
                 break;
             case "SUBMIT":
                 System.out.println("Submit button clicked");
+                if(this.addBook.titleField.getText().equals("")){
+                    JOptionPane.showMessageDialog(null, "Please enter a title");
+                }else{
+                    this.addBook.getBookFromPanel();
+                }
                 addBook.revalidate();
                 addBook.repaint();
                 break;
