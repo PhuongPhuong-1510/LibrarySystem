@@ -3,92 +3,50 @@ package ManageBook.view;
 import HomePage.view.CustomScrollBarUI;
 import ManageBook.controller.ManagementBookController;
 
+
 import javax.swing.*;
+import javax.swing.table.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.image.BufferedImage;
 
 public class ManagementBookView extends JPanel {
     private JPanel managementBooks;
-<<<<<<< HEAD
    private JButton addBookButton;
-=======
-    private ManagementBookController managementBookController;
-    private JButton addBookButton;
->>>>>>> c291d5ec3511ea10eb575bda29e61e6638e5b65e
+
 
     public ManagementBookView() {
         this.setLayout(new BorderLayout());
         this.init();
-<<<<<<< HEAD
         new ManagementBookController(this);
-=======
-        this.managementBookController = new ManagementBookController(this);
->>>>>>> c291d5ec3511ea10eb575bda29e61e6638e5b65e
     }
 
     private void init() {
-        managementBooks = new JPanel();
-        managementBooks.setLayout(new BorderLayout(10,10));
-        managementBooks.add(createBookDetailsPanel(), BorderLayout.CENTER);
+        managementBooks = new JPanel(new BorderLayout());
+        managementBooks.add(createBookDetails(), BorderLayout.CENTER);
         managementBooks.add(createNorthPanel(), BorderLayout.NORTH);
-        managementBooks.setBackground(new Color(255,192,203));
 
         this.add(managementBooks, BorderLayout.CENTER);
         this.setVisible(true);
     }
 
-    public JPanel createBookDetailsPanel() {
-        JPanel bookDetailsPanel = new JPanel();
-        bookDetailsPanel.setLayout(new BorderLayout(15, 15));
-        bookDetailsPanel.setBackground(new Color(255,192,203));
-        bookDetailsPanel.setBorder(BorderFactory.createLineBorder(new Color(255,192,203)));
-
-        // Using BoxLayout for bookListPanel to allow dynamic expansion
-        JPanel bookListPanel = new JPanel();
-        bookListPanel.setLayout(new GridLayout(100,1,15,15));
-        bookListPanel.setBackground(new Color(255,192,203));
-        //bookListPanel.setBorder(BorderFactory.createLineBorder(Color.WHITE));
-
-        // Loop to add 100 bookPanels with unique IDs from 1 to 100
-        for (int i = 1; i <= 100; i++) {
-            bookListPanel.add(bookPanel(i));
+    public String convertToHtml(String input) {
+        StringBuilder htmlString = new StringBuilder(input.length());
+        for (char c : input.toCharArray()) {
+            switch (c) {
+                case '&' -> htmlString.append("&amp;");
+                case '<' -> htmlString.append("&lt;");
+                case '>' -> htmlString.append("&gt;");
+                case '"' -> htmlString.append("&quot;");
+                case '\'' -> htmlString.append("&#39;");
+                case '\n' -> htmlString.append("<br>");
+                default -> htmlString.append(c);
+            }
         }
-
-        // Add bookListPanel to JScrollPane
-        JScrollPane scrollPane = createScrollPane(bookListPanel);
-
-        JPanel titlePanel = new JPanel(new BorderLayout(20, 20));
-        titlePanel.setBackground(new Color(255, 240, 245));
-
-        JLabel IDLaybel = new JLabel("BooK ID");
-        IDLaybel.setForeground(Color.BLACK);
-        IDLaybel.setFont(new Font("Serif", Font.BOLD, 20));
-
-
-        JLabel titleLaybel = new JLabel("                                   Title");
-        titleLaybel.setForeground(Color.BLACK);
-        titleLaybel.setFont(new Font("Serif", Font.BOLD, 20));
-
-
-        JLabel actionLaybel = new JLabel("Action    ");
-        actionLaybel.setForeground(Color.BLACK);
-        actionLaybel.setFont(new Font("Serif", Font.BOLD, 20));
-
-        actionLaybel.setForeground(Color.BLACK);
-        titlePanel.add(IDLaybel, BorderLayout.WEST);
-        titlePanel.add(titleLaybel, BorderLayout.CENTER);
-        titlePanel.add(actionLaybel, BorderLayout.EAST);
-
-        bookDetailsPanel.add(scrollPane, BorderLayout.CENTER);
-        bookDetailsPanel.add(titlePanel, BorderLayout.NORTH);
-        return bookDetailsPanel;
+        return "<html>" + htmlString + "</html>";
     }
 
-<<<<<<< HEAD
 
 
     private JPanel createBookDetails() {
@@ -325,9 +283,6 @@ public class ManagementBookView extends JPanel {
 
 
     private JScrollPane createScrollPane(JTable table) {
-=======
-    private JScrollPane createScrollPane(JPanel table) {
->>>>>>> c291d5ec3511ea10eb575bda29e61e6638e5b65e
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.getViewport().setBackground(new Color(238, 210, 238)); // Màu nền cho vùng hiển thị của JScrollPane
 
@@ -348,128 +303,51 @@ public class ManagementBookView extends JPanel {
     }
 
 
+    private void centerTableCells(JTable table) {
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+        for (int i = 0; i < table.getColumnCount(); i++) {
+            if (i != 2&&i!=9) {
+                table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+            }
 
-<<<<<<< HEAD
         }
 
     }
-=======
-    public JPanel bookPanel(int bookId) {
-        JPanel bookPanel = new JPanel(new BorderLayout(80, 80));
-        bookPanel.setBackground(new Color(255, 240, 245));
-        bookPanel.setBorder(BorderFactory.createLineBorder(new Color(255, 240, 245)));
->>>>>>> c291d5ec3511ea10eb575bda29e61e6638e5b65e
 
-        JLabel bookIDLaybel = new JLabel("S" + String.format("%03d", bookId));
-        bookIDLaybel.setForeground(Color.BLACK);
+    private void setTableHeaderAlignment(JTable table) {
+        JTableHeader header = table.getTableHeader();
+        header.setBackground(new Color(238, 210, 238));
+        header.setPreferredSize(new Dimension(header.getWidth(), 50));
 
+        DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                Component component = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                setHorizontalAlignment(SwingConstants.CENTER);
+                setBackground(new Color(255, 240, 245));
+                setForeground(new Color(54, 54, 54));
+                setFont(new Font("Tahoma", Font.LAYOUT_NO_LIMIT_CONTEXT, 15));
+                setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, new Color(238, 210, 238)));
+                return component;
+            }
+        };
 
-<<<<<<< HEAD
         for (int i = 0; i < table.getColumnCount(); i++) {
             table.getColumnModel().getColumn(i).setHeaderRenderer(headerRenderer);
         }
-=======
-        JLabel bookImageLabel = createImageLabel("/ManageBook/icon/1.jpg");
-
-        JLabel bookNameLaybel = new JLabel("天使と悪魔" + bookId);
-        bookNameLaybel.setForeground(Color.BLACK);
-        bookNameLaybel.setFont(new Font("Serif", Font.BOLD, 30));
-
-        JLabel bookAuthorLaybel = new JLabel("author" + bookId);
-        bookAuthorLaybel.setForeground(Color.BLACK);
-
-        JLabel bookCategoryLaybel = new JLabel("category" + bookId);
-        bookCategoryLaybel.setForeground(Color.BLACK);
-
-        JLabel bookLanguageLaybel = new JLabel("language" + bookId);
-        bookLanguageLaybel.setForeground(Color.BLACK);
-
-        JLabel bookTotalLaybel = new JLabel("100");
-        bookTotalLaybel.setForeground(Color.BLACK);
-
-        JLabel bookCurentLaybel = new JLabel("curent" + bookId);
-        bookCurentLaybel.setForeground(Color.BLACK);
-
-        JLabel bookPositionLaybel = new JLabel("Position" + bookId);
-        bookPositionLaybel.setForeground(Color.BLACK);
-
-        JPanel actionPanel = createActionPanel(bookId);
-
-        JPanel namePanel = new JPanel(new BorderLayout(5, 5));
-        namePanel.setBackground(new Color(255, 240, 245));
-        namePanel.add(bookNameLaybel, BorderLayout.NORTH);
-
-        JPanel nameTitelPanel = new JPanel(new GridLayout(6,1,5,5));
-        nameTitelPanel.setBackground(new Color(255, 240, 245));
-        nameTitelPanel.add(bookAuthorLaybel);
-        nameTitelPanel.add(bookCategoryLaybel);
-        nameTitelPanel.add(bookLanguageLaybel);
-        nameTitelPanel.add(bookTotalLaybel);
-        nameTitelPanel.add(bookCurentLaybel);
-        nameTitelPanel.add(bookPositionLaybel);
-
-        namePanel.add(nameTitelPanel, BorderLayout.CENTER);
-
-        JPanel bookTitelPanel = new JPanel(new BorderLayout(10, 10));
-        bookTitelPanel.setBackground(new Color(255, 240, 245));
-        bookTitelPanel.add(bookImageLabel, BorderLayout.WEST);
-        bookTitelPanel.add(namePanel, BorderLayout.CENTER);
-
-
-
-        bookPanel.add(bookIDLaybel, BorderLayout.WEST);
-        bookPanel.add(bookTitelPanel, BorderLayout.CENTER);
-        bookPanel.add(actionPanel, BorderLayout.EAST);
-
-        return bookPanel;
->>>>>>> c291d5ec3511ea10eb575bda29e61e6638e5b65e
     }
 
 
-    private JLabel createImageLabel(String path) {
-        ImageIcon icon;
-        if (path != null && getClass().getResource(path) != null) {
-            icon = new ImageIcon(getClass().getResource(path));
-        } else {
-            icon = new ImageIcon(new BufferedImage(100, 150, BufferedImage.TYPE_INT_ARGB)); // Placeholder
+    private void setTableColumnWidths(JTable table) {
+        TableColumn column;
+
+        int[] columnWidths = {80, 340, 120, 80, 100, 80, 70, 80, 70, 90};
+
+        for (int i = 0; i < table.getColumnCount(); i++) {
+            column = table.getColumnModel().getColumn(i);
+            column.setPreferredWidth(columnWidths[i]);
         }
-        return new JLabel(icon);
-    }
-
-    private JPanel createActionPanel(int bookId) {
-        JPanel actionPanel = new JPanel();
-        actionPanel.setLayout(new GridLayout(1,2,5,5));
-        actionPanel.setBackground(new Color(255, 240, 245));
-
-        JButton editButton = createActionButton("/ManageBook/icon/pen.jpg", "Edit");
-        JButton deleteButton = createActionButton("/ManageBook/icon/bin.jpg", "Delete");
-
-        editButton.addActionListener(e -> handleEditButtonClick(bookId));
-        deleteButton.addActionListener(e -> handleDeleteButtonClick(bookId));
-
-        actionPanel.add(editButton);
-        //actionPanel.add(Box.createVerticalStrut(10));  // Khoảng cách giữa các nút
-        actionPanel.add(deleteButton);
-
-        return actionPanel;
-    }
-
-    private JButton createActionButton(String iconPath, String tooltip) {
-        JButton button = new JButton(new ImageIcon(getClass().getResource(iconPath)));
-        button.setToolTipText(tooltip);
-        button.setFocusPainted(false);
-        button.setBorderPainted(false);
-        button.setContentAreaFilled(false);
-        button.setPreferredSize(new Dimension(20, 20));
-        return button;
-    }
-
-    private void handleDeleteButtonClick(int bookId) {
-        System.out.println("Delete button clicked for Book ID: " + bookId);
-    }
-
-    private void handleEditButtonClick(int bookId) {
-        System.out.println("Edit button clicked for Book ID: " + bookId);
     }
 
     private JPanel createNorthPanel() {
@@ -486,8 +364,9 @@ public class ManagementBookView extends JPanel {
         return northPanel;
     }
 
+
     private JPanel createSearchPanel() {
-        String placeholder = "Search id, author, genre, book title";
+        String placeholder = "Search id,author, genre, book title";
 
         JTextField searchField = new JTextField(20);
         searchField.setBorder(null);
@@ -518,8 +397,10 @@ public class ManagementBookView extends JPanel {
         searchPanel.add(searchField);
         searchPanel.setBackground(new Color(150, 180, 255));
 
+
         return searchPanel;
     }
+
 
     private JButton createAddBookButton() {
         addBookButton = new JButton("Add Book");
@@ -533,11 +414,10 @@ public class ManagementBookView extends JPanel {
         return addBookButton;
     }
 
-<<<<<<< HEAD
 
-=======
->>>>>>> c291d5ec3511ea10eb575bda29e61e6638e5b65e
     public JButton getAddBookButton() {
         return addBookButton;
     }
+
+
 }
