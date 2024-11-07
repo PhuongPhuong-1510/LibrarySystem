@@ -1,6 +1,8 @@
 package ManageBook.view;
 
 import HomePage.view.CustomScrollBarUI;
+import MainApp.model.Book;
+import MainApp.model.LibraryModelManage;
 import ManageBook.controller.ManagementBookController;
 
 
@@ -10,13 +12,15 @@ import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 public class ManagementBookView extends JPanel {
     private JPanel managementBooks;
-   private JButton addBookButton;
-
+    private JButton addBookButton;
+    private LibraryModelManage libraryModelManage;
 
     public ManagementBookView() {
+        this.libraryModelManage = new LibraryModelManage();
         this.setLayout(new BorderLayout());
         this.init();
         new ManagementBookController(this);
@@ -52,29 +56,27 @@ public class ManagementBookView extends JPanel {
     private JPanel createBookDetails() {
         String[] columnNames = {"Book ID", "Name Book", "Image", "Author", "Category", "Language", "Total", "Current", "Position", "Action"};
 
-        Object[][] data = {
-                {1,
-                        convertToHtml("Sunset\nJohn Doe's \"Sunset\" is a captivating exploration of nature’s beauty as seen through the tranquil moments of twilight."),
-                        createImageLabel("/ManageBook/icon/1.jpg"),
-                        "John Doe",
-                        "Nature",
-                        "English", 10, 5, "Shelf A1",
-                        createAction(1)
-                },
-                {2, convertToHtml("Ocean\nJane Smith's \"Ocean\" takes readers on an adventure across the seas."),
-                        createImageLabel("/ManageBook/icon/1.jpg"),
-                        "Jane Smith",
-                        "Adventure",
-                        "English", 15, 7, "Shelf B2",
-                        createAction(2)
+        // Fetch books from the library model
+        ArrayList<Book> booksList = libraryModelManage.getBooksList();
 
-                },
-                {3, convertToHtml("Mountain\nMike Brown's \"Mountain\" captures the essence of high-altitude travel."), createImageLabel("/ManageBook/icon/1.jpg"), "Mike Brown", "Travel", "Spanish", 8, 4, "Shelf C3",
-                        createAction(3)}
+        // Populate the data array with data from booksList
+        Object[][] data = new Object[booksList.size()][10];
+        for (int i = 0; i < booksList.size(); i++) {
+            Book book = booksList.get(i);
+            data[i][0] = book.getBookID();
+            data[i][1] = convertToHtml(book.getBookName());
+            data[i][2] = createImageLabel(book.getImage());
+            data[i][3] = book.getAuthor();
+            data[i][4] = book.getCategory();
+            data[i][5] = book.getLanguage();
+            data[i][6] = book.getTotal();
+            data[i][7] = book.getCurent();
+            data[i][8] = book.getPosition();
 
-        };
+            data[i][9] = createAction(i);
+        }
 
-        return createTablePanel(data, columnNames, 2000);
+        return createTablePanel(data, columnNames, booksList.size());
     }
 
 
