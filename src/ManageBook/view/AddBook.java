@@ -1,6 +1,11 @@
 package ManageBook.view;
 
 import LoginPage.view.OvalButton;
+<<<<<<< HEAD
+=======
+import MainApp.model.Book;
+import MainApp.model.LibraryModelManage;
+>>>>>>> 524ad9bea3a9e8c8443977595a9d6397da6e84ca
 import ManageBook.controller.AddBookController;
 
 import javax.swing.*;
@@ -15,10 +20,25 @@ public class AddBook extends JFrame {
     private AddBookController addBookController;
     private JLabel coverLabel;
     private String imagePath;
+<<<<<<< HEAD
+=======
+    private JTextArea descriptionArea;
+    public JTextField titleField;
+    private LibraryModelManage libraryModelManage;
+    private JTextField authorText;
+    private JTextField languageText;
+    private JTextField totalText;
+    private JTextField currentText;
+    private JTextField positionText;
+>>>>>>> 524ad9bea3a9e8c8443977595a9d6397da6e84ca
 
     public AddBook() {
         this.init();
         this.addBookController= new AddBookController(this);
+<<<<<<< HEAD
+=======
+        this.libraryModelManage = new LibraryModelManage();
+>>>>>>> 524ad9bea3a9e8c8443977595a9d6397da6e84ca
     }
 
     private void init() {
@@ -51,14 +71,22 @@ public class AddBook extends JFrame {
         return leftJPanel;
     }
     private JPanel createBook() {
+<<<<<<< HEAD
         JTextField titleField = setCustomTextField();
+=======
+        titleField = setCustomTextField();
+>>>>>>> 524ad9bea3a9e8c8443977595a9d6397da6e84ca
         return createLabeledTextFieldPanel(new JLabel("Book Title:"), titleField);
     }
 
 
     private JPanel createDescription() {
         JLabel descriptionLabel=new JLabel("Short Description");
+<<<<<<< HEAD
         JTextArea descriptionArea = new JTextArea(3, 20);
+=======
+        descriptionArea = new JTextArea(3, 20);
+>>>>>>> 524ad9bea3a9e8c8443977595a9d6397da6e84ca
         JScrollPane scrollPane = new JScrollPane(descriptionArea);
         scrollPane.setOpaque(false);
         scrollPane.setBorder(null);
@@ -70,9 +98,15 @@ public class AddBook extends JFrame {
     private JPanel createAuthor() {
         JPanel writerPanel = new JPanel(new GridLayout(1, 4, 10, 10));
         writerPanel.setBackground(new Color(255, 228, 225));
+<<<<<<< HEAD
         JTextField authorText = setCustomTextField();
         JPanel authorPanel=createLabeledTextFieldPanel(new JLabel("Author: "),authorText);
         JTextField languageText =  setCustomTextField();
+=======
+        authorText = setCustomTextField();
+        JPanel authorPanel=createLabeledTextFieldPanel(new JLabel("Author: "),authorText);
+        languageText =  setCustomTextField();
+>>>>>>> 524ad9bea3a9e8c8443977595a9d6397da6e84ca
         JPanel languagePanel=createLabeledTextFieldPanel(new JLabel("Language: "),languageText);
         writerPanel.add(authorPanel);
         writerPanel.add(languagePanel);
@@ -83,6 +117,7 @@ public class AddBook extends JFrame {
         JPanel quantityPanel = new JPanel(new GridLayout(1, 3, 10, 10)); // Chia làm 3 cặp nhãn-ô nhập liệu
         quantityPanel.setBackground(new Color(255, 228, 225));
 
+<<<<<<< HEAD
         JTextField totalText = setCustomTextField();
         JPanel totalPanel = createLabeledTextFieldPanel(new JLabel("Tatal: "), totalText);
 
@@ -90,6 +125,15 @@ public class AddBook extends JFrame {
         JPanel currentPanel = createLabeledTextFieldPanel(new JLabel("Current: "), currentText);
 
         JTextField positionText = setCustomTextField();
+=======
+        totalText = setCustomTextField();
+        JPanel totalPanel = createLabeledTextFieldPanel(new JLabel("Tatal: "), totalText);
+
+        currentText = setCustomTextField();
+        JPanel currentPanel = createLabeledTextFieldPanel(new JLabel("Current: "), currentText);
+
+        positionText = setCustomTextField();
+>>>>>>> 524ad9bea3a9e8c8443977595a9d6397da6e84ca
         JPanel positionPanel = createLabeledTextFieldPanel(new JLabel("Position: "), positionText);
 
         quantityPanel.add(totalPanel);
@@ -184,6 +228,22 @@ public class AddBook extends JFrame {
         Image image = imageIcon.getImage().getScaledInstance(coverLabel.getWidth(), coverLabel.getHeight(), Image.SCALE_SMOOTH);
         coverLabel.setIcon(new ImageIcon(image));
     }
+<<<<<<< HEAD
+=======
+    
+    public void getBookFromPanel(){
+        String id = this.libraryModelManage.creatBookID();
+        String title = this.titleField.getText()+"\n"+"( "+ this.descriptionArea.getText()+" )";
+        String imagePath = getImagePath();
+        String author = this.authorText.getText()+"";
+        String language = this.languageText.getText()+"";
+        int total = Integer.valueOf(totalText.getText()+"");
+        String current = this.currentText.getText()+"";
+        String position = this.positionText.getText()+"";
+        Book book = new Book(id, title,imagePath, author,"Programing", language, total, current, position);
+        libraryModelManage.addBookToDatabase(book);
+    }
+>>>>>>> 524ad9bea3a9e8c8443977595a9d6397da6e84ca
 
     public JButton getUploadCoverButton() {
         return uploadCoverButton;
@@ -201,5 +261,8 @@ public class AddBook extends JFrame {
         return imagePath;
     }
 }
+<<<<<<< HEAD
 ///
 
+=======
+>>>>>>> 524ad9bea3a9e8c8443977595a9d6397da6e84ca
