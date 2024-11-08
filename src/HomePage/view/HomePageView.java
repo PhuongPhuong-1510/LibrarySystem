@@ -2,14 +2,21 @@ package HomePage.view;
 
 import HomePage.controller.HomePageController;
 import HomePage.model.HomePageModel;
+import MainApp.model.LibraryModelManage;
+import MainApp.model.Student;
 import MainApp.view.MainView;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.table.*;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.Date;
 import java.text.SimpleDateFormat;
 import java.util.Objects;
+import javax.swing.table.DefaultTableModel;
+import java.sql.*;
+import java.util.Vector;
+import MainApp.model.StudentDAO;
 
 public class HomePageView extends JPanel {
     private HomePageModel homePageModel;
@@ -20,7 +27,7 @@ public class HomePageView extends JPanel {
     private JMenuBar menuBar;
     private JPanel mainHomePanel;
     private JPanel homePagePanel;
-
+    private LibraryModelManage libraryModelManage;
 
 
     private JMenu jMenuHomePage, jMenuLogout, jMenuLMSDashBoard, jMenuMGMTBooks, jMenuMGMTSutudents,
@@ -29,8 +36,10 @@ public class HomePageView extends JPanel {
     public HomePageView(MainView mainView) {
         this.mainView = mainView;
         this.homePageModel = new HomePageModel();
+        this.libraryModelManage = new LibraryModelManage();
         init();
         this.homePageController = new HomePageController(this);
+
     }
 
     private void init() {
@@ -203,14 +212,22 @@ public class HomePageView extends JPanel {
     }
 
     private JPanel createStudentDetails() {
-        String[] studentColumnNames = {"Student ID", "Student Email", "Major", "Contact Number"};
-        Object[][] studentData = {
-                {4, "Rose", "PHD", "Computer Science"},
-                {5, "Mary", "PHD", "Computer Science"},
-                {6, "Iron Man", "M.Sc", "Chemistry"},
-                {7, "Captain America", "PHD", "Computer Science"},
-                {8, "Bruce Banner", "M.Sc", "Physics"}
-        };
+        if (this.libraryModelManage == null) {
+            throw new IllegalStateException("LibraryModelManage chưa được khởi tạo!");
+        }
+        String[] studentColumnNames = {"Student ID", "Student Name", "Student Email", "Contact Number"};
+
+        ArrayList<Student> students = this.libraryModelManage.getStudentsList();
+        Object[][] studentData = new Object[students.size()][4];
+
+        for (int i = 0; i < students.size(); i++) {
+            Student student = students.get(i);
+            studentData[i][0] = student.getID();
+            studentData[i][1] = student.getName();
+            studentData[i][2] = student.getEmail();
+            studentData[i][3] = student.getPhone();
+        }
+        
         return createTablePanel(studentData, studentColumnNames, 5,"Student Details");
     }
 
