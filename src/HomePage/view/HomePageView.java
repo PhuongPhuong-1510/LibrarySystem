@@ -2,6 +2,7 @@ package HomePage.view;
 
 import HomePage.controller.HomePageController;
 import HomePage.model.HomePageModel;
+import MainApp.model.Book;
 import MainApp.model.LibraryModelManage;
 import MainApp.model.Student;
 import MainApp.view.MainView;
@@ -184,13 +185,30 @@ public class HomePageView extends JPanel {
         };
 
         for (int i = 0; i < infoTitles.length; i++) {
-            infoPanel.add(createInfoTile(infoTitles[i], icons[i], i % 2 == 0));
+            String count = "";
+            switch (i) {
+                case 0:
+                    ArrayList<Student> students = this.libraryModelManage.getStudentsList();
+                    count = String.valueOf(students.size());
+                    break;
+                case 1:
+                    ArrayList<Book> books = this.libraryModelManage.getBooksList();
+                    count = String.valueOf(books.size());
+                    break;
+                case 2:
+                    count = "10";
+                    break;
+                case 3:
+                    count = "10";
+                    break;
+            }
+            infoPanel.add(createInfoTile(infoTitles[i], icons[i], i % 2 == 0, count));
         }
 
         return infoPanel;
     }
 
-    private JPanel createInfoTile(String title, String iconPath, boolean isPink) {
+    private JPanel createInfoTile(String title, String iconPath, boolean isPink, String count) {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(new Color(230,230,250));;
         JLabel iconLabel = new JLabel(new ImageIcon(Objects.requireNonNull(getClass().getResource(iconPath))));
@@ -204,7 +222,7 @@ public class HomePageView extends JPanel {
         titleLabel.setBackground(isPink ? Color.PINK : new Color(135, 206, 250));
         panel.add(titleLabel, BorderLayout.NORTH);
 
-        JLabel countLabel = new JLabel("10", JLabel.CENTER);
+        JLabel countLabel = new JLabel(count, JLabel.CENTER);
         countLabel.setFont(new Font("Arial Rounded", Font.BOLD, 40));
         panel.add(countLabel, BorderLayout.CENTER);
 
@@ -232,15 +250,22 @@ public class HomePageView extends JPanel {
     }
 
     private JPanel createBookDetailsTable() {
+        if (this.libraryModelManage == null) {
+            throw new IllegalStateException("LibraryModelManage chưa được khởi tao!");
+        }
         String[] bookColumnNames = {"Book ID", "Book Name", "Author", "Quantity"};
-        Object[][] bookData = {
-                {"4", "PHP", "Rose", "16"},
-                {"5", "HTML", "Bruce", "49"},
-                {"6", "CSS", "Daniel", "0"},
-                {"7", "Golang programming", "Jack", "45"},
-                {"8", "Golang ", "Hi", "456"},
 
-        };
+        ArrayList<Book> books = this.libraryModelManage.getBooksList();
+        Object[][] bookData = new Object[books.size()][4];
+
+        for (int i = 0; i < books.size(); i++) {
+            Book book = books.get(i);
+            bookData[i][0] = book.getBookID();
+            bookData[i][1] = book.getBookName();
+            bookData[i][2] = book.getAuthor();
+            bookData[i][3] = book.getTotal();
+        }
+
         return createTablePanel(bookData, bookColumnNames, 5,"Book Details");
     }
 
