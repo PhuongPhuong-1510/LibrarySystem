@@ -19,7 +19,7 @@ public class AddBook extends JFrame {
     private String imagePath;
     private JTextArea descriptionArea;
     public JTextField titleField;
-    private LibraryModelManage libraryModelManage;
+    public LibraryModelManage libraryModelManage;
     private JTextField authorText;
     private JTextField languageText;
     private JTextField totalText;
@@ -207,6 +207,32 @@ public class AddBook extends JFrame {
         String position = this.positionText.getText()+"";
         Book book = new Book(id, title,imagePath, author,"Programing", language, total, current, position);
         libraryModelManage.addBookToDatabase(book);
+    }
+
+    public void editBook(Book book) {
+        // Store the book being edited
+       // Book editingBook = book;
+        String title = book.getBookName();
+        String[] lines = title.split("\n", 2);
+
+        String name = lines[0];
+        String description = (lines.length > 1) ? lines[1] : "";
+
+        // Populate fields with the book's details
+        titleField.setText(name);
+        descriptionArea.setText(description);
+        authorText.setText(book.getAuthor());
+        languageText.setText(book.getLanguage());
+        totalText.setText(String.valueOf(book.getTotal()));
+        currentText.setText(String.valueOf(book.getCurent()));
+        positionText.setText(book.getPosition());
+
+        // Load and display the cover image, if available
+        imagePath = book.getImage();
+        if (imagePath != null && !imagePath.isEmpty()) {
+            displayImage(imagePath);
+        }
+
     }
 
     public JButton getUploadCoverButton() {

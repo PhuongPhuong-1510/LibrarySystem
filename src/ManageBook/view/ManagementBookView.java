@@ -18,6 +18,7 @@ public class ManagementBookView extends JPanel {
     private JPanel managementBooks;
     private JButton addBookButton;
     private LibraryModelManage libraryModelManage;
+    private ArrayList<Book> booksList;
 
     public ManagementBookView() {
         this.libraryModelManage = new LibraryModelManage();
@@ -57,7 +58,7 @@ public class ManagementBookView extends JPanel {
         String[] columnNames = {"Book ID", "Name Book", "Image", "Author", "Category", "Language", "Total", "Current", "Position", "Action"};
 
         // Fetch books from the library model
-        ArrayList<Book> booksList = libraryModelManage.getBooksList();
+        booksList = libraryModelManage.getBooksList();
 
         // Populate the data array with data from booksList
         Object[][] data = new Object[booksList.size()][10];
@@ -114,6 +115,11 @@ public class ManagementBookView extends JPanel {
         editButton.addActionListener(e ->
                 System.out.println("Edit button clicked at row: " + row)
         );
+        editButton.addActionListener(e -> {
+            AddBook addBook = new AddBook();
+            addBook.setVisible(true);
+            addBook.editBook(booksList.get(row));  // Assuming booksList is accessible in this context
+        });
 
         deleteButton.addActionListener(e ->
                 System.out.println("Delete button clicked at row: " + row)
