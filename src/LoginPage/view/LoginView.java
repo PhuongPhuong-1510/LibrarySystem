@@ -2,10 +2,14 @@ package LoginPage.view;
 
 import LoginPage.controller.LoginController;
 import LoginPage.model.LoginModel;
+import MainApp.model.Admin;
+import MainApp.model.LibraryModelManage;
+import MainApp.model.Student;
 import MainApp.view.MainView;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class LoginView extends JPanel {
@@ -16,12 +20,14 @@ public class LoginView extends JPanel {
     private JButton btnLogin;
     private JButton btnSignUp;
     private JButton btnForgot;
+    private LibraryModelManage libraryModelManage;
 
     public LoginView(MainView mainView) {
         this.mainView = mainView;
         this.loginModel = new LoginModel();
         initializeUIComponents();
         new LoginController(this);
+        this.libraryModelManage = new LibraryModelManage();
     }
 
     private void initializeUIComponents() {
@@ -150,5 +156,25 @@ public class LoginView extends JPanel {
 
     public MainView getMainView() {
         return mainView;
+    }
+
+    public boolean checkLogin(){
+        String username = txtUserName.getText();
+        String password = txtPassWord.getText();
+        if(!username.equals("") && !password.equals("")) {
+            ArrayList<Admin> admins = libraryModelManage.getAdminsList();
+            for (Admin admin : admins) {
+                if (admin.getEmail().equals(username) && admin.getPassword().equals(password)) {
+                    return true;
+                }
+            }
+            ArrayList<Student> students = libraryModelManage.getStudentsList();
+            for (Student student : students) {
+                if (student.getEmail().equals(username) && student.getPassword().equals(password)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }
