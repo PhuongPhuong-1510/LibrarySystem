@@ -106,6 +106,27 @@ public class BookDAO {
         }
     }
 
+    public void deleteBook(String bookID) {
+        String query = "DELETE FROM book WHERE bookID = ?";
+
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+
+            preparedStatement.setString(1, bookID);
+            int rowsDeleted = preparedStatement.executeUpdate();
+
+            if (rowsDeleted > 0) {
+                System.out.println("Book deleted successfully from the database.");
+            } else {
+                System.out.println("Book with given ID not found in the database.");
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error deleting book from database: " + e.getMessage());
+        }
+    }
+
+
 
     public ArrayList<Book> getBooksList() {
         return booksList;

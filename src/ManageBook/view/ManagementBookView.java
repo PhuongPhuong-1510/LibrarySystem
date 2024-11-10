@@ -128,9 +128,21 @@ public class ManagementBookView extends JPanel implements EditBookListener {
             editBook.editBook(booksList.get(row));  // Assuming booksList is accessible in this context
         });
 
-        deleteButton.addActionListener(e ->
-                System.out.println("Delete button clicked at row: " + row)
-        );
+        deleteButton.addActionListener(e -> {
+            // Hiển thị hộp thoại xác nhận trước khi xóa
+            int confirm = JOptionPane.showConfirmDialog(
+                    null,
+                    "Bạn có chắc chắn xóa không?",
+                    "Xác nhận xóa",
+                    JOptionPane.YES_NO_OPTION
+            );
+
+            // Nếu người dùng chọn "Yes", thực hiện việc xóa
+            if (confirm == JOptionPane.YES_OPTION) {
+                System.out.println("Delete button clicked at row: " + row);
+                deleteBook(booksList.get(row).getBookID());
+            }
+        });
 
 
 
@@ -480,5 +492,27 @@ public class ManagementBookView extends JPanel implements EditBookListener {
         }
     }
 
+    public void deleteBook(String bookID) {
+        for (int rowIndex = 0; rowIndex < booksList.size(); rowIndex++) {
+            Book book = booksList.get(rowIndex);
+            if (book.getBookID().equals(bookID)) {
+                booksList.remove(rowIndex); // Xóa sách khỏi booksList
+                libraryModelManage.deleteBookFromDatabase(bookID);
+                // Cập nhật DefaultTableModel
+                DefaultTableModel model = (DefaultTableModel) ((JTable) scrollPane.getViewport().getView()).getModel();
+                model.removeRow(rowIndex);  // Xóa dòng từ bảng
+
+                // Thoát vòng lặp sau khi xóa để tránh lỗi chỉ số
+                break;
+            }
+        }
+    }
 
 }
+
+
+
+
+
+
+

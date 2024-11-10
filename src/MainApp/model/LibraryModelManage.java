@@ -40,6 +40,12 @@ public class LibraryModelManage {
         bookDAO.editBook(book);
     }
 
+    public void deleteBookFromDatabase(String bookID) {
+        BookDAO bookDAO = new BookDAO();
+        bookDAO.deleteBook(bookID);
+        booksList.removeIf(book -> book.getBookID().equals(bookID)); // Update the local list
+    }
+
 
     public String creatBookID(){
         BookDAO bookDAO = new BookDAO();
