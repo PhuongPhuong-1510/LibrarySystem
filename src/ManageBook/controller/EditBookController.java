@@ -12,9 +12,11 @@ import java.awt.event.MouseListener;
 
 public class EditBookController implements ActionListener, MouseListener {
     private final EditBook editBook;
+    private final EditBookListener listener;
 
-    public EditBookController(EditBook editBook) {
+    public EditBookController(EditBook editBook, EditBookListener listener) {
         this.editBook = editBook;
+        this.listener = listener;
         initializeListeners();
     }
 
@@ -44,17 +46,10 @@ public class EditBookController implements ActionListener, MouseListener {
                 break;
             case "SUBMIT":
                 System.out.println("Submit button clicked");
-                if(this.editBook.titleField.getText().equals("")){
-                    JOptionPane.showMessageDialog(null, "Please enter a title");
-                }else{
-                    this.editBook.getBookFromPanel();
-                    editBook.setVisible(false);
-                }
+                listener.onBookEdit();
                 editBook.revalidate();
                 editBook.repaint();
                 break;
-
-
             default:
                 break;
         }

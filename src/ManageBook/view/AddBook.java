@@ -28,12 +28,12 @@ public class AddBook extends JFrame{
     private JTextField totalText;
     private JTextField currentText;
     private JTextField positionText;
-    private ManagementBookView managementBookView;
+    //private ManagementBookView managementBookView;
 
     public AddBook() {
         this.init();
         this.libraryModelManage = new LibraryModelManage();
-        this.managementBookView = new ManagementBookView();
+        //this.managementBookView = new ManagementBookView();
     }
 
     private void init() {

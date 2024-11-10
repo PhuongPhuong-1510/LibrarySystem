@@ -3,6 +3,8 @@ package ManageBook.view;
 import HomePage.view.CustomScrollBarUI;
 import MainApp.model.Book;
 import MainApp.model.LibraryModelManage;
+import ManageBook.controller.EditBookController;
+import ManageBook.controller.EditBookListener;
 import ManageBook.controller.ManagementBookController;
 import ManageBook.model.ManagementBookModel;
 
@@ -15,13 +17,14 @@ import java.awt.event.FocusEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
-public class ManagementBookView extends JPanel {
+public class ManagementBookView extends JPanel implements EditBookListener {
     public ManagementBookModel managementBookModel;
     public JPanel managementBooks;
     private JButton addBookButton;
     private LibraryModelManage libraryModelManage;
     private ArrayList<Book> booksList;
     private JScrollPane scrollPane;
+    private EditBook editBook;
 
     public ManagementBookView() {
         this.libraryModelManage = new LibraryModelManage();
@@ -119,7 +122,8 @@ public class ManagementBookView extends JPanel {
 
         editButton.addActionListener(e -> {
             System.out.println("Edit button clicked at row: " + row);
-            EditBook editBook = new EditBook();
+            editBook = new EditBook();
+            EditBookController editBookController = new EditBookController(editBook, this);
             editBook.setVisible(true);
             editBook.editBook(booksList.get(row));  // Assuming booksList is accessible in this context
         });
@@ -144,6 +148,11 @@ public class ManagementBookView extends JPanel {
         return actionPanel;
     }
 
+    @Override
+    public void onBookEdit() {
+        System.out.println("Edit book action was cancelled");
+        editBook(editBook.getBookFromPanel());
+    }
 
 
 
@@ -449,5 +458,27 @@ public class ManagementBookView extends JPanel {
         DefaultTableModel model = (DefaultTableModel) ((JTable) scrollPane.getViewport().getView()).getModel();
         model.addRow(rowData);
     }
+
+    public void editBook(Book editedBook) {
+        for (int rowIndex = 0; rowIndex < booksList.size(); rowIndex++) {
+            Book book = booksList.get(rowIndex);
+            if (book.getBookID().equals(editedBook.getBookID())) {
+                booksList.set(rowIndex, editedBook);
+                DefaultTableModel model = (DefaultTableModel) ((JTable) scrollPane.getViewport().getView()).getModel();
+                model.setValueAt(convertToHtml(editedBook.getBookName()), rowIndex, 1);
+                model.setValueAt(createImageLabel(editedBook.getImage()), rowIndex, 2);
+                model.setValueAt(editedBook.getAuthor(), rowIndex, 3);
+                model.setValueAt(editedBook.getCategory(), rowIndex, 4);
+                model.setValueAt(editedBook.getLanguage(), rowIndex, 5);
+                model.setValueAt(editedBook.getTotal(), rowIndex, 6);
+                model.setValueAt(editedBook.getCurent(), rowIndex, 7);
+                model.setValueAt(editedBook.getPosition(), rowIndex, 8);
+                model.setValueAt(createAction(rowIndex), rowIndex, 9);
+
+                break;
+            }
+        }
+    }
+
 
 }

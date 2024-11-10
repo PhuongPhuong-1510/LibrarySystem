@@ -6,7 +6,8 @@ import ManageBook.view.AddBook;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class ManagementBookController implements ActionListener, AddBookListener {
+public class ManagementBookController implements ActionListener, AddBookListener{
+
     private ManagementBookView managementBookView;
     private AddBook addBook;
 
@@ -41,5 +42,6 @@ public class ManagementBookController implements ActionListener, AddBookListener
         System.out.println("Add book action was cancelled");
         // Any action needed for cancellation can go here
     }
+
 }
 

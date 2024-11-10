@@ -32,8 +32,8 @@ public class EditBook extends JFrame {
 
     public EditBook() {
         this.init();
-        this.editBookController= new EditBookController(this);
         this.libraryModelManage = new LibraryModelManage();
+        //this.managementBookView = new ManagementBookView();
     }
 
     private void init() {
@@ -230,7 +230,7 @@ public class EditBook extends JFrame {
 
     }
 
-    public void getBookFromPanel(){
+    public Book getBookFromPanel(){
 
         String id = this.editingBook.getBookID();
         String title = this.titleField.getText()+"\n"+"( "+ this.descriptionArea.getText()+" )";
@@ -243,6 +243,7 @@ public class EditBook extends JFrame {
         Book book = new Book(id, title,imagePath, author,"Programing", language, total, current, position);
         this.editingBook = book;
         libraryModelManage.editBookInDatabase(editingBook);
+        return editingBook;
     }
 
 
