@@ -12,6 +12,7 @@ public class SignupView extends JPanel {
     private SignupModel signupModel;
 
     private JTextField txtUserName;
+    private JTextField txtFullName;
     private JPasswordField txtPassWord;
     private JPasswordField txtConfirmPass;
     private JTextField txtContactNumber;
@@ -68,18 +69,21 @@ public class SignupView extends JPanel {
         lblConfirmPasswordError = createErrorLabel();
         lblContactError = createErrorLabel();
 
-        txtUserName = createTextField("abc@gmail.com", 200, 185);
-        txtPassWord = createPasswordField("Enter your new password", 200, 235);
-        txtConfirmPass = createPasswordField("Enter confirm password", 200, 280);
-        txtContactNumber = createTextField("0***", 205, 325);
+        txtFullName=createTextField("Enter your fullname",200,185);
+        txtUserName = createTextField("abc@gmail.com", 200, 235);
+        txtPassWord = createPasswordField("Enter your new password", 200, 290);
+        txtConfirmPass = createPasswordField("Enter confirm password", 200, 335);
+        txtContactNumber = createTextField("0***", 205, 390);
 
-        loginPanel.add(createLabel("Email:", new Font("Tahoma", Font.PLAIN, 16), Color.WHITE, 50, 170));
+        loginPanel.add(createLabel("Full Name: ",new Font("Tahoma",Font.PLAIN,16),Color.WHITE,50,170));
+        loginPanel.add(txtFullName);
+        loginPanel.add(createLabel("Email:", new Font("Tahoma", Font.PLAIN, 16), Color.WHITE, 50, 240));
         loginPanel.add(txtUserName);
-        loginPanel.add(createLabel("Password:", new Font("Tahoma", Font.PLAIN, 15), Color.WHITE, 50, 240));
+        loginPanel.add(createLabel("Password:", new Font("Tahoma", Font.PLAIN, 15), Color.WHITE, 50, 280));
         loginPanel.add(txtPassWord);
-        loginPanel.add(createLabel("Confirm Password:", new Font("Tahoma", Font.PLAIN, 15), Color.WHITE, 50, 280));
+        loginPanel.add(createLabel("Confirm Password:", new Font("Tahoma", Font.PLAIN, 15), Color.WHITE, 50, 335));
         loginPanel.add(txtConfirmPass);
-        loginPanel.add(createLabel("Contact Number:", new Font("Tahoma", Font.PLAIN, 15), Color.WHITE, 55, 325));
+        loginPanel.add(createLabel("Contact Number:", new Font("Tahoma", Font.PLAIN, 15), Color.WHITE, 55, 390));
         loginPanel.add(txtContactNumber);
         loginPanel.add(createSignUpButton());
         loginPanel.add(createLoginButton());
@@ -134,7 +138,7 @@ public class SignupView extends JPanel {
         btnSignUp = new OvalButton("SIGNUP");
         btnSignUp.setBackground(new Color(255, 94, 77));
         btnSignUp.setForeground(Color.WHITE);
-        btnSignUp.setBounds(120, 390, 100, 30);
+        btnSignUp.setBounds(120, 480, 100, 30);
         btnSignUp.setCursor(new Cursor(Cursor.HAND_CURSOR));
         return btnSignUp;
     }
@@ -142,7 +146,7 @@ public class SignupView extends JPanel {
     private JButton createLoginButton() {
         btnLogin = new OvalButton("LOGIN");
         btnLogin.setBackground(new Color(192, 192, 192));
-        btnLogin.setBounds(240, 390, 100, 30);
+        btnLogin.setBounds(240, 480, 100, 30);
         btnLogin.setToolTipText("Do you already have an account?");
         btnLogin.setCursor(new Cursor(Cursor.HAND_CURSOR));
         return btnLogin;

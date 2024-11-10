@@ -11,12 +11,9 @@ import java.awt.event.MouseListener;
 
 public class AddBookController implements ActionListener, MouseListener {
     private final AddBook addBook;
-    private final AddBookListener listener;
 
-
-    public AddBookController(AddBook addBook, AddBookListener listener) {
+    public AddBookController(AddBook addBook) {
         this.addBook = addBook;
-        this.listener = listener;
         initializeListeners();
     }
 
@@ -24,6 +21,7 @@ public class AddBookController implements ActionListener, MouseListener {
         addBook.getCancelButton().addActionListener(this);
         addBook.getSubmitButton().addActionListener(this);
         addBook.getUploadCoverButton().addActionListener(this);
+
         addBook.getUploadCoverButton().addMouseListener(this);
         addBook.getSubmitButton().addMouseListener(this);
         addBook.getCancelButton().addMouseListener(this);
@@ -44,19 +42,27 @@ public class AddBookController implements ActionListener, MouseListener {
                 break;
             case "SUBMIT":
                 System.out.println("Submit button clicked");
-                if (this.addBook.titleField.getText().equals("")) {
+                if(this.addBook.titleField.getText().equals("")){
                     JOptionPane.showMessageDialog(null, "Please enter a title");
-                } else {
-                    listener.onBookAdded();
+                }else{
+                    this.addBook.getBookFromPanel();
                 }
+
+                JOptionPane.showMessageDialog(
+                        addBook,
+                        "Add book successfully",
+                        "Success",
+                        JOptionPane.INFORMATION_MESSAGE
+                );
                 addBook.revalidate();
                 addBook.repaint();
                 break;
+
+
             default:
                 break;
         }
     }
-
 
     @Override
     public void mouseEntered(MouseEvent e) {
