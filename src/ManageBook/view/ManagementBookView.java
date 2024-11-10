@@ -4,6 +4,7 @@ import HomePage.view.CustomScrollBarUI;
 import MainApp.model.Book;
 import MainApp.model.LibraryModelManage;
 import ManageBook.controller.ManagementBookController;
+import ManageBook.model.ManagementBookModel;
 
 
 import javax.swing.*;
@@ -15,16 +16,19 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 public class ManagementBookView extends JPanel {
-    private JPanel managementBooks;
+    public ManagementBookModel managementBookModel;
+    public JPanel managementBooks;
     private JButton addBookButton;
     private LibraryModelManage libraryModelManage;
     private ArrayList<Book> booksList;
+    private JScrollPane scrollPane;
 
     public ManagementBookView() {
         this.libraryModelManage = new LibraryModelManage();
         this.setLayout(new BorderLayout());
         this.init();
         new ManagementBookController(this);
+        this.managementBookModel = new ManagementBookModel();
     }
 
     private void init() {
@@ -32,6 +36,7 @@ public class ManagementBookView extends JPanel {
         managementBooks.add(createBookDetails(), BorderLayout.CENTER);
         managementBooks.add(createNorthPanel(), BorderLayout.NORTH);
 
+        this.booksList= this.libraryModelManage.getBooksList();
         this.add(managementBooks, BorderLayout.CENTER);
         this.setVisible(true);
     }
@@ -112,13 +117,11 @@ public class ManagementBookView extends JPanel {
         JButton deleteButton = createActionButton("/ManageBook/icon/bin.jpg", new Color(255, 240, 245));
 
 
-        editButton.addActionListener(e ->
-                System.out.println("Edit button clicked at row: " + row)
-        );
         editButton.addActionListener(e -> {
-            AddBook addBook = new AddBook();
-            addBook.setVisible(true);
-            addBook.editBook(booksList.get(row));  // Assuming booksList is accessible in this context
+            System.out.println("Edit button clicked at row: " + row);
+            EditBook editBook = new EditBook();
+            editBook.setVisible(true);
+            editBook.editBook(booksList.get(row));  // Assuming booksList is accessible in this context
         });
 
         deleteButton.addActionListener(e ->
@@ -152,7 +155,7 @@ public class ManagementBookView extends JPanel {
         configureTable(table, rowCount);
 
 
-        JScrollPane scrollPane = createScrollPane(table);
+        scrollPane = createScrollPane(table);
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(scrollPane, BorderLayout.CENTER);
 
@@ -427,5 +430,24 @@ public class ManagementBookView extends JPanel {
         return addBookButton;
     }
 
+    public void addBook(Book book) {
+
+        booksList.add(book);
+        Object[] rowData = new Object[]{
+                book.getBookID(),
+                convertToHtml(book.getBookName()),
+                createImageLabel(book.getImage()),
+                book.getAuthor(),
+                book.getCategory(),
+                book.getLanguage(),
+                book.getTotal(),
+                book.getCurent(),
+                book.getPosition(),
+                createAction(booksList.size() - 1)
+        };
+
+        DefaultTableModel model = (DefaultTableModel) ((JTable) scrollPane.getViewport().getView()).getModel();
+        model.addRow(rowData);
+    }
 
 }

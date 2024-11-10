@@ -3,6 +3,7 @@ package MainApp.model;
 import java.util.ArrayList;
 
 public class LibraryModelManage {
+    public String luaChon;
     private ArrayList<Book> booksList;
     private ArrayList<Student> studentsList;
     private ArrayList<Admin> adminsList;
@@ -21,6 +22,8 @@ public class LibraryModelManage {
         return booksList;
     }
 
+
+
     private void loadBooksFromDatabase() {
         BookDAO bookDAO = new BookDAO();
         bookDAO.loadBooksFromDatabase();
@@ -31,6 +34,12 @@ public class LibraryModelManage {
         BookDAO bookDAO = new BookDAO();
         bookDAO.addBook(book);
     }
+
+    public void editBookInDatabase(Book book) {
+        BookDAO bookDAO = new BookDAO();
+        bookDAO.editBook(book);
+    }
+
 
     public String creatBookID(){
         BookDAO bookDAO = new BookDAO();
@@ -74,5 +83,12 @@ public class LibraryModelManage {
     public void addAdminToDatabase(Admin admin) {
         AdminDAO adminDAO = new AdminDAO();
         adminDAO.addAdmin(admin);
+    }
+
+    public String getLuaChon() {
+        return luaChon;
+    }
+    public void setLuaChon(String luaChon) {
+        this.luaChon = luaChon;
     }
 }

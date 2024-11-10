@@ -1,6 +1,7 @@
 package ManageBook.controller;
 
 import ManageBook.view.AddBook;
+import ManageBook.view.EditBook;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,24 +10,23 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-public class AddBookController implements ActionListener, MouseListener {
-    private final AddBook addBook;
-    private final AddBookListener listener;
+public class EditBookController implements ActionListener, MouseListener {
+    private final EditBook editBook;
 
-
-    public AddBookController(AddBook addBook, AddBookListener listener) {
-        this.addBook = addBook;
-        this.listener = listener;
+    public EditBookController(EditBook editBook) {
+        this.editBook = editBook;
         initializeListeners();
     }
 
     private void initializeListeners() {
-        addBook.getCancelButton().addActionListener(this);
-        addBook.getSubmitButton().addActionListener(this);
-        addBook.getUploadCoverButton().addActionListener(this);
-        addBook.getUploadCoverButton().addMouseListener(this);
-        addBook.getSubmitButton().addMouseListener(this);
-        addBook.getCancelButton().addMouseListener(this);
+        editBook.getCancelButton().addActionListener(this);
+        editBook.getSubmitButton().addActionListener(this);
+        editBook.getUploadCoverButton().addActionListener(this);
+
+        // Add mouse listeners for hover effect
+        editBook.getUploadCoverButton().addMouseListener(this);
+        editBook.getSubmitButton().addMouseListener(this);
+        editBook.getCancelButton().addMouseListener(this);
     }
 
     @Override
@@ -34,50 +34,52 @@ public class AddBookController implements ActionListener, MouseListener {
         switch (e.getActionCommand()) {
             case "UPLOAD COVER":
                 System.out.println("Upload cover button clicked");
-                addBook.chooseImage(e);
-                String path = addBook.getImagePath();
+                editBook.chooseImage(e);
+                String path = editBook.getImagePath();
                 System.out.println("Image path: " + path);
                 break;
             case "CANCLE":
                 System.out.println("Cancel button clicked");
-                addBook.setVisible(false);
+                editBook.setVisible(false);
                 break;
             case "SUBMIT":
                 System.out.println("Submit button clicked");
-                if (this.addBook.titleField.getText().equals("")) {
+                if(this.editBook.titleField.getText().equals("")){
                     JOptionPane.showMessageDialog(null, "Please enter a title");
-                } else {
-                    listener.onBookAdded();
+                }else{
+                    this.editBook.getBookFromPanel();
+                    editBook.setVisible(false);
                 }
-                addBook.revalidate();
-                addBook.repaint();
+                editBook.revalidate();
+                editBook.repaint();
                 break;
+
+
             default:
                 break;
         }
     }
 
-
     @Override
     public void mouseEntered(MouseEvent e) {
-        if (e.getSource() == addBook.getSubmitButton()) {
-            styleButtonHover(addBook.getSubmitButton(), Font.BOLD, 16);
-        } else if (e.getSource() == addBook.getCancelButton()) {
-            styleButtonHover(addBook.getCancelButton(), Font.BOLD, 16);
-        } else if (e.getSource() == addBook.getUploadCoverButton()) {
-            styleButtonHover(addBook.getUploadCoverButton(), Font.BOLD, 16);
+        if (e.getSource() == editBook.getSubmitButton()) {
+            styleButtonHover(editBook.getSubmitButton(), Font.BOLD, 16);
+        } else if (e.getSource() == editBook.getCancelButton()) {
+            styleButtonHover(editBook.getCancelButton(), Font.BOLD, 16);
+        } else if (e.getSource() == editBook.getUploadCoverButton()) {
+            styleButtonHover(editBook.getUploadCoverButton(), Font.BOLD, 16);
         }
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
         // Đặt lại kiểu nút khi chuột di ra ngoài
-        if (e.getSource() == addBook.getSubmitButton()) {
-            styleButtonDefault(addBook.getSubmitButton());
-        } else if (e.getSource() == addBook.getCancelButton()) {
-            styleButtonDefault(addBook.getCancelButton());
-        } else if (e.getSource() == addBook.getUploadCoverButton()) {
-            styleButtonDefault(addBook.getUploadCoverButton());
+        if (e.getSource() == editBook.getSubmitButton()) {
+            styleButtonDefault(editBook.getSubmitButton());
+        } else if (e.getSource() == editBook.getCancelButton()) {
+            styleButtonDefault(editBook.getCancelButton());
+        } else if (e.getSource() == editBook.getUploadCoverButton()) {
+            styleButtonDefault(editBook.getUploadCoverButton());
         }
     }
 
