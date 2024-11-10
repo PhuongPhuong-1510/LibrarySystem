@@ -3,7 +3,10 @@ package ManageBook.view;
 import HomePage.view.CustomScrollBarUI;
 import MainApp.model.Book;
 import MainApp.model.LibraryModelManage;
+import ManageBook.controller.EditBookController;
+import ManageBook.controller.EditBookListener;
 import ManageBook.controller.ManagementBookController;
+import ManageBook.model.ManagementBookModel;
 
 
 import javax.swing.*;
@@ -14,16 +17,21 @@ import java.awt.event.FocusEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
-public class ManagementBookView extends JPanel {
-    private JPanel managementBooks;
+public class ManagementBookView extends JPanel implements EditBookListener {
+    public ManagementBookModel managementBookModel;
+    public JPanel managementBooks;
     private JButton addBookButton;
     private LibraryModelManage libraryModelManage;
+    private ArrayList<Book> booksList;
+    private JScrollPane scrollPane;
+    private EditBook editBook;
 
     public ManagementBookView() {
         this.libraryModelManage = new LibraryModelManage();
         this.setLayout(new BorderLayout());
         this.init();
         new ManagementBookController(this);
+        this.managementBookModel = new ManagementBookModel();
     }
 
     private void init() {
@@ -31,6 +39,7 @@ public class ManagementBookView extends JPanel {
         managementBooks.add(createBookDetails(), BorderLayout.CENTER);
         managementBooks.add(createNorthPanel(), BorderLayout.NORTH);
 
+        this.booksList= this.libraryModelManage.getBooksList();
         this.add(managementBooks, BorderLayout.CENTER);
         this.setVisible(true);
     }
@@ -57,7 +66,7 @@ public class ManagementBookView extends JPanel {
         String[] columnNames = {"Book ID", "Name Book", "Image", "Author", "Category", "Language", "Total", "Current", "Position", "Action"};
 
         // Fetch books from the library model
-        ArrayList<Book> booksList = libraryModelManage.getBooksList();
+        booksList = libraryModelManage.getBooksList();
 
         // Populate the data array with data from booksList
         Object[][] data = new Object[booksList.size()][10];
@@ -111,13 +120,29 @@ public class ManagementBookView extends JPanel {
         JButton deleteButton = createActionButton("/ManageBook/icon/bin.jpg", new Color(255, 240, 245));
 
 
-        editButton.addActionListener(e ->
-                System.out.println("Edit button clicked at row: " + row)
-        );
+        editButton.addActionListener(e -> {
+            System.out.println("Edit button clicked at row: " + row);
+            editBook = new EditBook();
+            EditBookController editBookController = new EditBookController(editBook, this);
+            editBook.setVisible(true);
+            editBook.editBook(booksList.get(row));  // Assuming booksList is accessible in this context
+        });
 
-        deleteButton.addActionListener(e ->
-                System.out.println("Delete button clicked at row: " + row)
-        );
+        deleteButton.addActionListener(e -> {
+            // Hiển thị hộp thoại xác nhận trước khi xóa
+            int confirm = JOptionPane.showConfirmDialog(
+                    null,
+                    "Bạn có chắc chắn xóa không?",
+                    "Xác nhận xóa",
+                    JOptionPane.YES_NO_OPTION
+            );
+
+            // Nếu người dùng chọn "Yes", thực hiện việc xóa
+            if (confirm == JOptionPane.YES_OPTION) {
+                System.out.println("Delete button clicked at row: " + row);
+                deleteBook(booksList.get(row).getBookID());
+            }
+        });
 
 
 
@@ -135,6 +160,11 @@ public class ManagementBookView extends JPanel {
         return actionPanel;
     }
 
+    @Override
+    public void onBookEdit() {
+        System.out.println("Edit book action was cancelled");
+        editBook(editBook.getBookFromPanel());
+    }
 
 
 
@@ -146,7 +176,7 @@ public class ManagementBookView extends JPanel {
         configureTable(table, rowCount);
 
 
-        JScrollPane scrollPane = createScrollPane(table);
+        scrollPane = createScrollPane(table);
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(scrollPane, BorderLayout.CENTER);
 
@@ -421,5 +451,68 @@ public class ManagementBookView extends JPanel {
         return addBookButton;
     }
 
+    public void addBook(Book book) {
+
+        booksList.add(book);
+        Object[] rowData = new Object[]{
+                book.getBookID(),
+                convertToHtml(book.getBookName()),
+                createImageLabel(book.getImage()),
+                book.getAuthor(),
+                book.getCategory(),
+                book.getLanguage(),
+                book.getTotal(),
+                book.getCurent(),
+                book.getPosition(),
+                createAction(booksList.size() - 1)
+        };
+
+        DefaultTableModel model = (DefaultTableModel) ((JTable) scrollPane.getViewport().getView()).getModel();
+        model.addRow(rowData);
+    }
+
+    public void editBook(Book editedBook) {
+        for (int rowIndex = 0; rowIndex < booksList.size(); rowIndex++) {
+            Book book = booksList.get(rowIndex);
+            if (book.getBookID().equals(editedBook.getBookID())) {
+                booksList.set(rowIndex, editedBook);
+                DefaultTableModel model = (DefaultTableModel) ((JTable) scrollPane.getViewport().getView()).getModel();
+                model.setValueAt(convertToHtml(editedBook.getBookName()), rowIndex, 1);
+                model.setValueAt(createImageLabel(editedBook.getImage()), rowIndex, 2);
+                model.setValueAt(editedBook.getAuthor(), rowIndex, 3);
+                model.setValueAt(editedBook.getCategory(), rowIndex, 4);
+                model.setValueAt(editedBook.getLanguage(), rowIndex, 5);
+                model.setValueAt(editedBook.getTotal(), rowIndex, 6);
+                model.setValueAt(editedBook.getCurent(), rowIndex, 7);
+                model.setValueAt(editedBook.getPosition(), rowIndex, 8);
+                model.setValueAt(createAction(rowIndex), rowIndex, 9);
+
+                break;
+            }
+        }
+    }
+
+    public void deleteBook(String bookID) {
+        for (int rowIndex = 0; rowIndex < booksList.size(); rowIndex++) {
+            Book book = booksList.get(rowIndex);
+            if (book.getBookID().equals(bookID)) {
+                booksList.remove(rowIndex); // Xóa sách khỏi booksList
+                libraryModelManage.deleteBookFromDatabase(bookID);
+                // Cập nhật DefaultTableModel
+                DefaultTableModel model = (DefaultTableModel) ((JTable) scrollPane.getViewport().getView()).getModel();
+                model.removeRow(rowIndex);  // Xóa dòng từ bảng
+
+                // Thoát vòng lặp sau khi xóa để tránh lỗi chỉ số
+                break;
+            }
+        }
+    }
 
 }
+
+
+
+
+
+
+

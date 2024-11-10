@@ -78,6 +78,55 @@ public class BookDAO {
         return "B000";
     }
 
+    public void editBook(Book book) {
+        String query = "UPDATE book SET bookName = ?, image = ?, author = ?, category = ?, language = ?, total = ?, curent = ?, Position = ? WHERE bookID = ?";
+
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+
+            preparedStatement.setString(1, book.getBookName());
+            preparedStatement.setString(2, book.getImage());
+            preparedStatement.setString(3, book.getAuthor());
+            preparedStatement.setString(4, book.getCategory());
+            preparedStatement.setString(5, book.getLanguage());
+            preparedStatement.setInt(6, book.getTotal());
+            preparedStatement.setString(7, book.getCurent());
+            preparedStatement.setString(8, book.getPosition());
+            preparedStatement.setString(9, book.getBookID());
+
+            int rowsUpdated = preparedStatement.executeUpdate();
+            if (rowsUpdated > 0) {
+                System.out.println("Book data updated successfully in the database.");
+            } else {
+                System.out.println("Book with given ID not found in the database.");
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error updating book in database: " + e.getMessage());
+        }
+    }
+
+    public void deleteBook(String bookID) {
+        String query = "DELETE FROM book WHERE bookID = ?";
+
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+
+            preparedStatement.setString(1, bookID);
+            int rowsDeleted = preparedStatement.executeUpdate();
+
+            if (rowsDeleted > 0) {
+                System.out.println("Book deleted successfully from the database.");
+            } else {
+                System.out.println("Book with given ID not found in the database.");
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error deleting book from database: " + e.getMessage());
+        }
+    }
+
+
 
     public ArrayList<Book> getBooksList() {
         return booksList;

@@ -4,7 +4,7 @@ import LoginPage.view.OvalButton;
 import MainApp.model.Book;
 import MainApp.model.LibraryModelManage;
 import ManageBook.controller.AddBookController;
-
+import ManageBook.controller.EditBookController;
 import ManageBook.model.ManagementBookModel;
 
 import javax.swing.*;
@@ -12,12 +12,12 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.Objects;
 
-public class AddBook extends JFrame{
+public class EditBook extends JFrame {
 
     private JButton uploadCoverButton;
     private JButton submitButton;
     private JButton cancelButton;
-    private AddBookController addBookController;
+    private EditBookController editBookController;
     private JLabel coverLabel;
     private String imagePath;
     private JTextArea descriptionArea;
@@ -28,9 +28,9 @@ public class AddBook extends JFrame{
     private JTextField totalText;
     private JTextField currentText;
     private JTextField positionText;
-    //private ManagementBookView managementBookView;
+    private Book editingBook;
 
-    public AddBook() {
+    public EditBook() {
         this.init();
         this.libraryModelManage = new LibraryModelManage();
         //this.managementBookView = new ManagementBookView();
@@ -199,9 +199,40 @@ public class AddBook extends JFrame{
         Image image = imageIcon.getImage().getScaledInstance(coverLabel.getWidth(), coverLabel.getHeight(), Image.SCALE_SMOOTH);
         coverLabel.setIcon(new ImageIcon(image));
     }
-    
+
+
+    public void editBook(Book book) {
+
+        // Store the book being edited
+        // Book editingBook = book;
+        String id = book.getBookID();
+        String title = book.getBookName();
+        String[] lines = title.split("\n", 2);
+
+        String name = lines[0];
+        String description = (lines.length > 1) ? lines[1] : "";
+
+        // Populate fields with the book's details
+        titleField.setText(name);
+        descriptionArea.setText(description);
+        authorText.setText(book.getAuthor());
+        languageText.setText(book.getLanguage());
+        totalText.setText(String.valueOf(book.getTotal()));
+        currentText.setText(String.valueOf(book.getCurent()));
+        positionText.setText(book.getPosition());
+
+        // Load and display the cover image, if available
+        imagePath = book.getImage();
+        if (imagePath != null && !imagePath.isEmpty()) {
+            displayImage(imagePath);
+        }
+        editingBook = book;
+
+    }
+
     public Book getBookFromPanel(){
-        String id = this.libraryModelManage.creatBookID();
+
+        String id = this.editingBook.getBookID();
         String title = this.titleField.getText()+"\n"+"( "+ this.descriptionArea.getText()+" )";
         String imagePath = getImagePath();
         String author = this.authorText.getText()+"";
@@ -210,10 +241,12 @@ public class AddBook extends JFrame{
         String current = this.currentText.getText()+"";
         String position = this.positionText.getText()+"";
         Book book = new Book(id, title,imagePath, author,"Programing", language, total, current, position);
-        libraryModelManage.addBookToDatabase(book);
-
-        return book;
+        this.editingBook = book;
+        libraryModelManage.editBookInDatabase(editingBook);
+        return editingBook;
     }
+
+
 
     public JButton getUploadCoverButton() {
         return uploadCoverButton;
