@@ -1,7 +1,9 @@
 package HomePage.controller;
 
 import HomePage.view.HomePageView;
+import IssueBook.view.IssueBookView;
 import ManageBook.view.ManagementBookView;
+import ManageStudent.view.ManagementStudentView;
 
 import javax.swing.*;
 import java.awt.*;
@@ -77,6 +79,23 @@ public class HomePageController implements ActionListener, MouseListener {
                     homePageView.toggleMenuBar();
                     managementBookView.setPreferredSize(new Dimension(homePageView.getMainHomePanel().getWidth(),homePageView.getMainHomePanel().getHeight()));
                     homePageView.setMainHomePanel(managementBookView);
+                }
+                if(menu==homePageView.getjMenuMGMTSutudents())
+                {
+                    System.out.println(("MenuStudent clicked"));
+                    ManagementStudentView managementStudentView = new ManagementStudentView();
+                    homePageView.toggleMenuBar();
+                    managementStudentView.setPreferredSize(new Dimension(homePageView.getMainHomePanel().getWidth(),homePageView.getMainHomePanel().getHeight()));
+                    homePageView.setMainHomePanel(managementStudentView);
+                }
+
+                if(menu==homePageView.getjMenuIssueBook())
+                {
+                    System.out.println(("Issue Button clicked"));
+                    IssueBookView issueBookView = new IssueBookView();
+                    homePageView.toggleMenuBar();
+                    issueBookView.setPreferredSize(new Dimension(homePageView.getMainHomePanel().getWidth(),homePageView.getMainHomePanel().getHeight()));
+                    homePageView.setMainHomePanel(issueBookView);
                 }
 
             }

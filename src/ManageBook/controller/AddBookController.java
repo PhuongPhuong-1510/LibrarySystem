@@ -22,7 +22,6 @@ public class AddBookController implements ActionListener, MouseListener {
         addBook.getSubmitButton().addActionListener(this);
         addBook.getUploadCoverButton().addActionListener(this);
 
-        // Add mouse listeners for hover effect
         addBook.getUploadCoverButton().addMouseListener(this);
         addBook.getSubmitButton().addMouseListener(this);
         addBook.getCancelButton().addMouseListener(this);
@@ -43,14 +42,18 @@ public class AddBookController implements ActionListener, MouseListener {
                 break;
             case "SUBMIT":
                 System.out.println("Submit button clicked");
-<<<<<<< HEAD
-=======
                 if(this.addBook.titleField.getText().equals("")){
                     JOptionPane.showMessageDialog(null, "Please enter a title");
                 }else{
                     this.addBook.getBookFromPanel();
                 }
->>>>>>> 524ad9bea3a9e8c8443977595a9d6397da6e84ca
+
+                JOptionPane.showMessageDialog(
+                        addBook,
+                        "Add book successfully",
+                        "Success",
+                        JOptionPane.INFORMATION_MESSAGE
+                );
                 addBook.revalidate();
                 addBook.repaint();
                 break;
