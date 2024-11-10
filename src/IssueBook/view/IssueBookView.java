@@ -1,11 +1,23 @@
 package IssueBook.view;
 
+import LoginPage.view.OvalButton;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 
 public class IssueBookView extends JPanel {
+    private JTextField bookTitleField;
+    private JTextField authorField;
+    private JTextField languageField;
+    private JTextField totalField;
+    private JTextField studentNameField;
+    private JTextField contactPhoneField;
+    private JTextField contactEmailField;
+    private JTextField majorField;
+    private JTextField branchField;
+
     public IssueBookView() {
         setupMainPanel();
         add(createBookPanel());
@@ -26,65 +38,136 @@ public class IssueBookView extends JPanel {
         JPanel bookPanel = new JPanel();
         bookPanel.setBackground(new Color(246, 222, 236));
         bookPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        bookPanel.setLayout(null); // Layout null
+        bookPanel.setLayout(null);
 
-        JPanel titlePanel = createImageLabel("/IssueBook/view/icon/issueBook.png", "BOOK DETAILS", new Color(246, 222, 236),new Color(238,58,140));
-        titlePanel.setBounds(0, 50, 400, 200); // Đặt kích thước và vị trí cho titlePanel
+        JPanel titlePanel = createImageLabel("/IssueBook/view/icon/issueBook.png", "BOOK DETAILS", new Color(246, 222, 236), new Color(238, 58, 140));
+        titlePanel.setBounds(0, 50, 400, 200);
         bookPanel.add(titlePanel);
 
-        Color labelColor=new Color(205,50,120);
-        bookPanel.add(createLabelAtPosition("Book Id: ", 25, 210, 200, 30,labelColor));
-        bookPanel.add(createLabelAtPosition("Book Title: ", 25, 250, 200, 30,labelColor));
-        bookPanel.add(createLabelAtPosition("Author: ", 25, 290, 200, 30,labelColor));
-        bookPanel.add(createLabelAtPosition("Category: ", 25, 330, 200, 30,labelColor));
-        bookPanel.add(createLabelAtPosition("Language: ", 25, 370, 200, 30,labelColor));
-        bookPanel.add(createLabelAtPosition("Total: ", 25, 410, 200, 30,labelColor));
+        Color labelColor = new Color(205, 50, 120);
+
+
+
+        bookPanel.add(createLabelAtPosition("Book Title: ", 25, 250, 200, 30, labelColor));
+         bookTitleField = createTextField(150, 250, 200, 30,false);
+        bookPanel.add(bookTitleField);
+
+        bookPanel.add(createLabelAtPosition("Author: ", 25, 290, 200, 30, labelColor));
+         authorField = createTextField(150, 290, 200, 30,false);
+        bookPanel.add(authorField);
+
+        bookPanel.add(createLabelAtPosition("Category: ", 25, 330, 200, 30, labelColor));
+        JTextField categoryField = createTextField(150, 330, 200, 30,false);
+        bookPanel.add(categoryField);
+
+        bookPanel.add(createLabelAtPosition("Language: ", 25, 370, 200, 30, labelColor));
+         languageField = createTextField(150, 370, 200, 30,false);
+        bookPanel.add(languageField);
+
+        bookPanel.add(createLabelAtPosition("Total: ", 25, 410, 200, 30, labelColor));
+         totalField = createTextField(150, 410, 200, 30,false);
+        bookPanel.add(totalField);
 
         return bookPanel;
     }
-
-
     private JPanel createStudentPanel() {
         JPanel studentPanel = new JPanel();
         studentPanel.setBackground(new Color(202, 225, 255));
         studentPanel.setLayout(null);
 
-        JPanel titlePanel = createImageLabel("/IssueBook/view/icon/issueStudent.png", "STUDENT DETAILS", new Color(202, 225, 255),new Color(0,191,255));
-        titlePanel.setBounds(0, 50, 400, 200); // Đặt kích thước và vị trí cho titlePanel
+        JPanel titlePanel = createImageLabel("/IssueBook/view/icon/issueStudent.png", "STUDENT DETAILS", new Color(202, 225, 255), new Color(0, 191, 255));
+        titlePanel.setBounds(0, 50, 400, 200);
         studentPanel.add(titlePanel);
 
+        Color labelColor = new Color(0, 178, 238);
 
-        Color labelColor=new Color(0,178,238);
-        studentPanel.add(createLabelAtPosition("Student ID: ", 25, 210, 200, 30,labelColor));
-        studentPanel.add(createLabelAtPosition("Student Name: ", 25, 250, 200, 30,labelColor));
-        studentPanel.add(createLabelAtPosition("Contact Phone: ", 25, 290, 200, 30,labelColor));
-        studentPanel.add(createLabelAtPosition("Contact Email: ", 25, 330, 200, 30,labelColor));
-        studentPanel.add(createLabelAtPosition("Major: ", 25, 370, 200, 30,labelColor));
-        studentPanel.add(createLabelAtPosition("Branch: ", 25, 410, 200, 30,labelColor));
+       
 
+        studentPanel.add(createLabelAtPosition("Student Name: ", 25, 250, 200, 30, labelColor));
+         studentNameField = createTextField(150, 250, 100, 30,false);
+        studentPanel.add(studentNameField);
+
+        studentPanel.add(createLabelAtPosition("Contact Phone: ", 25, 290, 200, 30, labelColor));
+         contactPhoneField = createTextField(150, 290, 100, 30,false);
+        studentPanel.add(contactPhoneField);
+
+        studentPanel.add(createLabelAtPosition("Contact Email: ", 25, 330, 200, 30, labelColor));
+         contactEmailField = createTextField(150, 330, 100, 30,false);
+        studentPanel.add(contactEmailField);
+
+        studentPanel.add(createLabelAtPosition("Major: ", 25, 370, 200, 30, labelColor));
+         majorField = createTextField(150, 370, 100, 30,false);
+        studentPanel.add(majorField);
+
+        studentPanel.add(createLabelAtPosition("Branch: ", 25, 410, 200, 30, labelColor));
+         branchField = createTextField(150, 410, 100, 30,false);
+        studentPanel.add(branchField);
 
         return studentPanel;
     }
+
+
+
 
     private JPanel createIssuePanel() {
         JPanel issuePanel = new JPanel();
         issuePanel.setBackground(new Color(248, 248, 255));
         issuePanel.setLayout(null);
 
-        JPanel titlePanel = createImageLabel("/IssueBook/view/icon/issue.png", "ISSUE BOOK", new Color(248, 248, 255),new Color(238,162,173));
-        titlePanel.setBounds(0, 50, 400, 200); // Đặt kích thước và vị trí cho titlePanel
+        JPanel titlePanel = createImageLabel("/IssueBook/view/icon/issue.png", "ISSUE BOOK", new Color(248, 248, 255), new Color(238, 162, 173));
+        titlePanel.setBounds(0, 50, 400, 200);
         issuePanel.add(titlePanel);
 
+        Color labelColor = new Color(205, 145, 158);
 
-        Color labelColor=new Color(205,145,158);
-        issuePanel.add(createLabelAtPosition("Book Id: ", 25, 250, 200, 30,labelColor));
-        issuePanel.add(createLabelAtPosition("Student Id: ", 25, 290, 200, 30,labelColor));
-        issuePanel.add(createLabelAtPosition("Issue Date:", 25, 330, 200, 30,labelColor));
-        issuePanel.add(createLabelAtPosition("Due Date: ", 25, 370, 200, 30,labelColor));
+        // Book Id
+        issuePanel.add(createLabelAtPosition("Book Id: ", 25, 250, 200, 30, labelColor));
+        JTextField bookIdField = createTextField(150, 250, 100, 30, true);
+        issuePanel.add(bookIdField);
+
+        // Student Id
+        issuePanel.add(createLabelAtPosition("Student Id: ", 25, 290, 200, 30, labelColor));
+        JTextField studentIdField = createTextField(150, 290, 100, 30, true);
+        issuePanel.add(studentIdField);
+
+        issuePanel.add(createLabelAtPosition("Issue Date: ", 25, 330, 200, 30, labelColor));
+        JTextField issueDateField = createTextField(150, 330, 100, 30, true);
+        issueDateField.setBackground(new Color(255, 192, 203));
+        issueDateField.setToolTipText("Select borrowing date");
+        JButton issueDateButton = new JButton();
+        issueDateButton.setBounds(260, 341, 20, 20);
+        issueDateButton.setBackground(new Color(255, 192, 203));
+        issueDateButton.addActionListener(e -> new DatePickerDemo().showDatePicker());
+
+
+
+        issuePanel.add(createLabelAtPosition("Due Date: ", 25, 370, 200, 30, labelColor));
+        JTextField dueDateField = createTextField(150, 370, 100, 30, true);
+        dueDateField.setToolTipText("Select return date");
+        JButton dueDateButton = new JButton();
+        dueDateButton.setBackground(new Color(255, 192, 203));
+        dueDateButton.setBounds(260, 386, 20, 20);
+        dueDateButton.addActionListener(e -> new DatePickerDemo().showDatePicker());
+
+
+        JButton issueButton=createButton("ISSUE",50,470);
+        JButton clearButton=createButton("CLEAR",240,470);
+
+        issuePanel.add(issueDateField);
+        issuePanel.add(issueDateButton);
+
+
+        issuePanel.add(dueDateField);
+        issuePanel.add(dueDateButton);
+
+        issuePanel.add(issueButton);
+        issuePanel.add(clearButton);
 
 
         return issuePanel;
     }
+
+
 
     private JLabel createLabel(String text) {
         JLabel label = new JLabel(text);
@@ -97,6 +180,34 @@ public class IssueBookView extends JPanel {
         label.setBounds(x, y, width, height);  // Đặt vị trí và kích thước cho label
         return label;
     }
+
+    private JTextField createTextField(int x, int y, int width, int height, boolean hasBorder) {
+        JTextField textField = new JTextField();
+        textField.setBounds(x, y, width, height);
+
+        if (hasBorder) {
+            textField.setOpaque(false);
+            textField.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, new Color(181, 66, 171, 221)));  // Đặt viền dưới
+
+        } else {
+            textField.setOpaque(false);
+            textField.setBorder(null);
+        }
+
+        return textField;
+    }
+
+    private JButton createButton(String text, int x, int y) {
+        JButton button = new OvalButton(text);
+        button.setBackground(new Color(255,130,171));
+        button.setForeground(Color.WHITE);
+        button.setBounds(x, y, 100, 30);
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        return button;
+    }
+
+
+
 
     private JPanel createImageLabel(String path, String title, Color background, Color titleColor) {
         JPanel imagePanel = new JPanel();
@@ -122,50 +233,27 @@ public class IssueBookView extends JPanel {
 
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
-        // Panel chứa tiêu đề và đường kẻ
         JPanel titleContainer = new JPanel();
         titleContainer.setLayout(new BoxLayout(titleContainer, BoxLayout.Y_AXIS));
         titleContainer.setBackground(background);
 
-        // Thêm tiêu đề vào titleContainer
         titleContainer.add(titleLabel);
 
-        // Tạo đường kẻ trắng dưới tiêu đề
         JPanel linePanel = new JPanel();
         linePanel.setBackground(titleColor);
-        linePanel.setPreferredSize(new Dimension(250, 4)); // Đặt kích thước đường kẻ
+        linePanel.setPreferredSize(new Dimension(250, 4));
 
-        // Container căn giữa đường kẻ và điều chỉnh khoảng cách với tiêu đề
         JPanel lineContainer = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
         lineContainer.setBackground(background);
         lineContainer.setBorder(BorderFactory.createEmptyBorder(5, 0, 0, 0)); // Khoảng cách 5px ở trên để gần tiêu đề hơn
         lineContainer.add(linePanel);
 
-        // Thêm lineContainer vào titleContainer
         titleContainer.add(lineContainer);
 
-        // Thêm titleContainer vào imagePanel
         imagePanel.add(titleContainer, BorderLayout.CENTER);
 
         return imagePanel;
     }
 
 
-    public static void main(String[] args) {
-        JFrame frame = new JFrame("Issue Book View");
-        IssueBookView issueBookView = new IssueBookView();
-        frame.add(issueBookView);
-        frame.pack();
-        frame.setVisible(true);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        // Thêm ComponentListener để in kích thước của titlePanel sau khi frame hiển thị
-        frame.addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentShown(ComponentEvent e) {
-                Component titlePanel = issueBookView.getComponent(0);  // Lấy titlePanel
-                System.out.println("Kích thước thật sự của titlePanel: " + titlePanel.getSize());
-            }
-        });
-    }
 }
