@@ -138,7 +138,7 @@ public class IssueBookView extends JPanel {
 
     private JPanel createTitlePanel() {
         JPanel titlePanel = createImageLabel("/IssueBook/view/icon/issue.png", "ISSUE BOOK", new Color(248, 248, 255), new Color(238, 162, 173));
-        titlePanel.setBounds(0, 50, 400, 200);
+        titlePanel.setBounds(20, 50, 400, 200);
         return titlePanel;
     }
 

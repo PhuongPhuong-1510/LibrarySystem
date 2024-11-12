@@ -6,69 +6,104 @@ import javax.swing.*;
 import java.awt.*;
 
 public class ReturnBookView extends JPanel {
-    private JTextField bookTitleField;
-    private JTextField authorField;
-    private JTextField languageField;
-    private JTextField totalField;
-    private JButton issueButton;
-    private JButton clearButton;
+
+    private JLayeredPane layeredPane;
+    private JTextField issueIdTitleField;
+    private JTextField bookIdTitleFiled;
+    private JTextField bookNameTitleFiled;
+    private JTextField studentNameTitleFiled;
+    private JTextField issueDateTitleFiled;
+    private JTextField dueDateTitleFiled;
+    private JButton findButton;
+    private JButton returnButton;
+    private JTextField studentIdTitleFiled;
 
     public ReturnBookView() {
         setupMainPanel();
-        add(createBookPanel());
-        add(createIssuePanel());
+        add(layeredPane);
         setVisible(true);
     }
 
     private void setupMainPanel() {
-        this.setLayout(null);
+        setLayout(new BorderLayout());
         setBackground(new Color(230, 230, 250));
-        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        layeredPane = new JLayeredPane();
+        layeredPane.setPreferredSize(new Dimension(1200, 600)); // Thiết lập kích thước cho layeredPane
+
+        JPanel backgroundPanel = createBackgroundPanel("/ReturnBook/view/icon/background.png");
+        backgroundPanel.setBounds(0, 0, 1200, 600);
+        layeredPane.add(backgroundPanel, Integer.valueOf(0));
+
+        JPanel contentPanel = new JPanel();
+        contentPanel.setLayout(null);
+        contentPanel.setOpaque(false); // Để thấy được ảnh nền
+        contentPanel.setBounds(0, 0, 1200, 600);
+
+        contentPanel.add(createBookPanel());
+        contentPanel.add(createIssuePanel());
+
+        // Thêm contentPanel vào layer 1
+        layeredPane.add(contentPanel, Integer.valueOf(1));
     }
 
-
+    private JPanel createBackgroundPanel(String path) {
+        JPanel backgroundPanel = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                ImageIcon backgroundIcon = new ImageIcon(getClass().getResource(path));
+                g.drawImage(backgroundIcon.getImage(), 0, 0, getWidth(), getHeight(), this);
+            }
+        };
+        return backgroundPanel;
+    }
 
     private JPanel createBookPanel() {
         JPanel bookPanel = new JPanel();
-        bookPanel.setBounds(80,15,400,550);
-        bookPanel.setBackground(new Color(246, 222, 236));
-        bookPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
+        bookPanel.setBounds(80, 15, 400, 550);
+        bookPanel.setBackground(new Color(202, 225, 255));
+        bookPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
         bookPanel.setLayout(null);
 
-        JPanel titlePanel = createImageLabel("/ReturnBook/view/icon/bookDetail.png", "BOOK DETAILS", new Color(246, 222, 236), new Color(238, 58, 140));
+        JPanel titlePanel = createImageLabel("/ReturnBook/view/icon/bookDetail.png", "BOOK DETAILS", new Color(202, 225, 255), new Color(85,85,85));
         titlePanel.setBounds(50, 50, 300, 200);
         bookPanel.add(titlePanel);
 
-        Color labelColor = new Color(205, 50, 120);
+        Color labelColor = new Color(54, 54, 139);
+        bookPanel.add(createLabelAtPosition("Issue Id: ", 25, 250, 100, 30, labelColor));
+        issueIdTitleField = createTextField(150, 250, 200, 30, false);
+        bookPanel.add(issueIdTitleField);
+
+        bookPanel.add(createLabelAtPosition("Book Id: ", 25, 290, 200, 30, labelColor));
+        bookIdTitleFiled = createTextField(150, 280, 200, 30, false);
+        bookPanel.add(bookIdTitleFiled);
+
+        bookPanel.add(createLabelAtPosition("Book Name: ", 25, 330, 200, 30, labelColor));
+        bookNameTitleFiled = createTextField(150, 310, 200, 30, false);
+        bookPanel.add(bookNameTitleFiled);
+
+        bookPanel.add(createLabelAtPosition("Student Id: ", 25, 370, 200, 30, labelColor));
+        studentIdTitleFiled= createTextField(150, 340, 200, 30, false);
+        bookPanel.add(studentIdTitleFiled);
+
+        bookPanel.add(createLabelAtPosition("Student Name: ", 25, 410, 200, 30, labelColor));
+        studentNameTitleFiled = createTextField(150, 370, 200, 30, false);
+        bookPanel.add(studentNameTitleFiled);
 
 
+        bookPanel.add(createLabelAtPosition("Issue Date: ", 25, 450, 200, 30, labelColor));
+        issueDateTitleFiled = createTextField(150, 370, 200, 30, false);
+        bookPanel.add(issueDateTitleFiled);
 
-        bookPanel.add(createLabelAtPosition("Book Title: ", 25, 250, 200, 30, labelColor));
-        bookTitleField = createTextField(150, 250, 200, 30,false);
-        bookPanel.add(bookTitleField);
 
-        bookPanel.add(createLabelAtPosition("Author: ", 25, 290, 200, 30, labelColor));
-        authorField = createTextField(150, 290, 200, 30,false);
-        bookPanel.add(authorField);
+        bookPanel.add(createLabelAtPosition("Due Date: ", 25, 490, 200, 30, labelColor));
+        dueDateTitleFiled = createTextField(150, 370, 200, 30, false);
+        bookPanel.add(dueDateTitleFiled);
 
-        bookPanel.add(createLabelAtPosition("Category: ", 25, 330, 200, 30, labelColor));
-        JTextField categoryField = createTextField(150, 330, 200, 30,false);
-        bookPanel.add(categoryField);
-
-        bookPanel.add(createLabelAtPosition("Language: ", 25, 370, 200, 30, labelColor));
-        languageField = createTextField(150, 370, 200, 30,false);
-        bookPanel.add(languageField);
-
-        bookPanel.add(createLabelAtPosition("Total: ", 25, 410, 200, 30, labelColor));
-        totalField = createTextField(150, 410, 200, 30,false);
-        bookPanel.add(totalField);
 
         return bookPanel;
     }
-
-
-
 
     private JPanel createIssuePanel() {
         JPanel issuePanel = initializeIssuePanel();
@@ -76,7 +111,6 @@ public class ReturnBookView extends JPanel {
         issuePanel.add(titlePanel);
 
         Color labelColor = new Color(119, 136, 153);
-
         addIssueDetailsFields(issuePanel, labelColor);
         addButtons(issuePanel);
 
@@ -85,19 +119,16 @@ public class ReturnBookView extends JPanel {
 
     private JPanel initializeIssuePanel() {
         JPanel panel = new JPanel();
-
-        panel.setBounds(600,15,400,550);
-        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
-
+        panel.setBounds(700, 15, 400, 550);
+        panel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
         panel.setBackground(new Color(248, 248, 255));
         panel.setLayout(null);
         return panel;
     }
 
     private JPanel createTitlePanel() {
-        JPanel titlePanel = createImageLabel("/ReturnBook/view/icon/returnBook.png", " RETURN BOOK", new Color(248, 248, 255), new Color(30, 144, 255));
-        titlePanel.setBounds(0, 30, 380, 200);
+        JPanel titlePanel = createImageLabel("/ReturnBook/view/icon/returnBook.png", " RETURN BOOK", new Color(248, 248, 255), new Color(112, 112, 112));
+        titlePanel.setBounds(20, 30, 350, 200);
         return titlePanel;
     }
 
@@ -111,26 +142,17 @@ public class ReturnBookView extends JPanel {
         issuePanel.add(studentIdField);
     }
 
-
-
     private void addButtons(JPanel issuePanel) {
-        issueButton = createButton("FIND", 120, 400);
-        clearButton = createButton("RETURN BOOK", 120, 450);
+        findButton = createButton("FIND", 120, 400);
+        returnButton = createButton("RETURN BOOK", 120, 450);
 
-        issuePanel.add(issueButton);
-        issuePanel.add(clearButton);
+        issuePanel.add(findButton);
+        issuePanel.add(returnButton);
     }
 
-
-
-
-    private JLabel createLabel(String text) {
+    private JLabel createLabelAtPosition(String text, int x, int y, int width, int height, Color labelColor) {
         JLabel label = new JLabel(text);
-        label.setFont(new Font("SansSerif", Font.PLAIN, 18));  // Sử dụng font SansSerif với kiểu chữ bình thường và cỡ 16
-        return label;
-    }
-    private JLabel createLabelAtPosition(String text, int x, int y, int width, int height,Color labelColor) {
-        JLabel label = createLabel(text);
+        label.setFont(new Font("SansSerif", Font.PLAIN, 18));
         label.setForeground(labelColor);
         label.setBounds(x, y, width, height);
         return label;
@@ -142,8 +164,7 @@ public class ReturnBookView extends JPanel {
 
         if (hasBorder) {
             textField.setOpaque(false);
-            textField.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, new Color(104, 131, 139)));  // Đặt viền dưới
-
+            textField.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, new Color(104, 131, 139)));
         } else {
             textField.setOpaque(false);
             textField.setBorder(null);
@@ -154,28 +175,23 @@ public class ReturnBookView extends JPanel {
 
     private JButton createButton(String text, int x, int y) {
         JButton button = new OvalButton(text);
-        button.setBackground(new Color(135,206,255));
+        button.setBackground(new Color(135, 206, 255));
         button.setForeground(Color.WHITE);
         button.setBounds(x, y, 160, 30);
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
         return button;
     }
 
-
-
-
     private JPanel createImageLabel(String path, String title, Color background, Color titleColor) {
         JPanel imagePanel = new JPanel();
         imagePanel.setLayout(new BorderLayout());
         imagePanel.setBackground(background);
 
-        Dimension fixedSize = new Dimension(200, 200);
+        Dimension fixedSize = new Dimension(200, 130);
         imagePanel.setPreferredSize(fixedSize);
-        imagePanel.setMaximumSize(fixedSize);
-        imagePanel.setMinimumSize(fixedSize);
 
         java.net.URL imageUrl = getClass().getResource(path);
-        JLabel titleLabel = createLabel(title);
+        JLabel titleLabel = new JLabel(title);
         titleLabel.setForeground(titleColor);
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 20));
 
@@ -187,27 +203,21 @@ public class ReturnBookView extends JPanel {
         }
 
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
-
         JPanel titleContainer = new JPanel();
         titleContainer.setLayout(new BoxLayout(titleContainer, BoxLayout.Y_AXIS));
         titleContainer.setBackground(background);
-
         titleContainer.add(titleLabel);
 
         JPanel linePanel = new JPanel();
         linePanel.setBackground(titleColor);
         linePanel.setPreferredSize(new Dimension(200, 4));
-
         JPanel lineContainer = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
         lineContainer.setBackground(background);
-        lineContainer.setBorder(BorderFactory.createEmptyBorder(5, 0, 0, 0)); // Khoảng cách 5px ở trên để gần tiêu đề hơn
         lineContainer.add(linePanel);
 
         titleContainer.add(lineContainer);
-
         imagePanel.add(titleContainer, BorderLayout.CENTER);
 
         return imagePanel;
     }
-
 }
