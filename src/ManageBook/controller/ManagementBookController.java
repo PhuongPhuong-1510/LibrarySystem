@@ -24,10 +24,10 @@ public class ManagementBookController implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
 
-          if (e.getSource()==managementBookView.getAddBookButton()) {
+        if (e.getSource()==managementBookView.getAddBookButton()) {
             System.out.println("Add Book button clicked!");
-              addBook = new AddBook();
-              addBook.setVisible(true);
+            addBook = new AddBook();
+            addBook.setVisible(true);
         }
 
 

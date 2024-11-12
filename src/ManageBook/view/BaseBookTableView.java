@@ -213,7 +213,7 @@ public abstract class BaseBookTableView extends JPanel {
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
         for (int i = 0; i < table.getColumnCount(); i++) {
-                table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+            table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
 
         }
 

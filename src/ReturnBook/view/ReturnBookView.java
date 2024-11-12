@@ -75,7 +75,7 @@ public class ReturnBookView extends JPanel {
         JPanel titlePanel = createTitlePanel();
         issuePanel.add(titlePanel);
 
-        Color labelColor = new Color(205, 145, 158);
+        Color labelColor = new Color(119, 136, 153);
 
         addIssueDetailsFields(issuePanel, labelColor);
         addButtons(issuePanel);
@@ -96,17 +96,17 @@ public class ReturnBookView extends JPanel {
     }
 
     private JPanel createTitlePanel() {
-        JPanel titlePanel = createImageLabel("/ReturnBook/view/icon/returnBook.png", " RETURN BOOK", new Color(248, 248, 255), new Color(171, 130, 255));
+        JPanel titlePanel = createImageLabel("/ReturnBook/view/icon/returnBook.png", " RETURN BOOK", new Color(248, 248, 255), new Color(30, 144, 255));
         titlePanel.setBounds(0, 30, 380, 200);
         return titlePanel;
     }
 
     private void addIssueDetailsFields(JPanel issuePanel, Color labelColor) {
-        issuePanel.add(createLabelAtPosition("Book Id: ", 25, 250, 200, 30, labelColor));
+        issuePanel.add(createLabelAtPosition("Book Id: ", 25, 260, 200, 30, labelColor));
         JTextField bookIdField = createTextField(150, 250, 100, 30, true);
         issuePanel.add(bookIdField);
 
-        issuePanel.add(createLabelAtPosition("Student Id: ", 25, 290, 200, 30, labelColor));
+        issuePanel.add(createLabelAtPosition("Student Id: ", 25, 300, 200, 30, labelColor));
         JTextField studentIdField = createTextField(150, 290, 100, 30, true);
         issuePanel.add(studentIdField);
     }
@@ -126,7 +126,7 @@ public class ReturnBookView extends JPanel {
 
     private JLabel createLabel(String text) {
         JLabel label = new JLabel(text);
-        label.setFont(new Font("SansSerif", Font.PLAIN, 16));  // Sử dụng font SansSerif với kiểu chữ bình thường và cỡ 16
+        label.setFont(new Font("SansSerif", Font.PLAIN, 18));  // Sử dụng font SansSerif với kiểu chữ bình thường và cỡ 16
         return label;
     }
     private JLabel createLabelAtPosition(String text, int x, int y, int width, int height,Color labelColor) {
@@ -142,7 +142,7 @@ public class ReturnBookView extends JPanel {
 
         if (hasBorder) {
             textField.setOpaque(false);
-            textField.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, new Color(135, 106, 250)));  // Đặt viền dưới
+            textField.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, new Color(104, 131, 139)));  // Đặt viền dưới
 
         } else {
             textField.setOpaque(false);
@@ -154,7 +154,7 @@ public class ReturnBookView extends JPanel {
 
     private JButton createButton(String text, int x, int y) {
         JButton button = new OvalButton(text);
-        button.setBackground(new Color(255,130,171));
+        button.setBackground(new Color(135,206,255));
         button.setForeground(Color.WHITE);
         button.setBounds(x, y, 160, 30);
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
