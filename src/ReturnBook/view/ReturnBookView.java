@@ -1,6 +1,7 @@
 package ReturnBook.view;
 
 import LoginPage.view.OvalButton;
+import ReturnBook.controller.ReturnBookController;
 
 import javax.swing.*;
 import java.awt.*;
@@ -19,9 +20,10 @@ public class ReturnBookView extends JPanel {
     private JTextField studentIdTitleFiled;
 
     public ReturnBookView() {
-        setupMainPanel();
-        add(layeredPane);
-        setVisible(true);
+        this.setupMainPanel();
+        this.add(layeredPane,BorderLayout.CENTER);
+        this.setVisible(true);
+        new ReturnBookController(this);
     }
 
     private void setupMainPanel() {
@@ -219,5 +221,45 @@ public class ReturnBookView extends JPanel {
         imagePanel.add(titleContainer, BorderLayout.CENTER);
 
         return imagePanel;
+    }
+
+    public JLayeredPane getLayeredPane() {
+        return layeredPane;
+    }
+
+    public JTextField getIssueIdTitleField() {
+        return issueIdTitleField;
+    }
+
+    public JTextField getBookIdTitleFiled() {
+        return bookIdTitleFiled;
+    }
+
+    public JTextField getBookNameTitleFiled() {
+        return bookNameTitleFiled;
+    }
+
+    public JTextField getStudentNameTitleFiled() {
+        return studentNameTitleFiled;
+    }
+
+    public JTextField getIssueDateTitleFiled() {
+        return issueDateTitleFiled;
+    }
+
+    public JTextField getDueDateTitleFiled() {
+        return dueDateTitleFiled;
+    }
+
+    public JButton getFindButton() {
+        return findButton;
+    }
+
+    public JButton getReturnButton() {
+        return returnButton;
+    }
+
+    public JTextField getStudentIdTitleFiled() {
+        return studentIdTitleFiled;
     }
 }
