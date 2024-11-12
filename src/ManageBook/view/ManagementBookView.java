@@ -22,6 +22,8 @@ public class ManagementBookView extends JPanel {
     private int count=0;
     private int lastSelectedRow=-1;
     JButton lastSelectedEditButton;
+    private JButton lastSelectedImageButton = null;
+
 
 
     public ManagementBookView() {
@@ -208,6 +210,14 @@ public class ManagementBookView extends JPanel {
         if (row != lastSelectedRow) {
             if (lastSelectedEditButton != null) {
                 lastSelectedEditButton.setIcon(new ImageIcon(getClass().getResource("/ManageBook/icon/bookEdit.png")));
+
+                actionPanel.remove(imageButton);
+                GridBagConstraints gbc = new GridBagConstraints();
+                gbc.gridx = 2;
+                gbc.gridy = 0;
+                gbc.insets = new Insets(0, 7, 0, 7);
+                actionPanel.add(deleteButton, gbc);
+
             }
 
             lastSelectedRow = row;
