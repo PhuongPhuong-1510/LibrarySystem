@@ -74,6 +74,7 @@ public class ManagementBookView extends JPanel {
                 }
             }
         };
+
         managementPanel=new BaseManagementPanel("Search id, author, genre, title","/ManageBook/icon/bookAdd.png","Add Book") {
             @Override
             protected JPanel createSearchPanel() {

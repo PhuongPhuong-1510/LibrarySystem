@@ -53,6 +53,9 @@ public abstract class BaseBookTableView extends JPanel {
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(scrollPane, BorderLayout.CENTER);
 
+        panel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
+
+
         return panel;
     }
 
