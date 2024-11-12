@@ -4,6 +4,7 @@ import HomePage.view.HomePageView;
 import IssueBook.view.IssueBookView;
 import ManageBook.view.ManagementBookView;
 import ManageStudent.view.ManagementStudentView;
+import ReturnBook.view.ReturnBookView;
 
 import javax.swing.*;
 import java.awt.*;
@@ -96,6 +97,14 @@ public class HomePageController implements ActionListener, MouseListener {
                     homePageView.toggleMenuBar();
                     issueBookView.setPreferredSize(new Dimension(homePageView.getMainHomePanel().getWidth(),homePageView.getMainHomePanel().getHeight()));
                     homePageView.setMainHomePanel(issueBookView);
+                }
+                if(menu==homePageView.getjMenuReturnBook())
+                {
+                    System.out.println(("Return Button clicked"));
+                    ReturnBookView returnBookView = new ReturnBookView();
+                    homePageView.toggleMenuBar();
+                    returnBookView.setPreferredSize(new Dimension(homePageView.getMainHomePanel().getWidth(),homePageView.getMainHomePanel().getHeight()));
+                    homePageView.setMainHomePanel(returnBookView);
                 }
 
             }

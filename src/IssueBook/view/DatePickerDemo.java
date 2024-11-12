@@ -2,71 +2,65 @@ package IssueBook.view;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.time.LocalDate;
 import java.util.Calendar;
 
-public class DatePickerDemo extends JFrame {
-    private JTextField dateField;
-    private JButton dateButton;
-
-    public DatePickerDemo() {
-        setTitle("Date Picker Demo");
-        setSize(300, 200);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
-
-        dateField = new JTextField(10);
-        dateField.setEditable(false);
-
-        dateButton = new JButton("Chọn ngày");
-        dateButton.addActionListener(e -> showDatePicker());
-
-        JPanel panel = new JPanel();
-        panel.add(new JLabel("Issue Date:"));
-        panel.add(dateField);
-        panel.add(dateButton);
-
-        add(panel);
+public class DatePickerDemo extends JDialog {
+    private LocalDate selectedDate;
+    public LocalDate getSelectedDate() {
+        return selectedDate;
     }
 
-    public void showDatePicker() {
-        JDialog dateDialog = new JDialog(this, "Chọn ngày", true);
-        dateDialog.setSize(250, 200);
-        dateDialog.setLayout(new BorderLayout());
+    public DatePickerDemo() {
+        setSize(400, 250);
+        this.setUndecorated(true);
 
         Calendar calendar = Calendar.getInstance();
         int month = calendar.get(Calendar.MONTH);
         int year = calendar.get(Calendar.YEAR);
 
-        JComboBox<String> monthCombo = new JComboBox<>(new String[]{
+        JComboBox<String> monthCombo = new JComboBox<>(new String[] {
                 "January", "February", "March", "April", "May", "June",
                 "July", "August", "September", "October", "November", "December"});
         monthCombo.setSelectedIndex(month);
+        monthCombo.setBackground(new Color(248, 248, 255));
 
         JComboBox<Integer> yearCombo = new JComboBox<>();
         for (int i = year - 100; i <= year + 100; i++) {
             yearCombo.addItem(i);
         }
         yearCombo.setSelectedItem(year);
+        yearCombo.setBackground(new Color(248, 248, 255));
 
         JPanel headerPanel = new JPanel();
+        headerPanel.setBackground(new Color(255, 192, 203));
         headerPanel.add(monthCombo);
         headerPanel.add(yearCombo);
 
         JPanel daysPanel = new JPanel(new GridLayout(7, 7));
+        daysPanel.setBackground(new Color(255, 192, 203));
+
         String[] days = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
         for (String day : days) {
-            daysPanel.add(new JLabel(day, SwingConstants.CENTER));
+            JLabel dayLabel = new JLabel(day, SwingConstants.CENTER);
+            dayLabel.setFont(new Font("Arial", Font.BOLD, 14));
+            daysPanel.add(dayLabel);
         }
 
         JButton[] dayButtons = new JButton[42];
         for (int i = 0; i < 42; i++) {
             dayButtons[i] = new JButton();
+            dayButtons[i].setBackground(new Color(255, 228, 225));
             daysPanel.add(dayButtons[i]);
             dayButtons[i].addActionListener(e -> {
                 JButton source = (JButton) e.getSource();
-                dateField.setText(source.getText() + "/" + (monthCombo.getSelectedIndex() + 1) + "/" + yearCombo.getSelectedItem());
-                dateDialog.dispose();
+                String dayText = source.getText();
+                if (!dayText.isEmpty()) {
+                    int day = Integer.parseInt(dayText); // Convert text to day integer
+                    selectedDate = LocalDate.of(year, month + 1, day); // Set the selected date with the correct day, month, and year
+                    System.out.println("Ngày chọn: " + day + "/" + (month + 1) + "/" + year);
+                    this.dispose();  // Close the dialog when the user selects a date
+                }
             });
         }
 
@@ -75,10 +69,9 @@ public class DatePickerDemo extends JFrame {
 
         updateDays(daysPanel, dayButtons, monthCombo, yearCombo);
 
-        dateDialog.add(headerPanel, BorderLayout.NORTH);
-        dateDialog.add(daysPanel, BorderLayout.CENTER);
-        dateDialog.setLocationRelativeTo(this);
-        dateDialog.setVisible(true);
+        setLayout(new BorderLayout());
+        add(headerPanel, BorderLayout.NORTH);
+        add(daysPanel, BorderLayout.CENTER);
     }
 
     private void updateDays(JPanel daysPanel, JButton[] dayButtons, JComboBox<String> monthCombo, JComboBox<Integer> yearCombo) {
@@ -96,21 +89,15 @@ public class DatePickerDemo extends JFrame {
         for (int i = 0; i < 42; i++) {
             if (i >= startDay && i < startDay + daysInMonth) {
                 dayButtons[i].setText(Integer.toString(i - startDay + 1));
+                dayButtons[i].setBackground(new Color(255, 228, 225));
                 dayButtons[i].setEnabled(true);
             } else {
                 dayButtons[i].setText("");
                 dayButtons[i].setEnabled(false);
+                dayButtons[i].setBackground(Color.WHITE);
             }
         }
         daysPanel.revalidate();
         daysPanel.repaint();
     }
-
-//    public static void main(String[] args) {
-//        SwingUtilities.invokeLater(() -> {
-//            DatePickerDemo demo = new DatePickerDemo();
-//            demo.setVisible(true);
-//        });
-//    }
 }
-

@@ -67,11 +67,11 @@ public class AddBookController implements ActionListener, MouseListener {
     @Override
     public void mouseEntered(MouseEvent e) {
         if (e.getSource() == addBook.getSubmitButton()) {
-            styleButtonHover(addBook.getSubmitButton(), Font.BOLD, 16);
+            styleButtonHover(addBook.getSubmitButton(), Font.PLAIN, 16);
         } else if (e.getSource() == addBook.getCancelButton()) {
-            styleButtonHover(addBook.getCancelButton(), Font.BOLD, 16);
+            styleButtonHover(addBook.getCancelButton(), Font.PLAIN, 16);
         } else if (e.getSource() == addBook.getUploadCoverButton()) {
-            styleButtonHover(addBook.getUploadCoverButton(), Font.BOLD, 16);
+            styleButtonHover(addBook.getUploadCoverButton(), Font.PLAIN, 16);
         }
     }
 
@@ -95,9 +95,8 @@ public class AddBookController implements ActionListener, MouseListener {
     }
 
     private void styleButtonDefault(JButton button) {
-        // Đặt lại kiểu nút về mặc định
         button.setBackground(new Color(250, 128 ,114));
-        button.setFont(new Font("Tahoma", Font.PLAIN, 16)); // Kiểu chữ mặc định
+        button.setFont(new Font("Tahoma", Font.BOLD, 16)); // Kiểu chữ mặc định
         button.revalidate();
         button.repaint();
     }

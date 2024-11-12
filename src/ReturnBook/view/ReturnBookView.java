@@ -1,39 +1,27 @@
-package IssueBook.view;
+package ReturnBook.view;
 
-import IssueBook.controller.IssueBookController;
 import LoginPage.view.OvalButton;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class IssueBookView extends JPanel {
+public class ReturnBookView extends JPanel {
     private JTextField bookTitleField;
     private JTextField authorField;
     private JTextField languageField;
     private JTextField totalField;
-    private JTextField studentNameField;
-    private JTextField contactPhoneField;
-    private JTextField contactEmailField;
-    private JTextField majorField;
-    private JTextField branchField;
-    private JButton dueDateButton;
-    private JButton issueDateButton;
-    private JTextField issueDateField;
-    private JTextField dueDateField;
     private JButton issueButton;
     private JButton clearButton;
 
-    public IssueBookView() {
+    public ReturnBookView() {
         setupMainPanel();
         add(createBookPanel());
-        add(createStudentPanel());
         add(createIssuePanel());
         setVisible(true);
-        new IssueBookController(this);
     }
 
     private void setupMainPanel() {
-        setLayout(new GridLayout(1, 3, 10, 10));
+        this.setLayout(null);
         setBackground(new Color(230, 230, 250));
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
     }
@@ -42,12 +30,14 @@ public class IssueBookView extends JPanel {
 
     private JPanel createBookPanel() {
         JPanel bookPanel = new JPanel();
+        bookPanel.setBounds(80,15,400,550);
         bookPanel.setBackground(new Color(246, 222, 236));
         bookPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
         bookPanel.setLayout(null);
 
-        JPanel titlePanel = createImageLabel("/IssueBook/view/icon/issueBook.png", "BOOK DETAILS", new Color(246, 222, 236), new Color(238, 58, 140));
-        titlePanel.setBounds(0, 50, 400, 200);
+        JPanel titlePanel = createImageLabel("/ReturnBook/view/icon/bookDetail.png", "BOOK DETAILS", new Color(246, 222, 236), new Color(238, 58, 140));
+        titlePanel.setBounds(50, 50, 300, 200);
         bookPanel.add(titlePanel);
 
         Color labelColor = new Color(205, 50, 120);
@@ -55,11 +45,11 @@ public class IssueBookView extends JPanel {
 
 
         bookPanel.add(createLabelAtPosition("Book Title: ", 25, 250, 200, 30, labelColor));
-         bookTitleField = createTextField(150, 250, 200, 30,false);
+        bookTitleField = createTextField(150, 250, 200, 30,false);
         bookPanel.add(bookTitleField);
 
         bookPanel.add(createLabelAtPosition("Author: ", 25, 290, 200, 30, labelColor));
-         authorField = createTextField(150, 290, 200, 30,false);
+        authorField = createTextField(150, 290, 200, 30,false);
         bookPanel.add(authorField);
 
         bookPanel.add(createLabelAtPosition("Category: ", 25, 330, 200, 30, labelColor));
@@ -67,49 +57,14 @@ public class IssueBookView extends JPanel {
         bookPanel.add(categoryField);
 
         bookPanel.add(createLabelAtPosition("Language: ", 25, 370, 200, 30, labelColor));
-         languageField = createTextField(150, 370, 200, 30,false);
+        languageField = createTextField(150, 370, 200, 30,false);
         bookPanel.add(languageField);
 
         bookPanel.add(createLabelAtPosition("Total: ", 25, 410, 200, 30, labelColor));
-         totalField = createTextField(150, 410, 200, 30,false);
+        totalField = createTextField(150, 410, 200, 30,false);
         bookPanel.add(totalField);
 
         return bookPanel;
-    }
-    private JPanel createStudentPanel() {
-        JPanel studentPanel = new JPanel();
-        studentPanel.setBackground(new Color(202, 225, 255));
-        studentPanel.setLayout(null);
-
-        JPanel titlePanel = createImageLabel("/IssueBook/view/icon/issueStudent.png", "STUDENT DETAILS", new Color(202, 225, 255), new Color(0, 191, 255));
-        titlePanel.setBounds(0, 50, 400, 200);
-        studentPanel.add(titlePanel);
-
-        Color labelColor = new Color(0, 178, 238);
-
-       
-
-        studentPanel.add(createLabelAtPosition("Student Name: ", 25, 250, 200, 30, labelColor));
-         studentNameField = createTextField(150, 250, 100, 30,false);
-        studentPanel.add(studentNameField);
-
-        studentPanel.add(createLabelAtPosition("Contact Phone: ", 25, 290, 200, 30, labelColor));
-         contactPhoneField = createTextField(150, 290, 100, 30,false);
-        studentPanel.add(contactPhoneField);
-
-        studentPanel.add(createLabelAtPosition("Contact Email: ", 25, 330, 200, 30, labelColor));
-         contactEmailField = createTextField(150, 330, 100, 30,false);
-        studentPanel.add(contactEmailField);
-
-        studentPanel.add(createLabelAtPosition("Major: ", 25, 370, 200, 30, labelColor));
-         majorField = createTextField(150, 370, 100, 30,false);
-        studentPanel.add(majorField);
-
-        studentPanel.add(createLabelAtPosition("Branch: ", 25, 410, 200, 30, labelColor));
-         branchField = createTextField(150, 410, 100, 30,false);
-        studentPanel.add(branchField);
-
-        return studentPanel;
     }
 
 
@@ -123,7 +78,6 @@ public class IssueBookView extends JPanel {
         Color labelColor = new Color(205, 145, 158);
 
         addIssueDetailsFields(issuePanel, labelColor);
-        addDatePickers(issuePanel);
         addButtons(issuePanel);
 
         return issuePanel;
@@ -131,14 +85,19 @@ public class IssueBookView extends JPanel {
 
     private JPanel initializeIssuePanel() {
         JPanel panel = new JPanel();
+
+        panel.setBounds(600,15,400,550);
+        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+
         panel.setBackground(new Color(248, 248, 255));
         panel.setLayout(null);
         return panel;
     }
 
     private JPanel createTitlePanel() {
-        JPanel titlePanel = createImageLabel("/IssueBook/view/icon/issue.png", "ISSUE BOOK", new Color(248, 248, 255), new Color(238, 162, 173));
-        titlePanel.setBounds(0, 50, 400, 200);
+        JPanel titlePanel = createImageLabel("/ReturnBook/view/icon/returnBook.png", " RETURN BOOK", new Color(248, 248, 255), new Color(171, 130, 255));
+        titlePanel.setBounds(0, 30, 380, 200);
         return titlePanel;
     }
 
@@ -152,38 +111,11 @@ public class IssueBookView extends JPanel {
         issuePanel.add(studentIdField);
     }
 
-    private void addDatePickers(JPanel issuePanel) {
-        Color backgroundColor = new Color(255, 192, 203);
-
-        issuePanel.add(createLabelAtPosition("Issue Date: ", 25, 330, 200, 30, new Color(205, 145, 158)));
-        issueDateField = createTextField(150, 330, 100, 30, true);
-        issueDateField.setBackground(backgroundColor);
-        issueDateButton = createDatePickerButton(260, 341);
-        issueDateButton.setToolTipText("Select borrowing date");
-
-        issuePanel.add(issueDateField);
-        issuePanel.add(issueDateButton);
-
-        issuePanel.add(createLabelAtPosition("Due Date: ", 25, 370, 200, 30, new Color(205, 145, 158)));
-        dueDateField = createTextField(150, 370, 100, 30, true);
-        dueDateButton = createDatePickerButton(260, 386);
-        dueDateButton.setToolTipText("Select return date");
-
-        issuePanel.add(dueDateField);
-        issuePanel.add(dueDateButton);
-    }
-
-    private JButton createDatePickerButton(int x, int y) {
-        JButton button = new JButton();
-        button.setBounds(x, y, 20, 20);
-        button.setBackground(new Color(255, 192, 203));
-        return button;
-    }
 
 
     private void addButtons(JPanel issuePanel) {
-        issueButton = createButton("ISSUE", 50, 470);
-        clearButton = createButton("CLEAR", 240, 470);
+        issueButton = createButton("FIND", 120, 400);
+        clearButton = createButton("RETURN BOOK", 120, 450);
 
         issuePanel.add(issueButton);
         issuePanel.add(clearButton);
@@ -200,7 +132,7 @@ public class IssueBookView extends JPanel {
     private JLabel createLabelAtPosition(String text, int x, int y, int width, int height,Color labelColor) {
         JLabel label = createLabel(text);
         label.setForeground(labelColor);
-        label.setBounds(x, y, width, height);  // Đặt vị trí và kích thước cho label
+        label.setBounds(x, y, width, height);
         return label;
     }
 
@@ -210,7 +142,7 @@ public class IssueBookView extends JPanel {
 
         if (hasBorder) {
             textField.setOpaque(false);
-            textField.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, new Color(181, 66, 171, 221)));  // Đặt viền dưới
+            textField.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, new Color(135, 106, 250)));  // Đặt viền dưới
 
         } else {
             textField.setOpaque(false);
@@ -224,7 +156,7 @@ public class IssueBookView extends JPanel {
         JButton button = new OvalButton(text);
         button.setBackground(new Color(255,130,171));
         button.setForeground(Color.WHITE);
-        button.setBounds(x, y, 100, 30);
+        button.setBounds(x, y, 160, 30);
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
         return button;
     }
@@ -237,7 +169,7 @@ public class IssueBookView extends JPanel {
         imagePanel.setLayout(new BorderLayout());
         imagePanel.setBackground(background);
 
-        Dimension fixedSize = new Dimension(400, 200);
+        Dimension fixedSize = new Dimension(200, 200);
         imagePanel.setPreferredSize(fixedSize);
         imagePanel.setMaximumSize(fixedSize);
         imagePanel.setMinimumSize(fixedSize);
@@ -264,7 +196,7 @@ public class IssueBookView extends JPanel {
 
         JPanel linePanel = new JPanel();
         linePanel.setBackground(titleColor);
-        linePanel.setPreferredSize(new Dimension(250, 4));
+        linePanel.setPreferredSize(new Dimension(200, 4));
 
         JPanel lineContainer = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
         lineContainer.setBackground(background);
@@ -278,63 +210,4 @@ public class IssueBookView extends JPanel {
         return imagePanel;
     }
 
-    public JButton getDueDateButton() {
-        return dueDateButton;
-    }
-
-    public JButton getIssueDateButton() {
-        return issueDateButton;
-    }
-
-    public JTextField getBookTitleField() {
-        return bookTitleField;
-    }
-
-    public JTextField getAuthorField() {
-        return authorField;
-    }
-
-    public JTextField getLanguageField() {
-        return languageField;
-    }
-
-    public JTextField getTotalField() {
-        return totalField;
-    }
-
-    public JTextField getStudentNameField() {
-        return studentNameField;
-    }
-
-    public JTextField getContactPhoneField() {
-        return contactPhoneField;
-    }
-
-    public JTextField getContactEmailField() {
-        return contactEmailField;
-    }
-
-    public JTextField getMajorField() {
-        return majorField;
-    }
-
-    public JTextField getBranchField() {
-        return branchField;
-    }
-
-    public JTextField getIssueDateField() {
-        return issueDateField;
-    }
-
-    public JTextField getDueDateField() {
-        return dueDateField;
-    }
-
-    public JButton getIssueButton() {
-        return issueButton;
-    }
-
-    public JButton getClearButton() {
-        return clearButton;
-    }
 }
