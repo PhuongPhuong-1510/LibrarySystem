@@ -56,10 +56,10 @@ public class DatePickerDemo extends JDialog {
                 JButton source = (JButton) e.getSource();
                 String dayText = source.getText();
                 if (!dayText.isEmpty()) {
-                    int day = Integer.parseInt(dayText); // Convert text to day integer
+                    int day = Integer.parseInt(dayText);
                     selectedDate = LocalDate.of(year, month + 1, day); // Set the selected date with the correct day, month, and year
                     System.out.println("Ngày chọn: " + day + "/" + (month + 1) + "/" + year);
-                    this.dispose();  // Close the dialog when the user selects a date
+                    this.dispose();
                 }
             });
         }
