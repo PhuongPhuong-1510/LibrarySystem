@@ -29,7 +29,7 @@ public class AddBook extends JFrame {
 
     public AddBook() {
         this.init();
-        this.addBookController= new AddBookController(this);
+        //this.addBookController= new AddBookController(this);
         this.libraryModelManage = new LibraryModelManage();
     }
 
@@ -207,7 +207,7 @@ public class AddBook extends JFrame {
         coverLabel.setIcon(new ImageIcon(image));
     }
 
-    public void getBookFromPanel(){
+    public Book getBookFromPanel(){
         String id = this.libraryModelManage.creatBookID();
         String title = this.titleField.getText()+"\n"+"( "+ this.descriptionArea.getText()+" )";
         String imagePath = getImagePath();
@@ -218,6 +218,7 @@ public class AddBook extends JFrame {
         String position = this.positionText.getText()+"";
         Book book = new Book(id, title,imagePath, author,"Programing", language, total, current, position);
         libraryModelManage.addBookToDatabase(book);
+        return book;
     }
 
     public JButton getUploadCoverButton() {

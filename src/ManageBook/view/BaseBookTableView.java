@@ -14,23 +14,26 @@ public abstract class BaseBookTableView extends JPanel {
     protected int imageColumn;
     protected int rowHeight;
     protected int selectedRow = -1;
+    protected JTable table;
 
 
 
     public BaseBookTableView(String[] columnNames, Object[][] data,int editColumn,int rowHeight,int imageColumn) {
-        this.imageColumn=imageColumn;
-        this.rowHeight=rowHeight;
-        this.editColumn=editColumn;
+        this.imageColumn = imageColumn;
+        this.rowHeight = rowHeight;
+        this.editColumn = editColumn;
         this.columnNames = columnNames;
         this.setLayout(new BorderLayout());
-        this.tablePanel = createTablePanel(data, columnNames,rowCount);
-        this.setLayout(new BorderLayout());
-        JTable table=createTable(data,columnNames);
+
+        this.table = createTable(data, columnNames); // Khởi tạo bảng trước khi cấu hình
         configureColumnRenderers(table);
-        configureTable(table,rowCount);
+        configureTable(table, rowCount);
+
         JScrollPane scrollPane = createScrollPane(table);
+        this.tablePanel = new JPanel(new BorderLayout());
         tablePanel.add(scrollPane, BorderLayout.CENTER);
-        this.add(tablePanel,BorderLayout.CENTER);
+
+        this.add(tablePanel, BorderLayout.CENTER);
 
     }
 
@@ -39,11 +42,9 @@ public abstract class BaseBookTableView extends JPanel {
 
 
 
-
-
     private JPanel createTablePanel(Object[][] data, String[] columnNames, int rowCount) {
-        JTable table = createTable(data, columnNames);
-
+//        JTable table = createTable(data, columnNames);
+//
 
         configureColumnRenderers(table);
         configureTable(table, rowCount);
@@ -258,6 +259,11 @@ public abstract class BaseBookTableView extends JPanel {
     public void setSelectedRow(int row) {
         this.selectedRow = row;
         repaint();  // Cập nhật lại giao diện
+    }
+
+    // Trong lớp BaseBookTableView
+    public JTable getTable() {
+        return table;
     }
 
 }

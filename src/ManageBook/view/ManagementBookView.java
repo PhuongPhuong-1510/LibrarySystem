@@ -7,6 +7,7 @@ import ManageBook.controller.ManagementBookController;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -237,6 +238,12 @@ public class ManagementBookView extends JPanel {
             gbc.gridy = 0;
             gbc.insets = new Insets(0, 7, 0, 7);
             actionPanel.add(imageButton, gbc);
+            editButton.addActionListener(e -> {
+                System.out.println("Saved");
+                Book bookToEdit = getUpdatedBookFromRow(row) ; // Get the selected book
+                libraryModelManage.editBookInDatabase(bookToEdit);
+
+            });
         } else {
             editButton.setIcon(new ImageIcon(getClass().getResource("/ManageBook/icon/bookEdit.png")));
 
@@ -266,6 +273,10 @@ public class ManagementBookView extends JPanel {
         );
 
         if (confirm == JOptionPane.YES_OPTION) {
+            String bookID = bookTableView.getTable().getModel().getValueAt(row, 0).toString();
+            deleteBookByID(bookID);
+            lastSelectedRow = -1;
+            libraryModelManage.deleteBookFromDatabase(bookID); // Call to delete from database if implemented
             System.out.println("Book deleted at row: " + row);
         } else {
             System.out.println("Book deletion canceled.");
@@ -298,17 +309,62 @@ public class ManagementBookView extends JPanel {
     }
 
 
-
-
-
-
-
-
-
-
     public JButton getAddBookButton() {
         return addBookButton;
     }
+
+    public void addBook(Book book) {
+        DefaultTableModel model = (DefaultTableModel) bookTableView.getTable().getModel();
+
+        Object[] rowData = new Object[]{
+                book.getBookID(),
+                book.getBookName(),
+                createImageLabel(book.getImage()),
+                book.getAuthor(),
+                book.getCategory(),
+                book.getLanguage(),
+                book.getTotal(),
+                book.getCurent(),
+                book.getPosition(),
+                createAction(model.getRowCount())
+        };
+
+        model.addRow(rowData);
+
+        bookTableView.revalidate();
+        bookTableView.repaint();
+    }
+
+    private Book getUpdatedBookFromRow(int row) {
+        DefaultTableModel model = (DefaultTableModel) bookTableView.getTable().getModel();
+
+        String bookID = model.getValueAt(row, 0).toString();
+        String bookName = model.getValueAt(row, 1).toString();
+        String image = model.getValueAt(row, 2).toString();
+        String author = model.getValueAt(row, 3).toString();
+        String category = model.getValueAt(row, 4).toString();
+        String language = model.getValueAt(row, 5).toString();
+        int total = Integer.parseInt(model.getValueAt(row, 6).toString());
+        String curent = model.getValueAt(row, 7).toString();
+        String position = model.getValueAt(row, 8).toString();
+
+        return new Book(bookID, bookName, image, author, category, language, total, curent, position);
+    }
+
+    private void deleteBookByID(String bookID) {
+        DefaultTableModel model = (DefaultTableModel) bookTableView.getTable().getModel();
+        for (int i = 0; i < model.getRowCount(); i++) {
+            if (model.getValueAt(i, 0).toString().equals(bookID)) {
+                model.removeRow(i);
+                bookTableView.revalidate();
+                bookTableView.repaint();
+                System.out.println("Book with ID " + bookID + " deleted from table.");
+                break;
+            }
+        }
+        lastSelectedRow = -1;
+    }
+
 
 
 }

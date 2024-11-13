@@ -11,9 +11,11 @@ import java.awt.event.MouseListener;
 
 public class AddBookController implements ActionListener, MouseListener {
     private final AddBook addBook;
+    private final AddBookListener addBookListener;
 
-    public AddBookController(AddBook addBook) {
+    public AddBookController(AddBook addBook, AddBookListener addBookListener) {
         this.addBook = addBook;
+        this.addBookListener = addBookListener;
         initializeListeners();
     }
 
@@ -45,7 +47,7 @@ public class AddBookController implements ActionListener, MouseListener {
                 if(this.addBook.titleField.getText().equals("")){
                     JOptionPane.showMessageDialog(null, "Please enter a title");
                 }else{
-                    this.addBook.getBookFromPanel();
+                    addBookListener.onBookAdded();
                 }
 
                 JOptionPane.showMessageDialog(

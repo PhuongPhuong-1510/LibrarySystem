@@ -3,9 +3,6 @@ package ManageBook.view;
 import LoginPage.view.OvalButton;
 import MainApp.model.Book;
 import MainApp.model.LibraryModelManage;
-import ManageBook.controller.AddBookController;
-import ManageBook.controller.EditBookController;
-import ManageBook.model.ManagementBookModel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,7 +14,6 @@ public class EditBook extends JFrame {
     private JButton uploadCoverButton;
     private JButton submitButton;
     private JButton cancelButton;
-    private EditBookController editBookController;
     private JLabel coverLabel;
     private String imagePath;
     private JTextArea descriptionArea;
