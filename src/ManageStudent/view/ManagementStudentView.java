@@ -38,7 +38,7 @@ public class ManagementStudentView extends JPanel {
         String[] columnNames = createColumnNames();
         Object[][] data = fetchData();  // Phương thức để lấy dữ liệu
 
-        studentTableView = new BaseBookTableView(columnNames, data,9,110,4) {
+        studentTableView = new BaseBookTableView(columnNames, data,9,120,4) {
 
             @Override
             protected void centerTableCells(JTable table) {
@@ -65,7 +65,7 @@ public class ManagementStudentView extends JPanel {
             protected void setTableColumnWidths(JTable table) {
                 TableColumn column;
 
-                int[] columnWidths = {80, 150, 80,100,100, 130, 150, 150, 80, 100};
+                int[] columnWidths = {100, 150, 90,120,100, 130, 150, 150, 80, 100};
 
                 for (int i = 0; i < table.getColumnCount(); i++) {
                     column = table.getColumnModel().getColumn(i);

@@ -62,7 +62,7 @@ public abstract class BaseBookTableView extends JPanel {
 
 
     // Tạo bảng với cấu hình không cho phép chỉnh sửa
-    private JTable createTable(Object[][] data, String[] columnNames) {
+    protected JTable createTable(Object[][] data, String[] columnNames) {
         DefaultTableModel model = new DefaultTableModel(data, columnNames) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -97,9 +97,9 @@ public abstract class BaseBookTableView extends JPanel {
 
     // Thiết lập mặc định cho ô
     protected void setupDefaultCellAppearance(JComponent component) {
-        component.setFont(new Font("Rubik", Font.PLAIN, 13));
+        component.setFont(new Font("Tahoma", Font.PLAIN, 13));
         component.setBackground(new Color(255, 240, 245));
-        component.setForeground(Color.BLACK);
+        component.setForeground(new Color(79,79,79));
         component.setBorder(null);
     }
 
@@ -234,8 +234,8 @@ public abstract class BaseBookTableView extends JPanel {
                 Component component = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
                 setHorizontalAlignment(SwingConstants.CENTER);
                 setBackground(new Color(255, 240, 245));
-                setForeground(new Color(54, 54, 54));
-                setFont(new Font("Tahoma", Font.LAYOUT_NO_LIMIT_CONTEXT, 15));
+                setForeground(new Color(105  , 105  , 105  ));
+                setFont(new Font("Tahoma", Font.BOLD, 15));
                 setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, new Color(238, 210, 238)));
                 return component;
             }
