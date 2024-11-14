@@ -3,6 +3,14 @@ package LoginPage.model;
 public class LoginModel {
     private String userName;
     private String passWord;
+    public boolean ktUser;
+
+    public boolean getKtUser() {
+        return ktUser;
+    }
+    public void setKtUser(boolean ktUser) {
+        this.ktUser = ktUser;
+    }
 
     public String getUserName() {
         return userName;

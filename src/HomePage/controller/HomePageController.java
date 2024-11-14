@@ -2,6 +2,7 @@ package HomePage.controller;
 
 import HomePage.view.HomePageView;
 import IssueBook.view.IssueBookView;
+import MainApp.model.LibraryModelManage;
 import ManageBook.view.ManagementBookView;
 import ManageStudent.view.ManagementStudentView;
 import ReturnBook.view.ReturnBookView;
@@ -76,8 +77,9 @@ public class HomePageController implements ActionListener, MouseListener {
                 }
                 if(menu==homePageView.getjMenuMGMTBooks())
                 {
+                    LibraryModelManage libraryModelManage = new LibraryModelManage();
                     System.out.println(("MenuMGMTBooks clicked"));
-                    ManagementBookView managementBookView = new ManagementBookView();
+                    ManagementBookView managementBookView = new ManagementBookView(libraryModelManage);
                     homePageView.toggleMenuBar();
                     managementBookView.setPreferredSize(new Dimension(homePageView.getMainHomePanel().getWidth(),homePageView.getMainHomePanel().getHeight()));
                     homePageView.setMainHomePanel(managementBookView);

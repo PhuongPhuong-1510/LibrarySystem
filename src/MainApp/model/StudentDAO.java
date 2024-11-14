@@ -39,12 +39,6 @@ public class StudentDAO {
 
     // Phương thức để thêm sinh viên vào cơ sở dữ liệu
     public void addStudent(Student student) {
-//        // Kiểm tra dữ liệu đầu vào
-//        if (student == null || student.getID() == null || student.getName() == null ||
-//            student.getEmail() == null || student.getPassword() == null || student.getPhone() == null) {
-//            System.out.println("Dữ liệu sinh viên không hợp lệ.");
-//            return;
-//        }
 
         String query = "INSERT INTO student (id, name, email, password, phone) VALUES (?, ?, ?, ?, ?)";
 
@@ -66,7 +60,7 @@ public class StudentDAO {
         }
     }
 
-    // Phương thức để xóa sinh viên ở cơ sỡ dữ liệu
+
     public void deleteStudent(String studentId) {
         if (studentId == null || studentId.trim().isEmpty()) {
             System.out.println("ID sinh viên không hợp lê.");

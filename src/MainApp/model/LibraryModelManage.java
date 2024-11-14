@@ -1,6 +1,8 @@
 package MainApp.model;
 
 import java.util.ArrayList;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class LibraryModelManage {
     public String luaChon;
@@ -31,6 +33,7 @@ public class LibraryModelManage {
     public void addBookToDatabase(Book book) {
         BookDAO bookDAO = new BookDAO();
         bookDAO.addBook(book);
+        booksList.add(book);
     }
 
     public void editBookInDatabase(Book book) {
@@ -60,13 +63,24 @@ public class LibraryModelManage {
         return searchResults;
     }
 
+    public String creatBookID() {
+        int newID = 1;
+        Set<String> existingIDs = booksList.stream()
+                .map(Book::getBookID)
+                .collect(Collectors.toSet());
 
-
-    public String creatBookID(){
-        BookDAO bookDAO = new BookDAO();
-        String id = bookDAO.creatBookID();
-        return id;
+        String newBookID;
+        while (true) {
+            newBookID = String.format("B%03d", newID); // Formats ID with leading zeros
+            if (!existingIDs.contains(newBookID)) {
+                break;
+            }
+            newID++;
+        }
+        return newBookID;
     }
+
+
 
     // Quản lý sinh viên
     public ArrayList<Student> getStudentsList() {
@@ -85,6 +99,23 @@ public class LibraryModelManage {
     public void addStudentToDatabase(Student student) {
         StudentDAO studentDAO = new StudentDAO();
         studentDAO.addStudent(student);
+    }
+
+    public String creatStudentID() {
+        int newID = 1;
+        Set<String> existingIDs = studentsList.stream()
+                .map(Student::getID)
+                .collect(Collectors.toSet());
+
+        String newStudentID;
+        while (true) {
+            newStudentID = String.format("B%03d", newID); // Formats ID with leading zeros
+            if (!existingIDs.contains(newStudentID)) {
+                break;
+            }
+            newID++;
+        }
+        return newStudentID;
     }
 
     // Quản lý admin

@@ -17,7 +17,7 @@ import java.util.ArrayList;
 public class ManagementBookView extends JPanel {
     private JPanel managementBooks;
     private JButton addBookButton;
-    private LibraryModelManage libraryModelManage;
+    public LibraryModelManage libraryModelManage;
     private BaseBookTableView bookTableView;
     private BaseManagementPanel managementPanel;
     private int count=0;
@@ -27,8 +27,8 @@ public class ManagementBookView extends JPanel {
 
 
 
-    public ManagementBookView() {
-        this.libraryModelManage = new LibraryModelManage();
+    public ManagementBookView(LibraryModelManage libraryModelManage) {
+        this.libraryModelManage = libraryModelManage;
         this.setLayout(new BorderLayout());
         this.init();
         new ManagementBookController(this);
@@ -183,7 +183,16 @@ public class ManagementBookView extends JPanel {
         });
 
         deleteButton.addActionListener(e -> {
-            toggleDeleteButton(deleteButton, editButton, row);
+            int confirm = JOptionPane.showConfirmDialog(
+                    null,
+                    "Bạn có chắc chắn xóa không?",
+                    "Xác nhận xóa",
+                    JOptionPane.YES_NO_OPTION
+            );
+            if (confirm == JOptionPane.YES_OPTION) {
+                System.out.println("Delete button clicked at row: " + row);
+                deleteBook(libraryModelManage.getBooksList().get(row).getBookID());
+            }
         });
 
 
@@ -258,30 +267,6 @@ public class ManagementBookView extends JPanel {
         bookTableView.setSelectedRow(row);
         editButton.repaint();
     }
-
-    private void toggleDeleteButton(JButton deleteButton, JButton editButton, int row) {
-        System.out.println("Delete Book button clicked at row: " + row);
-        bookTableView.setSelectedRow(row);
-        editButton.setIcon(new ImageIcon(getClass().getResource("/ManageBook/icon/bookEdit.png")));
-        int confirm = JOptionPane.showConfirmDialog(
-                null,
-                "Are you sure you want to delete this book?",
-                "Delete Confirmation",
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.QUESTION_MESSAGE
-        );
-
-        if (confirm == JOptionPane.YES_OPTION) {
-            String bookID = bookTableView.getTable().getModel().getValueAt(row, 0).toString();
-            deleteBookByID(bookID);
-            lastSelectedRow = -1;
-            libraryModelManage.deleteBookFromDatabase(bookID); // Call to delete from database if implemented
-            System.out.println("Book deleted at row: " + row);
-        } else {
-            System.out.println("Book deletion canceled.");
-        }
-    }
-
 
     private void toggleImageButton(JButton deleteButton, JButton editButton, int row) {
         chooseImage(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
@@ -362,20 +347,6 @@ public class ManagementBookView extends JPanel {
     }
 
 
-    private void deleteBookByID(String bookID) {
-        DefaultTableModel model = (DefaultTableModel) bookTableView.getTable().getModel();
-        for (int i = 0; i < model.getRowCount(); i++) {
-            if (model.getValueAt(i, 0).toString().equals(bookID)) {
-                model.removeRow(i);
-                bookTableView.revalidate();
-                bookTableView.repaint();
-                System.out.println("Book with ID " + bookID + " deleted from table.");
-                break;
-            }
-        }
-        lastSelectedRow = -1;
-    }
-
     public void updateTable(ArrayList<Book> books) {
         DefaultTableModel model = (DefaultTableModel) bookTableView.getTable().getModel();
         model.setRowCount(0);  // Xóa toàn bộ dữ liệu cũ
@@ -400,6 +371,43 @@ public class ManagementBookView extends JPanel {
         bookTableView.repaint();
     }
 
+    public void deleteBook(String bookID) {
+        JTable table = bookTableView.getTable();
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
+
+        // Find the row index based on the bookID in the data list
+        int rowIndex = -1;
+        for (int i = 0; i < libraryModelManage.getBooksList().size(); i++) {
+            Book book = libraryModelManage.getBooksList().get(i);
+            if (book.getBookID().equals(bookID)) {
+                rowIndex = i;
+                break;
+            }
+        }
+
+        // If rowIndex is valid, proceed with deletion
+        if (rowIndex != -1) {
+            // Stop any active editing in the table to avoid index conflicts
+            if (table.isEditing()) {
+                table.getCellEditor().stopCellEditing();
+            }
+
+            // Remove the book from both model and data list
+            libraryModelManage.getBooksList().remove(rowIndex); // Update the data list
+            model.removeRow(rowIndex); // Update the table model
+
+            // Clear any selection and reset lastSelectedRow to avoid stale indices
+            table.clearSelection();
+            lastSelectedRow = -1;
+
+            // Refresh the table model to prevent row indexing errors
+            model.fireTableDataChanged();
+
+            // Revalidate and repaint to ensure the table updates visually
+            table.revalidate();
+            table.repaint();
+        }
+    }
 
 
 }

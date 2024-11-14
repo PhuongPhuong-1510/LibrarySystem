@@ -27,10 +27,10 @@ public class AddBook extends JFrame {
     private JTextField currentText;
     private JTextField positionText;
 
-    public AddBook() {
+    public AddBook(LibraryModelManage libraryModelManage) {
         this.init();
         //this.addBookController= new AddBookController(this);
-        this.libraryModelManage = new LibraryModelManage();
+        this.libraryModelManage = libraryModelManage;
     }
 
     private void init() {
@@ -221,6 +221,8 @@ public class AddBook extends JFrame {
         return book;
     }
 
+
+
     public JButton getUploadCoverButton() {
         return uploadCoverButton;
     }
@@ -236,8 +238,8 @@ public class AddBook extends JFrame {
     public String getImagePath() {
         return imagePath;
     }
-    public static void main( String args[])
-    {
-        new AddBook();
-    }
+//    public static void main( String args[])
+//    {
+//        new AddBook();
+//    }
 }

@@ -61,23 +61,6 @@ public class BookDAO {
         }
     }
 
-    public String creatBookID() {
-        try (Connection connection = DatabaseConnection.getConnection();
-             Statement statement = connection.createStatement()) {
-
-            String query = "SELECT COUNT(*) AS count FROM book";
-            ResultSet resultSet = statement.executeQuery(query);
-
-            if (resultSet.next()) {
-                int count = resultSet.getInt("count");
-                return "B00" + (count + 1);
-            }
-        } catch (SQLException e) {
-            System.out.println("Error generating book ID: " + e.getMessage());
-        }
-        return "B000";
-    }
-
     public void editBook(Book book) {
         String query = "UPDATE book SET bookName = ?, image = ?, author = ?, category = ?, language = ?, total = ?, curent = ?, Position = ? WHERE bookID = ?";
 

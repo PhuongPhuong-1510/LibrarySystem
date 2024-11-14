@@ -17,13 +17,13 @@ public abstract class BaseManagementPanel extends JPanel {
     private String placeholder;
     private String iconPath;
     private String text;
-    private LibraryModelManage libraryModelManage;
+    //private LibraryModelManage libraryModelManage;
     private ManagementBookView managementBookView;
     private ArrayList<Book> filteredBooks = null;
     private Timer typingTimer;
 
     public BaseManagementPanel(String placeholder, String iconPath, String text, ManagementBookView managementBookView) {
-        this.libraryModelManage = new LibraryModelManage();
+        //this.libraryModelManage = new LibraryModelManage();
         this.text = text;
         this.placeholder = placeholder;
         this.iconPath = iconPath;
@@ -124,15 +124,15 @@ public abstract class BaseManagementPanel extends JPanel {
     private void filterTable(String query) {
         if (query.isEmpty()) {
             filteredBooks = null;
-            managementBookView.updateTable(libraryModelManage.getBooksList());
+            managementBookView.updateTable(managementBookView.libraryModelManage.getBooksList());
         } else {
-            filteredBooks = libraryModelManage.searchBooks(query);
+            filteredBooks = managementBookView.libraryModelManage.searchBooks(query);
             managementBookView.updateTable(filteredBooks);
         }
     }
 
     public void restoreTable() {
-        managementBookView.updateTable(libraryModelManage.getBooksList());
+        managementBookView.updateTable(managementBookView.libraryModelManage.getBooksList());
     }
 
     protected JButton createAddBookButton() {
