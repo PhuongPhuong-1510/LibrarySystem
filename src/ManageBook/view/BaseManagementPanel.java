@@ -11,16 +11,17 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.util.ArrayList;
 
-public abstract class BaseManagementPanel extends JPanel{
+public abstract class BaseManagementPanel extends JPanel {
     protected JPanel northPanel;
     protected JButton addBookButton;
     private String placeholder;
     private String iconPath;
     private String text;
     private LibraryModelManage libraryModelManage;
-    private ManagementBookView managementBookView; // Tham chiếu tới ManagementBookView
+    private ManagementBookView managementBookView;
+    private ArrayList<Book> filteredBooks = null;
+    private Timer typingTimer;
 
-    // Constructor mới
     public BaseManagementPanel(String placeholder, String iconPath, String text, ManagementBookView managementBookView) {
         this.libraryModelManage = new LibraryModelManage();
         this.text = text;
@@ -38,14 +39,14 @@ public abstract class BaseManagementPanel extends JPanel{
         northPanel.add(addBookButton);
 
         this.setLayout(new BorderLayout());
-        this.add(northPanel);
+        this.add(northPanel, BorderLayout.NORTH);
     }
 
-    public BaseManagementPanel(String placeholder,String iconPath,String text) {
-        this.text=text;
-        this.placeholder=placeholder;
-        this.iconPath=iconPath;
-        this.northPanel=new JPanel(new FlowLayout(FlowLayout.RIGHT));
+    public BaseManagementPanel(String placeholder, String iconPath, String text) {
+        this.text = text;
+        this.placeholder = placeholder;
+        this.iconPath = iconPath;
+        this.northPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         northPanel.setBackground(new Color(150, 180, 255));
         northPanel.setBorder(null);
 
@@ -56,13 +57,10 @@ public abstract class BaseManagementPanel extends JPanel{
         northPanel.add(addBookButton);
 
         this.setLayout(new BorderLayout());
-        this.add(northPanel);
-
+        this.add(northPanel, BorderLayout.NORTH);
     }
 
-
     protected JPanel createSearchPanel() {
-
         JTextField searchField = new JTextField(20);
         searchField.setBorder(null);
         searchField.setFont(new Font("Arial", Font.PLAIN, 12));
@@ -70,24 +68,32 @@ public abstract class BaseManagementPanel extends JPanel{
         searchField.setForeground(Color.GRAY);
         searchField.setText(placeholder);
 
-        // Thêm DocumentListener để cập nhật bảng khi nội dung tìm kiếm thay đổi
+        typingTimer = new Timer(500, e -> {
+            if (searchField.getText().isEmpty()) {
+                restoreTable();
+            }
+        });
+        typingTimer.setRepeats(false);
+
         searchField.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
+                typingTimer.restart();
                 filterTable(searchField.getText());
             }
 
             @Override
             public void removeUpdate(DocumentEvent e) {
+                typingTimer.restart();
                 filterTable(searchField.getText());
             }
 
             @Override
             public void changedUpdate(DocumentEvent e) {
+                typingTimer.restart();
                 filterTable(searchField.getText());
             }
         });
-
 
         searchField.addFocusListener(new FocusAdapter() {
             @Override
@@ -103,6 +109,7 @@ public abstract class BaseManagementPanel extends JPanel{
                 if (searchField.getText().isEmpty()) {
                     searchField.setForeground(Color.GRAY);
                     searchField.setText(placeholder);
+                    restoreTable();
                 }
             }
         });
@@ -114,19 +121,20 @@ public abstract class BaseManagementPanel extends JPanel{
         return searchPanel;
     }
 
-
     private void filterTable(String query) {
         if (query.isEmpty()) {
+            filteredBooks = null;
             managementBookView.updateTable(libraryModelManage.getBooksList());
         } else {
-            ArrayList<Book> filteredBooks = libraryModelManage.searchBooks(query);
+            filteredBooks = libraryModelManage.searchBooks(query);
             managementBookView.updateTable(filteredBooks);
         }
     }
 
+    public void restoreTable() {
+        managementBookView.updateTable(libraryModelManage.getBooksList());
+    }
 
-
-    // Phương thức tạo nút "Add Book"
     protected JButton createAddBookButton() {
         addBookButton = new JButton(new ImageIcon(getClass().getResource(iconPath)));
         addBookButton.setBackground(null);
@@ -142,7 +150,6 @@ public abstract class BaseManagementPanel extends JPanel{
         return addBookButton;
     }
 
-    // Getter cho nút "Add Book"
     public JButton getAddBookButton() {
         return addBookButton;
     }
