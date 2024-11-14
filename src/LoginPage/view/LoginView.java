@@ -142,6 +142,7 @@ public class LoginView extends JPanel {
         return button;
     }
 
+
     public JButton getLoginButton() {
         return btnLogin;
     }

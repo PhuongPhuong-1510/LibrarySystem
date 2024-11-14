@@ -1,6 +1,7 @@
 package MainApp.controller;
 
 import MainApp.view.MainView;
+import ManageBook.view.AddBook;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,7 +12,7 @@ import java.awt.event.MouseEvent;
 
 public class MainController implements ActionListener {
     private final MainView mainView;
-
+    private AddBook addBook;
     public MainController(MainView mainView) {
         this.mainView = mainView;
         initializeButtonListeners();
@@ -62,6 +63,8 @@ public class MainController implements ActionListener {
 
     // Phương thức xử lý sự kiện thu nhỏ cửa sổ
     private void handleMinimize() {
-        mainView.setState(JFrame.ICONIFIED); // Thu nhỏ cửa sổ
+        mainView.setState(JFrame.ICONIFIED);
+
+
     }
 }

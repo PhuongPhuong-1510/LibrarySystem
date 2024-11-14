@@ -2,14 +2,22 @@ package HomePage.view;
 
 import HomePage.controller.HomePageController;
 import HomePage.model.HomePageModel;
+import MainApp.model.Book;
+import MainApp.model.LibraryModelManage;
+import MainApp.model.Student;
 import MainApp.view.MainView;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.table.*;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.Date;
 import java.text.SimpleDateFormat;
 import java.util.Objects;
+import javax.swing.table.DefaultTableModel;
+import java.sql.*;
+import java.util.Vector;
+import MainApp.model.StudentDAO;
 
 public class HomePageView extends JPanel {
     private HomePageModel homePageModel;
@@ -20,17 +28,20 @@ public class HomePageView extends JPanel {
     private JMenuBar menuBar;
     private JPanel mainHomePanel;
     private JPanel homePagePanel;
-
+    private LibraryModelManage libraryModelManage;
 
 
     private JMenu jMenuHomePage, jMenuLogout, jMenuLMSDashBoard, jMenuMGMTBooks, jMenuMGMTSutudents,
-            jMenuIssueBook, jMenuReturnBook, jMenuViewBooks, jMenuViewRecords, jMenuDefault;
+            jMenuIssueBook, jMenuReturnBook, jMenuViewRecords;
+    private JMenu jMenuAboutProject;
 
     public HomePageView(MainView mainView) {
         this.mainView = mainView;
         this.homePageModel = new HomePageModel();
+        this.libraryModelManage = new LibraryModelManage();
         init();
         this.homePageController = new HomePageController(this);
+
     }
 
     private void init() {
@@ -66,9 +77,8 @@ public class HomePageView extends JPanel {
         jMenuIssueBook = createMenu("Issue Book", "/HomePage/view/icon/icons8_Sell_26px.png", 230);
         jMenuReturnBook = createMenu("Return Book", "/HomePage/view/icon/icons8_Return_Purchase_26px.png", 280);
         jMenuViewRecords = createMenu("View Records", "/HomePage/view/icon/icons8_View_Details_26px.png", 330);
-        jMenuViewBooks = createMenu("View Issued Books", "/HomePage/view/icon/icons8_Books_26px.png", 380);
-        jMenuDefault = createMenu("Defaulter list", "/HomePage/view/icon/icons8_Conference_26px.png", 430);
-        jMenuLogout = createMenu("Logout", "/HomePage/view/icon/icons8_Exit_26px_2.png", 480);
+        jMenuAboutProject = createMenu("About Project", "/HomePage/view/icon/icons8_Books_26px.png", 380);
+        jMenuLogout = createMenu("Logout", "/HomePage/view/icon/icons8_Exit_26px_2.png", 430);
 
         JLabel lblMenu = new JLabel("Features");
         lblMenu.setFont(new Font("Tahoma", Font.PLAIN, 15));
@@ -175,13 +185,30 @@ public class HomePageView extends JPanel {
         };
 
         for (int i = 0; i < infoTitles.length; i++) {
-            infoPanel.add(createInfoTile(infoTitles[i], icons[i], i % 2 == 0));
+            String count = "";
+            switch (i) {
+                case 0:
+                    ArrayList<Student> students = this.libraryModelManage.getStudentsList();
+                    count = String.valueOf(students.size());
+                    break;
+                case 1:
+                    ArrayList<Book> books = this.libraryModelManage.getBooksList();
+                    count = String.valueOf(books.size());
+                    break;
+                case 2:
+                    count = "10";
+                    break;
+                case 3:
+                    count = "10";
+                    break;
+            }
+            infoPanel.add(createInfoTile(infoTitles[i], icons[i], i % 2 == 0, count));
         }
 
         return infoPanel;
     }
 
-    private JPanel createInfoTile(String title, String iconPath, boolean isPink) {
+    private JPanel createInfoTile(String title, String iconPath, boolean isPink, String count) {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(new Color(230,230,250));;
         JLabel iconLabel = new JLabel(new ImageIcon(Objects.requireNonNull(getClass().getResource(iconPath))));
@@ -195,7 +222,7 @@ public class HomePageView extends JPanel {
         titleLabel.setBackground(isPink ? Color.PINK : new Color(135, 206, 250));
         panel.add(titleLabel, BorderLayout.NORTH);
 
-        JLabel countLabel = new JLabel("10", JLabel.CENTER);
+        JLabel countLabel = new JLabel(count, JLabel.CENTER);
         countLabel.setFont(new Font("Arial Rounded", Font.BOLD, 40));
         panel.add(countLabel, BorderLayout.CENTER);
 
@@ -203,27 +230,42 @@ public class HomePageView extends JPanel {
     }
 
     private JPanel createStudentDetails() {
-        String[] studentColumnNames = {"Student ID", "Student Email", "Major", "Contact Number"};
-        Object[][] studentData = {
-                {4, "Rose", "PHD", "Computer Science"},
-                {5, "Mary", "PHD", "Computer Science"},
-                {6, "Iron Man", "M.Sc", "Chemistry"},
-                {7, "Captain America", "PHD", "Computer Science"},
-                {8, "Bruce Banner", "M.Sc", "Physics"}
-        };
+        if (this.libraryModelManage == null) {
+            throw new IllegalStateException("LibraryModelManage chưa được khởi tạo!");
+        }
+        String[] studentColumnNames = {"Student ID", "Student Name", "Student Email", "Contact Number"};
+
+        ArrayList<Student> students = this.libraryModelManage.getStudentsList();
+        Object[][] studentData = new Object[students.size()][4];
+
+        for (int i = 0; i < students.size(); i++) {
+            Student student = students.get(i);
+            studentData[i][0] = student.getID();
+            studentData[i][1] = student.getName();
+            studentData[i][2] = student.getEmail();
+            studentData[i][3] = student.getPhone();
+        }
+        
         return createTablePanel(studentData, studentColumnNames, 5,"Student Details");
     }
 
     private JPanel createBookDetailsTable() {
+        if (this.libraryModelManage == null) {
+            throw new IllegalStateException("LibraryModelManage chưa được khởi tao!");
+        }
         String[] bookColumnNames = {"Book ID", "Book Name", "Author", "Quantity"};
-        Object[][] bookData = {
-                {"4", "PHP", "Rose", "16"},
-                {"5", "HTML", "Bruce", "49"},
-                {"6", "CSS", "Daniel", "0"},
-                {"7", "Golang programming", "Jack", "45"},
-                {"8", "Golang ", "Hi", "456"},
 
-        };
+        ArrayList<Book> books = this.libraryModelManage.getBooksList();
+        Object[][] bookData = new Object[books.size()][4];
+
+        for (int i = 0; i < books.size(); i++) {
+            Book book = books.get(i);
+            bookData[i][0] = book.getBookID();
+            bookData[i][1] = book.getBookName();
+            bookData[i][2] = book.getAuthor();
+            bookData[i][3] = book.getTotal();
+        }
+
         return createTablePanel(bookData, bookColumnNames, 5,"Book Details");
     }
 
@@ -466,13 +508,13 @@ public class HomePageView extends JPanel {
         this.jMenuReturnBook = jMenuReturnBook;
     }
 
-    public JMenu getjMenuViewBooks() {
-        return jMenuViewBooks;
-    }
+//    public JMenu getjMenuViewBooks() {
+//        return jMenuViewBooks;
+//    }
 
-    public void setjMenuViewBooks(JMenu jMenuViewBooks) {
-        this.jMenuViewBooks = jMenuViewBooks;
-    }
+//    public void setjMenuViewBooks(JMenu jMenuViewBooks) {
+//        this.jMenuViewBooks = jMenuViewBooks;
+//    }
 
     public JMenu getjMenuViewRecords() {
         return jMenuViewRecords;
@@ -482,12 +524,8 @@ public class HomePageView extends JPanel {
         this.jMenuViewRecords = jMenuViewRecords;
     }
 
-    public JMenu getjMenuDefault() {
-        return jMenuDefault;
-    }
-
-    public void setjMenuDefault(JMenu jMenuDefault) {
-        this.jMenuDefault = jMenuDefault;
+    public JMenu getjMenuAboutProject() {
+        return jMenuAboutProject;
     }
 
     public MainView getMainView()
@@ -515,4 +553,5 @@ public class HomePageView extends JPanel {
         isMenuVisible = menuVisible;
 
     }
+
 }

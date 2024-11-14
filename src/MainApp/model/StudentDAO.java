@@ -62,7 +62,7 @@ public class StudentDAO {
 
         } catch (SQLException e) {
             System.out.println("Lỗi khi thêm sinh viên vào cơ sở dữ liệu: " + e.getMessage());
-            e.printStackTrace();
+            e.printStackTrace(); // Hiện thị câu lệnh khi làm sai để dễ fix bug
         }
     }
 
@@ -92,6 +92,38 @@ public class StudentDAO {
         } catch (SQLException e) {
             System.out.println("Lỗi khi xóa sinh viên khỏi cơ sỡ dữ liệu: " + e.getMessage());
             //e.printStackTrace();
+        }
+    }
+
+    // Phương thức để chỉnh sửa thông tin cho sinh viên
+    public void updateStudent(Student student) {
+        // Kiểm tra dữ liệu đầu vào
+        if (student == null || student.getID() == null || student.getName() == null ||
+            student.getEmail() == null || student.getPassword() == null || student.getPhone() == null) {
+            System.out.println("Dữ liệu sinh viên không hợp lệ.");
+            return;
+        }
+
+        String query = "UPDATE student SET name = ?, email = ?, password = ?, phone = ? WHERE id = ?";
+
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+
+            preparedStatement.setString(1, student.getName());
+            preparedStatement.setString(2, student.getEmail());
+            preparedStatement.setString(3, student.getPassword());
+            preparedStatement.setString(4, student.getPhone());
+            preparedStatement.setString(5, student.getID());
+
+            int rowsUpdateed = preparedStatement.executeUpdate();
+            if (rowsUpdateed > 0) {
+                System.out.println("Đã cập nhật thông tin sinh viên thành công.");
+            } else {
+                System.out.println("Không tìm thấy sinh viên với ID: " + student.getID());
+            }
+        } catch (SQLException e) {
+            System.out.println("Lỗi khi cập nhật sinh viên: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 

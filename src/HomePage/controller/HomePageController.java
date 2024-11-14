@@ -1,7 +1,11 @@
 package HomePage.controller;
 
 import HomePage.view.HomePageView;
+import IssueBook.view.IssueBookView;
 import ManageBook.view.ManagementBookView;
+import ManageStudent.view.ManagementStudentView;
+import ReturnBook.view.ReturnBookView;
+import ViewRecord.view.ViewRecordView;
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,14 +26,14 @@ public class HomePageController implements ActionListener, MouseListener {
                 new Color(208, 204, 207), new Color(150, 180, 255)));
 
         addMenuHoverEffect(homePageView.getjMenuHomePage());
-        addMenuHoverEffect(homePageView.getjMenuDefault());
+        addMenuHoverEffect(homePageView.getjMenuAboutProject());
         addMenuHoverEffect(homePageView.getjMenuLogout());
         addMenuHoverEffect(homePageView.getjMenuIssueBook());
         addMenuHoverEffect(homePageView.getjMenuMGMTSutudents());
         addMenuHoverEffect(homePageView.getjMenuReturnBook());
         addMenuHoverEffect(homePageView.getjMenuLMSDashBoard());
         addMenuHoverEffect(homePageView.getjMenuMGMTBooks());
-        addMenuHoverEffect(homePageView.getjMenuViewBooks());
+//        addMenuHoverEffect(homePageView.getjMenuViewBooks());
         addMenuHoverEffect(homePageView.getjMenuViewRecords());
     }
 
@@ -78,6 +82,40 @@ public class HomePageController implements ActionListener, MouseListener {
                     managementBookView.setPreferredSize(new Dimension(homePageView.getMainHomePanel().getWidth(),homePageView.getMainHomePanel().getHeight()));
                     homePageView.setMainHomePanel(managementBookView);
                 }
+                if(menu==homePageView.getjMenuMGMTSutudents())
+                {
+                    System.out.println(("MenuStudent clicked"));
+                    ManagementStudentView managementStudentView = new ManagementStudentView();
+                    homePageView.toggleMenuBar();
+                    managementStudentView.setPreferredSize(new Dimension(homePageView.getMainHomePanel().getWidth(),homePageView.getMainHomePanel().getHeight()));
+                    homePageView.setMainHomePanel(managementStudentView);
+                }
+
+                if(menu==homePageView.getjMenuIssueBook())
+                {
+                    System.out.println(("Issue Button clicked"));
+                    IssueBookView issueBookView = new IssueBookView();
+                    homePageView.toggleMenuBar();
+                    issueBookView.setPreferredSize(new Dimension(homePageView.getMainHomePanel().getWidth(),homePageView.getMainHomePanel().getHeight()));
+                    homePageView.setMainHomePanel(issueBookView);
+                }
+                if(menu==homePageView.getjMenuReturnBook())
+                {
+                    System.out.println(("Return Button clicked"));
+                    ReturnBookView returnBookView = new ReturnBookView();
+                    homePageView.toggleMenuBar();
+                    returnBookView.setPreferredSize(new Dimension(homePageView.getMainHomePanel().getWidth(),homePageView.getMainHomePanel().getHeight()));
+                    homePageView.setMainHomePanel(returnBookView);
+                }
+                if(menu==homePageView.getjMenuViewRecords())
+                {
+                    System.out.println(("View Recrd Button clicked"));
+                    ViewRecordView viewRecordView = new ViewRecordView();
+                    homePageView.toggleMenuBar();
+                    viewRecordView.setPreferredSize(new Dimension(homePageView.getMainHomePanel().getWidth(),homePageView.getMainHomePanel().getHeight()));
+                    homePageView.setMainHomePanel(viewRecordView);
+                }
+
 
             }
 

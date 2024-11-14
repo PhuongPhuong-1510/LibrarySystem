@@ -11,12 +11,11 @@ import java.awt.event.MouseListener;
 
 public class AddBookController implements ActionListener, MouseListener {
     private final AddBook addBook;
-    private final AddBookListener listener;
+    private final AddBookListener addBookListener;
 
-
-    public AddBookController(AddBook addBook, AddBookListener listener) {
+    public AddBookController(AddBook addBook, AddBookListener addBookListener) {
         this.addBook = addBook;
-        this.listener = listener;
+        this.addBookListener = addBookListener;
         initializeListeners();
     }
 
@@ -24,6 +23,7 @@ public class AddBookController implements ActionListener, MouseListener {
         addBook.getCancelButton().addActionListener(this);
         addBook.getSubmitButton().addActionListener(this);
         addBook.getUploadCoverButton().addActionListener(this);
+
         addBook.getUploadCoverButton().addMouseListener(this);
         addBook.getSubmitButton().addMouseListener(this);
         addBook.getCancelButton().addMouseListener(this);
@@ -44,28 +44,36 @@ public class AddBookController implements ActionListener, MouseListener {
                 break;
             case "SUBMIT":
                 System.out.println("Submit button clicked");
-                if (this.addBook.titleField.getText().equals("")) {
+                if(this.addBook.titleField.getText().equals("")){
                     JOptionPane.showMessageDialog(null, "Please enter a title");
-                } else {
-                    listener.onBookAdded();
+                }else{
+                    addBookListener.onBookAdded();
                 }
+
+                JOptionPane.showMessageDialog(
+                        addBook,
+                        "Add book successfully",
+                        "Success",
+                        JOptionPane.INFORMATION_MESSAGE
+                );
                 addBook.revalidate();
                 addBook.repaint();
                 break;
+
+
             default:
                 break;
         }
     }
 
-
     @Override
     public void mouseEntered(MouseEvent e) {
         if (e.getSource() == addBook.getSubmitButton()) {
-            styleButtonHover(addBook.getSubmitButton(), Font.BOLD, 16);
+            styleButtonHover(addBook.getSubmitButton(), Font.PLAIN, 16);
         } else if (e.getSource() == addBook.getCancelButton()) {
-            styleButtonHover(addBook.getCancelButton(), Font.BOLD, 16);
+            styleButtonHover(addBook.getCancelButton(), Font.PLAIN, 16);
         } else if (e.getSource() == addBook.getUploadCoverButton()) {
-            styleButtonHover(addBook.getUploadCoverButton(), Font.BOLD, 16);
+            styleButtonHover(addBook.getUploadCoverButton(), Font.PLAIN, 16);
         }
     }
 
@@ -89,9 +97,8 @@ public class AddBookController implements ActionListener, MouseListener {
     }
 
     private void styleButtonDefault(JButton button) {
-        // Đặt lại kiểu nút về mặc định
         button.setBackground(new Color(250, 128 ,114));
-        button.setFont(new Font("Tahoma", Font.PLAIN, 16)); // Kiểu chữ mặc định
+        button.setFont(new Font("Tahoma", Font.BOLD, 16)); // Kiểu chữ mặc định
         button.revalidate();
         button.repaint();
     }
