@@ -339,7 +339,18 @@ public class ManagementBookView extends JPanel {
 
         String bookID = model.getValueAt(row, 0).toString();
         String bookName = model.getValueAt(row, 1).toString();
-        String image = model.getValueAt(row, 2).toString();
+
+        // Trích xuất đường dẫn từ JLabel của ảnh
+        Object imageObject = model.getValueAt(row, 2);
+        String image = "";
+        if (imageObject instanceof JLabel) {
+            JLabel imageLabel = (JLabel) imageObject;
+            ImageIcon icon = (ImageIcon) imageLabel.getIcon();
+            image = icon.getDescription(); // Nếu ImageIcon có description là đường dẫn hình ảnh
+        } else {
+            image = imageObject.toString();
+        }
+
         String author = model.getValueAt(row, 3).toString();
         String category = model.getValueAt(row, 4).toString();
         String language = model.getValueAt(row, 5).toString();
@@ -349,6 +360,7 @@ public class ManagementBookView extends JPanel {
 
         return new Book(bookID, bookName, image, author, category, language, total, curent, position);
     }
+
 
     private void deleteBookByID(String bookID) {
         DefaultTableModel model = (DefaultTableModel) bookTableView.getTable().getModel();
