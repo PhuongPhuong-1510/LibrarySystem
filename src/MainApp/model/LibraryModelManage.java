@@ -22,8 +22,6 @@ public class LibraryModelManage {
         return booksList;
     }
 
-
-
     private void loadBooksFromDatabase() {
         BookDAO bookDAO = new BookDAO();
         bookDAO.loadBooksFromDatabase();
@@ -45,6 +43,23 @@ public class LibraryModelManage {
         bookDAO.deleteBook(bookID);
         booksList.removeIf(book -> book.getBookID().equals(bookID)); // Update the local list
     }
+
+    public ArrayList<Book> searchBooks(String keyword) {
+        ArrayList<Book> searchResults = new ArrayList<>();
+        keyword = keyword.toLowerCase(); // Để tìm kiếm không phân biệt chữ hoa/chữ thường
+
+        for (Book book : booksList) {
+            if (book.getBookID().toLowerCase().contains(keyword) ||
+                    book.getBookName().toLowerCase().contains(keyword) ||
+                    book.getAuthor().toLowerCase().contains(keyword) ||
+                    book.getCategory().toLowerCase().contains(keyword)) {
+                searchResults.add(book);
+            }
+        }
+
+        return searchResults;
+    }
+
 
 
     public String creatBookID(){

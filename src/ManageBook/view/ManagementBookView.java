@@ -76,7 +76,7 @@ public class ManagementBookView extends JPanel {
             }
         };
 
-        managementPanel=new BaseManagementPanel("Search id, author, genre, title","/ManageBook/icon/bookAdd.png","Add Book") {
+        managementPanel = new BaseManagementPanel("Search id, author, genre, title", "/ManageBook/icon/bookAdd.png", "Add Book", this) {
             @Override
             protected JPanel createSearchPanel() {
                 return super.createSearchPanel();
@@ -136,8 +136,7 @@ public class ManagementBookView extends JPanel {
 
 
 
-
-    public JLabel createImageLabel(String path) {
+    private JLabel createImageLabel(String path) {
         ImageIcon icon;
         if (path != null && getClass().getResource(path) != null) {
             icon = new ImageIcon(getClass().getResource(path));
@@ -363,6 +362,30 @@ public class ManagementBookView extends JPanel {
             }
         }
         lastSelectedRow = -1;
+    }
+
+    public void updateTable(ArrayList<Book> books) {
+        DefaultTableModel model = (DefaultTableModel) bookTableView.getTable().getModel();
+        model.setRowCount(0);  // Xóa toàn bộ dữ liệu cũ
+
+        for (Book book : books) {
+            Object[] rowData = new Object[]{
+                    book.getBookID(),
+                    book.getBookName(),
+                    createImageLabel(book.getImage()),
+                    book.getAuthor(),
+                    book.getCategory(),
+                    book.getLanguage(),
+                    book.getTotal(),
+                    book.getCurent(),
+                    book.getPosition(),
+                    createAction(model.getRowCount())
+            };
+            model.addRow(rowData);
+        }
+
+        bookTableView.revalidate();
+        bookTableView.repaint();
     }
 
 
