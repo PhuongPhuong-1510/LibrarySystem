@@ -2,9 +2,12 @@ package IssueBook.view;
 
 import IssueBook.controller.IssueBookController;
 import LoginPage.view.OvalButton;
+import MainApp.model.Issue;
+import MainApp.model.LibraryModelManage;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 
 public class IssueBookView extends JPanel {
     private JTextField bookTitleField;
@@ -22,6 +25,10 @@ public class IssueBookView extends JPanel {
     private JTextField dueDateField;
     private JButton issueButton;
     private JButton clearButton;
+    private JTextField bookIdField;
+    private JTextField studentIdField;
+    private LibraryModelManage libraryModelManage;
+
 
     public IssueBookView() {
         setupMainPanel();
@@ -30,6 +37,9 @@ public class IssueBookView extends JPanel {
         add(createIssuePanel());
         setVisible(true);
         new IssueBookController(this);
+        this.libraryModelManage = new LibraryModelManage();
+        libraryModelManage.getBooksList();
+        libraryModelManage.getStudentsList();
     }
 
     private void setupMainPanel() {
@@ -144,11 +154,11 @@ public class IssueBookView extends JPanel {
 
     private void addIssueDetailsFields(JPanel issuePanel, Color labelColor) {
         issuePanel.add(createLabelAtPosition("Book Id: ", 25, 250, 200, 30, labelColor));
-        JTextField bookIdField = createTextField(150, 250, 100, 30, true);
+        bookIdField = createTextField(150, 250, 100, 30, true);
         issuePanel.add(bookIdField);
 
         issuePanel.add(createLabelAtPosition("Student Id: ", 25, 290, 200, 30, labelColor));
-        JTextField studentIdField = createTextField(150, 290, 100, 30, true);
+        studentIdField = createTextField(150, 290, 100, 30, true);
         issuePanel.add(studentIdField);
     }
 
@@ -276,6 +286,26 @@ public class IssueBookView extends JPanel {
         imagePanel.add(titleContainer, BorderLayout.CENTER);
 
         return imagePanel;
+    }
+
+    public void updatePanel(){
+        ArrayList<Issue> issueLisst = libraryModelManage.getIssuesList();
+        String issueId = this.libraryModelManage.creatIssueID();
+         String bookID = this.bookIdField.getText()+"";
+         String studentID = this.studentIdField.getText()+"";
+         String issueDate = this.issueDateField.getText()+"";
+         String dueDate = this.dueDateField.getText()+"";
+         String status = "issued";
+
+         if(libraryModelManage.checkStudentAndBookEmpty(bookID, studentID)){
+             Issue issue = new Issue(issueId, bookID, studentID, issueDate, dueDate, status);
+             this.libraryModelManage.addIssueToDatabase(issue);
+         }else{
+             JOptionPane.showMessageDialog(null,
+                     "Either the book ID or the student ID does not exist. Please check and try again.",
+                     "Error",
+                     JOptionPane.ERROR_MESSAGE);
+         }
     }
 
     public JButton getDueDateButton() {

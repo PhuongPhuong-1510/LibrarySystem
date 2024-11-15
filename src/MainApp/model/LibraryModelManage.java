@@ -9,11 +9,13 @@ public class LibraryModelManage {
     private ArrayList<Book> booksList;
     private ArrayList<Student> studentsList;
     private ArrayList<Admin> adminsList;
+    private ArrayList<Issue> issuesList;
 
     public LibraryModelManage() {
         booksList = new ArrayList<>();
         studentsList = new ArrayList<>();
         adminsList = new ArrayList<>();
+        issuesList = new ArrayList<>();
     }
 
     // Quản lý sách
@@ -143,4 +145,54 @@ public class LibraryModelManage {
     public void setLuaChon(String luaChon) {
         this.luaChon = luaChon;
     }
+
+
+
+    public ArrayList<Issue> getIssuesList() {
+        if (issuesList.isEmpty()) {
+            loadIssuesFromDatabase();
+        }
+        return issuesList;
+    }
+
+    private void loadIssuesFromDatabase() {
+        IssueDAO issueDAO = new IssueDAO();
+        issueDAO.loadIssuesFromDatabase();
+        issuesList = issueDAO.getIssuesList();
+    }
+
+    public void addIssueToDatabase(Issue issue) {
+        IssueDAO issueDAO = new IssueDAO();
+        issueDAO.addIssue(issue);
+        issuesList.add(issue);
+    }
+
+    public String creatIssueID() {
+        int newID = 1;
+        Set<String> existingIDs = issuesList.stream()
+                .map(Issue::getIssueID)
+                .collect(Collectors.toSet());
+
+        String newIssueID;
+        while (true) {
+            newIssueID = String.format("I%03d", newID); // Formats ID with leading zeros
+            if (!existingIDs.contains(newIssueID)) {
+                break;
+            }
+            newID++;
+        }
+        return newIssueID;
+    }
+
+    public boolean checkStudentAndBookEmpty(String bookID, String studentID) {
+        boolean isBookPresent = booksList.stream()
+                .anyMatch(book -> book.getBookID().equals(bookID));
+
+        boolean isStudentPresent = studentsList.stream()
+                .anyMatch(student -> student.getID().equals(studentID));
+
+        return isBookPresent && isStudentPresent;
+    }
+
+
 }

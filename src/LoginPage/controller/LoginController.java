@@ -29,12 +29,12 @@ public class LoginController implements ActionListener, MouseListener {
         switch (e.getActionCommand()) {
             case "LOGIN":
                 System.out.println("Login button clicked!");
-                if(loginView.checkLogin()) {
+                //if(loginView.checkLogin()) {
                     loginView.getMainView().showCard("HomePage");
-                }else{
-                    JOptionPane.showMessageDialog(null, "Tài khoản hoặc mật khẩu sai", "Đăng nhập thất bại", JOptionPane.ERROR_MESSAGE);
-
-                }
+//                }else{
+//                    JOptionPane.showMessageDialog(null, "Tài khoản hoặc mật khẩu sai", "Đăng nhập thất bại", JOptionPane.ERROR_MESSAGE);
+//
+//                }
                 break;
             case "SIGNUP":
                 System.out.println("Signup button clicked!");
