@@ -7,7 +7,7 @@ import java.awt.*;
 import java.awt.event.*;
 
 public class LoginController implements ActionListener, MouseListener {
-    private final LoginView loginView;
+    private  LoginView loginView;
 
     public LoginController(LoginView loginView) {
         this.loginView = loginView;
@@ -18,6 +18,7 @@ public class LoginController implements ActionListener, MouseListener {
         loginView.getLoginButton().addActionListener(this);
         loginView.getSignupButton().addActionListener(this);
         loginView.getBtnForgot().addActionListener(this);
+        loginView.getCmbUserType().addActionListener(this);
 
         loginView.getLoginButton().addMouseListener(this);
         loginView.getSignupButton().addMouseListener(this);
@@ -28,10 +29,16 @@ public class LoginController implements ActionListener, MouseListener {
     public void actionPerformed(ActionEvent e) {
         switch (e.getActionCommand()) {
             case "LOGIN":
-                System.out.println("Login button clicked!");
-                //if(loginView.checkLogin()) {
+                String userType = (String) loginView.getCmbUserType().getSelectedItem();
+                if ("Admin".equals(userType)) {
+                    System.out.println("Login as Admin");
                     loginView.getMainView().showCard("HomePage");
-                //}
+                } else if ("User".equals(userType)) {
+                    System.out.println("Login as User");
+                    loginView.getMainView().showCard("UserView");
+                } else {
+                    JOptionPane.showMessageDialog(loginView, "Please select a user type!");
+                }
                 break;
             case "SIGNUP":
                 System.out.println("Signup button clicked!");

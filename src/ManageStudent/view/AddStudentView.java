@@ -177,7 +177,5 @@ public class AddStudentView extends JFrame {
         return btnCancel;
     }
 
-//    public static void main(String[] args) {
-//        new AddStudentView();
-//    }
+
 }

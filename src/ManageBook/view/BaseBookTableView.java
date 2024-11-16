@@ -258,10 +258,16 @@ public abstract class BaseBookTableView extends JPanel {
     }
     public void setSelectedRow(int row) {
         this.selectedRow = row;
-        repaint();  // Cập nhật lại giao diện
+        repaint();
+    }
+    public Object getCellValue(int row, int column) {
+        if (row >= 0 && row < table.getRowCount() && column >= 0 && column < table.getColumnCount()) {
+            return table.getValueAt(row, column);
+        }
+        return null;
     }
 
-    // Trong lớp BaseBookTableView
+
     public JTable getTable() {
         return table;
     }

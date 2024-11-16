@@ -17,6 +17,7 @@ public class LoginView extends JPanel {
     private  MainView mainView;
     private JTextField txtUserName;
     private JTextField txtPassWord;
+    private JComboBox<String> cmbUserType;
     private JButton btnLogin;
     private JButton btnSignUp;
     private JButton btnForgot;
@@ -47,7 +48,7 @@ public class LoginView extends JPanel {
 
     private JLayeredPane createImagePane() {
         JLabel imageLabel = new JLabel();
-        imageLabel.setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/LoginPage/view/icon/lms.png"))));
+        imageLabel.setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/LoginPage/view/icon/lms1.gif"))));
         imageLabel.setLayout(null);
         imageLabel.setBounds(0, 0, 750, 632);
 
@@ -55,7 +56,7 @@ public class LoginView extends JPanel {
         JLabel libraryLabel = createTextLabel("ADVANCE LIBRARY", new Font("Tahoma", Font.PLAIN, 22), Color.BLUE, 260, 50, 300, 50);
 
         JLayeredPane layeredPane = new JLayeredPane();
-        layeredPane.setPreferredSize(new Dimension(750, 632));
+        layeredPane.setPreferredSize(new Dimension(750, 650));
         layeredPane.setLayout(null);
         layeredPane.add(imageLabel, Integer.valueOf(0));
         layeredPane.add(welcomeLabel, Integer.valueOf(1));
@@ -77,8 +78,16 @@ public class LoginView extends JPanel {
         txtUserName = createPlaceholderField("Enter your email", 200, 185);
         txtPassWord = createPlaceholderField("Enter your password", 200, 235);
 
-        btnLogin = createButton("LOGIN", new Color(255, 94, 77), 120, 340);
-        btnSignUp = createButton("SIGNUP", new Color(192, 192, 192), 240, 340);
+
+        JLabel lblUserType = createIconLabel("Login as:","/LoginPage/view/icon/select.png",40,305,150,50 );
+        cmbUserType = new JComboBox<>(new String[]{"Select","Admin", "User"});
+        cmbUserType.setBackground(new Color(202,225,255));
+        cmbUserType.setBounds(200, 315, 190, 30);
+
+
+
+        btnLogin = createButton("LOGIN", new Color(255, 94, 77), 120, 385);
+        btnSignUp = createButton("SIGNUP", new Color(192, 192, 192), 240, 385);
         btnForgot = createForgotPasswordButton();
 
         loginPanel.add(lblWelcome);
@@ -87,6 +96,8 @@ public class LoginView extends JPanel {
         loginPanel.add(txtUserName);
         loginPanel.add(lblPassword);
         loginPanel.add(txtPassWord);
+        loginPanel.add(lblUserType);
+        loginPanel.add(cmbUserType);
         loginPanel.add(btnLogin);
         loginPanel.add(btnSignUp);
         loginPanel.add(btnForgot);
@@ -136,7 +147,7 @@ public class LoginView extends JPanel {
         button.setContentAreaFilled(false);
         button.setFocusPainted(false);
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        button.setBounds(120, 390, 250, 60);
+        button.setBounds(120, 425, 250, 60);
         button.setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/LoginPage/view/icon/forgotPassword.png"))));
         button.setHorizontalTextPosition(SwingConstants.RIGHT);
         return button;
@@ -157,6 +168,14 @@ public class LoginView extends JPanel {
 
     public MainView getMainView() {
         return mainView;
+    }
+
+    public JComboBox<String> getCmbUserType() {
+        return cmbUserType;
+    }
+
+    public void setCmbUserType(JComboBox<String> cmbUserType) {
+        this.cmbUserType = cmbUserType;
     }
 
     public boolean checkLogin(){
