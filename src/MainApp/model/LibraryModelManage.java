@@ -224,4 +224,22 @@ public class LibraryModelManage {
         return true;
     }
 
+    public Book searchBookByID(String bookID) {
+        for (Book book : booksList) {
+            if (book.getBookID().equals(bookID)) {
+                return book;
+            }
+        }
+        return null; // Return null if the book is not found
+    }
+
+    public Student searchStudentByID(String studentID) {
+        for (Student student : studentsList) {
+            if (student.getID().equals(studentID)) {
+                return student;
+            }
+        }
+        return null; // Return null if the student is not found
+    }
+
 }
