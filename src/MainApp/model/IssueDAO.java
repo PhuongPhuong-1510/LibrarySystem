@@ -57,6 +57,31 @@ public class IssueDAO {
         }
     }
 
+    public void editIssue(Issue issue) {
+        String query = "UPDATE issue SET bookID = ?, id = ?, isueDate = ?, dueDate = ?, status = ? WHERE issueID = ?";
+
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+
+            preparedStatement.setString(1, issue.getIssueBookID());
+            preparedStatement.setString(2, issue.getIssueStudentID());
+            preparedStatement.setString(3, issue.getIssueDate());
+            preparedStatement.setString(4, issue.getDueDate());
+            preparedStatement.setString(5, issue.getStatus());
+            preparedStatement.setString(6, issue.getIssueID());
+
+            int rowsUpdated = preparedStatement.executeUpdate();
+            if (rowsUpdated > 0) {
+                System.out.println("Issue data updated successfully in the database.");
+            } else {
+                System.out.println("Issue with the given ID not found in the database.");
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error updating issue in database: " + e.getMessage());
+        }
+    }
+
     public ArrayList<Issue> getIssuesList() {
         return issuesList;
     }

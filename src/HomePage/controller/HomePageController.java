@@ -105,8 +105,9 @@ public class HomePageController implements ActionListener, MouseListener {
                 }
                 if(menu==homePageView.getjMenuReturnBook())
                 {
+                    LibraryModelManage libraryModelManage = new LibraryModelManage();
                     System.out.println(("Return Button clicked"));
-                    ReturnBookView returnBookView = new ReturnBookView();
+                    ReturnBookView returnBookView = new ReturnBookView(libraryModelManage);
                     homePageView.toggleMenuBar();
                     returnBookView.setPreferredSize(new Dimension(homePageView.getMainHomePanel().getWidth(),homePageView.getMainHomePanel().getHeight()));
                     homePageView.setMainHomePanel(returnBookView);

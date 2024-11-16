@@ -170,6 +170,12 @@ public class LibraryModelManage {
         loadIssuesFromDatabase();
     }
 
+    public void editIssueInDatabase(Issue issue) {
+        IssueDAO issueDAO = new IssueDAO();
+        issueDAO.editIssue(issue);
+    }
+
+
     public String creatIssueID() {
         int newID = 1;
         Set<String> existingIDs = getIssuesList().stream()
@@ -225,7 +231,8 @@ public class LibraryModelManage {
     }
 
     public Book searchBookByID(String bookID) {
-        for (Book book : booksList) {
+        ArrayList<Book> bookslist = getBooksList();
+        for (Book book : bookslist) {
             if (book.getBookID().equals(bookID)) {
                 return book;
             }
@@ -234,12 +241,25 @@ public class LibraryModelManage {
     }
 
     public Student searchStudentByID(String studentID) {
-        for (Student student : studentsList) {
+        ArrayList<Student> studentslist = getStudentsList();
+        for (Student student : studentslist) {
             if (student.getID().equals(studentID)) {
                 return student;
             }
         }
         return null; // Return null if the student is not found
     }
+
+    public Issue searchIssueByBookStudent(String bookID, String studentID) {
+        ArrayList<Issue> issueslist = getIssuesList();
+        for (Issue issue : issueslist) {
+            if (issue.getIssueBookID().equals(bookID) && issue.getIssueStudentID().equals(studentID)) {
+                return issue;
+            }
+        }
+        JOptionPane.showMessageDialog(null, "Issue not found.");
+        return null; // Return null if no matching issue is found
+    }
+
 
 }
