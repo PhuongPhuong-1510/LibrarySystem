@@ -16,6 +16,7 @@ public class HomePageController implements ActionListener, MouseListener {
     private final HomePageView homePageView;
     private JMenu selectedMenu = null;
 
+
     public HomePageController(HomePageView homePageView) {
         this.homePageView = homePageView;
         initializeListeners();
@@ -77,8 +78,8 @@ public class HomePageController implements ActionListener, MouseListener {
                 }
                 if(menu==homePageView.getjMenuMGMTBooks())
                 {
-                    LibraryModelManage libraryModelManage = new LibraryModelManage();
                     System.out.println(("MenuMGMTBooks clicked"));
+                    LibraryModelManage libraryModelManage = new LibraryModelManage();
                     ManagementBookView managementBookView = new ManagementBookView(libraryModelManage);
                     homePageView.toggleMenuBar();
                     managementBookView.setPreferredSize(new Dimension(homePageView.getMainHomePanel().getWidth(),homePageView.getMainHomePanel().getHeight()));
@@ -95,8 +96,9 @@ public class HomePageController implements ActionListener, MouseListener {
 
                 if(menu==homePageView.getjMenuIssueBook())
                 {
+                    LibraryModelManage libraryModelManage = new LibraryModelManage();
                     System.out.println(("Issue Button clicked"));
-                    IssueBookView issueBookView = new IssueBookView();
+                    IssueBookView issueBookView = new IssueBookView(libraryModelManage);
                     homePageView.toggleMenuBar();
                     issueBookView.setPreferredSize(new Dimension(homePageView.getMainHomePanel().getWidth(),homePageView.getMainHomePanel().getHeight()));
                     homePageView.setMainHomePanel(issueBookView);

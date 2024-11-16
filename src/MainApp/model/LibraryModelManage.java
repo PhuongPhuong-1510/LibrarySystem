@@ -1,5 +1,6 @@
 package MainApp.model;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -161,21 +162,24 @@ public class LibraryModelManage {
         issuesList = issueDAO.getIssuesList();
     }
 
+
     public void addIssueToDatabase(Issue issue) {
         IssueDAO issueDAO = new IssueDAO();
         issueDAO.addIssue(issue);
         issuesList.add(issue);
+        loadIssuesFromDatabase();
     }
 
     public String creatIssueID() {
         int newID = 1;
-        Set<String> existingIDs = issuesList.stream()
+        Set<String> existingIDs = getIssuesList().stream()
                 .map(Issue::getIssueID)
                 .collect(Collectors.toSet());
 
         String newIssueID;
         while (true) {
-            newIssueID = String.format("I%03d", newID); // Formats ID with leading zeros
+            newIssueID = String.format("I%03d", newID);
+            System.out.println("Checking ID: " + newIssueID);
             if (!existingIDs.contains(newIssueID)) {
                 break;
             }
@@ -185,14 +189,39 @@ public class LibraryModelManage {
     }
 
     public boolean checkStudentAndBookEmpty(String bookID, String studentID) {
-        boolean isBookPresent = booksList.stream()
+        ArrayList<Book> bookslist = getBooksList();
+        boolean isBookPresent = bookslist.stream()
                 .anyMatch(book -> book.getBookID().equals(bookID));
+        if (!isBookPresent) {
+            JOptionPane.showMessageDialog(null, "Book not found.");
+            return false;
+        }
 
-        boolean isStudentPresent = studentsList.stream()
+        boolean isBookStill = bookslist.stream()
+                .anyMatch(book -> book.getBookID().equals(bookID) && "Still".equals(book.getCurent()));
+        if (!isBookStill) {
+            JOptionPane.showMessageDialog(null, "Book is not in 'Still' state.");
+            return false;
+        }
+
+        ArrayList<Student> studentslist = getStudentsList();
+        boolean isStudentPresent = studentslist.stream()
                 .anyMatch(student -> student.getID().equals(studentID));
+        if (!isStudentPresent) {
+            JOptionPane.showMessageDialog(null, "Student not found.");
+            return false;
+        }
 
-        return isBookPresent && isStudentPresent;
+        bookslist.stream()
+                .filter(book -> book.getBookID().equals(bookID))
+                .findFirst()
+                .ifPresent(book -> {
+                    book.setCurent("Borrowed");
+                    BookDAO bookDAO = new BookDAO();
+                    bookDAO.editBook(book);
+                });
+
+        return true;
     }
-
 
 }

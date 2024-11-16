@@ -9,6 +9,7 @@ public class IssueDAO {
     private ArrayList<Issue> issuesList = new ArrayList<>();
 
     public void loadIssuesFromDatabase() {
+        issuesList.clear(); // Đảm bảo danh sách được làm trống trước khi tải mới dữ liệu
         try (Connection connection = DatabaseConnection.getConnection();
              Statement statement = connection.createStatement()) {
 
@@ -19,11 +20,12 @@ public class IssueDAO {
                 String issueID = resultSet.getString("issueID");
                 String bookID = resultSet.getString("bookID");
                 String studentID = resultSet.getString("id");
-                String isueDate = resultSet.getString("issueDate");
+                String isueDate = resultSet.getString("isueDate");
                 String dueDate = resultSet.getString("dueDate");
                 String status = resultSet.getString("status");
 
                 Issue issue = new Issue(issueID, bookID, studentID, isueDate, dueDate, status);
+                issuesList.add(issue); // Thêm vào danh sách
             }
 
             System.out.println("Dữ liệu đã được tải vào danh sách issuesList.");
@@ -32,6 +34,7 @@ public class IssueDAO {
             System.out.println("Lỗi khi kết nối đến cơ sở dữ liệu: " + e.getMessage());
         }
     }
+
 
     public void addIssue(Issue issue) {
         String query = "INSERT INTO issue (issueID, bookID, id, isueDate, dueDate, status) VALUES (?, ?, ?, ?, ?, ?)";

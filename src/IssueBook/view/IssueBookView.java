@@ -30,16 +30,15 @@ public class IssueBookView extends JPanel {
     private LibraryModelManage libraryModelManage;
 
 
-    public IssueBookView() {
+    public IssueBookView(LibraryModelManage libraryModelManage) {
         setupMainPanel();
         add(createBookPanel());
         add(createStudentPanel());
         add(createIssuePanel());
         setVisible(true);
         new IssueBookController(this);
-        this.libraryModelManage = new LibraryModelManage();
-        libraryModelManage.getBooksList();
-        libraryModelManage.getStudentsList();
+        this.libraryModelManage = libraryModelManage;
+
     }
 
     private void setupMainPanel() {
@@ -289,8 +288,7 @@ public class IssueBookView extends JPanel {
     }
 
     public void updatePanel(){
-        ArrayList<Issue> issueLisst = libraryModelManage.getIssuesList();
-        String issueId = this.libraryModelManage.creatIssueID();
+        //ArrayList<Issue> issueLisst = libraryModelManage.getIssuesList();
          String bookID = this.bookIdField.getText()+"";
          String studentID = this.studentIdField.getText()+"";
          String issueDate = this.issueDateField.getText()+"";
@@ -298,13 +296,9 @@ public class IssueBookView extends JPanel {
          String status = "issued";
 
          if(libraryModelManage.checkStudentAndBookEmpty(bookID, studentID)){
+             String issueId = this.libraryModelManage.creatIssueID();
              Issue issue = new Issue(issueId, bookID, studentID, issueDate, dueDate, status);
              this.libraryModelManage.addIssueToDatabase(issue);
-         }else{
-             JOptionPane.showMessageDialog(null,
-                     "Either the book ID or the student ID does not exist. Please check and try again.",
-                     "Error",
-                     JOptionPane.ERROR_MESSAGE);
          }
     }
 

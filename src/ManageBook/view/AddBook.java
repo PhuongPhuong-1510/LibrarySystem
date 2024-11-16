@@ -24,7 +24,7 @@ public class AddBook extends JFrame {
     private JTextField authorText;
     private JTextField languageText;
     private JTextField totalText;
-    private JTextField currentText;
+    //private JTextField currentText;
     private JTextField positionText;
 
     public AddBook(LibraryModelManage libraryModelManage) {
@@ -98,14 +98,14 @@ public class AddBook extends JFrame {
         totalText = setCustomTextField();
         JPanel totalPanel = createLabeledTextFieldPanel(new JLabel("Tatal: "), totalText);
 
-        currentText = setCustomTextField();
-        JPanel currentPanel = createLabeledTextFieldPanel(new JLabel("Current: "), currentText);
+        //currentText = setCustomTextField();
+        //JPanel currentPanel = createLabeledTextFieldPanel(new JLabel("Current: "), currentText);
 
         positionText = setCustomTextField();
         JPanel positionPanel = createLabeledTextFieldPanel(new JLabel("Position: "), positionText);
 
         quantityPanel.add(totalPanel);
-        quantityPanel.add(currentPanel);
+        //quantityPanel.add(currentPanel);
         quantityPanel.add(positionPanel);
 
         return quantityPanel;
@@ -214,7 +214,7 @@ public class AddBook extends JFrame {
         String author = this.authorText.getText()+"";
         String language = this.languageText.getText()+"";
         int total = Integer.valueOf(totalText.getText()+"");
-        String current = this.currentText.getText()+"";
+        String current = "Still";
         String position = this.positionText.getText()+"";
         Book book = new Book(id, title,imagePath, author,"Programing", language, total, current, position);
         libraryModelManage.addBookToDatabase(book);
