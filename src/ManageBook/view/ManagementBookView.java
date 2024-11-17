@@ -167,7 +167,6 @@ public class ManagementBookView extends JPanel {
         JPanel actionPanel = new JPanel(new GridBagLayout());
         actionPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
-        // Tạo các nút chỉnh sửa và xóa cho sách
         JButton editButton = createActionButton("/ManageBook/icon/bookEdit.png", new Color(255, 240, 245));
         JButton deleteButton = createActionButton("/ManageBook/icon/bookDelete.png", new Color(255, 240, 245));
         JButton imageButton = createActionButton("/ManageBook/icon/uploadImage.png", new Color(255, 240, 245));
@@ -177,24 +176,46 @@ public class ManagementBookView extends JPanel {
         deleteButton.setToolTipText("Delete Book");
         imageButton.setToolTipText("Upload Cover");
 
-        // Xử lý sự kiện khi nhấn nút chỉnh sửa
         editButton.addActionListener(e -> {
             toggleEditButtonIcon(actionPanel,editButton,deleteButton,imageButton, row);
         });
 
         deleteButton.addActionListener(e -> {
             int confirm = JOptionPane.showConfirmDialog(
-                    null,
-                    "Bạn có chắc chắn xóa không?",
-                    "Xác nhận xóa",
+                    this,
+                    "Are you sure you want to delete this book?",
+                    "Delete Confirmation",
                     JOptionPane.YES_NO_OPTION
             );
+
             if (confirm == JOptionPane.YES_OPTION) {
-                System.out.println("Delete button clicked at row: " + row);
-                deleteBook(libraryModelManage.getBooksList().get(row).getBookID());
+                JTable table = bookTableView.getTable();
+                DefaultTableModel model = (DefaultTableModel) table.getModel();
+
+                // Dừng chỉnh sửa nếu đang có ô nào đang được chỉnh sửa
+                if (table.isEditing()) {
+                    table.getCellEditor().stopCellEditing();
+                }
+
+                // Kiểm tra chỉ số dòng hợp lệ
+                if (row >= 0 && row < model.getRowCount()) {
+                    // Xóa dòng trong model
+                    model.removeRow(row);
+
+                    // Xóa sách khỏi dữ liệu
+                    Book bookToRemove = libraryModelManage.getBooksList().get(row);
+                    libraryModelManage.deleteBookFromDatabase(bookToRemove.getBookID());
+
+                    // Làm mới bảng sau khi xóa
+                    updateTable(libraryModelManage.getBooksList());
+                }
+
+                // Hủy chọn dòng để tránh lỗi khi không còn dòng nào
+                if (model.getRowCount() == 0) {
+                    table.clearSelection();
+                }
             }
         });
-
 
         imageButton.addActionListener(e -> {
             toggleImageButton(deleteButton, editButton, row);
@@ -369,44 +390,6 @@ public class ManagementBookView extends JPanel {
 
         bookTableView.revalidate();
         bookTableView.repaint();
-    }
-
-    public void deleteBook(String bookID) {
-        JTable table = bookTableView.getTable();
-        DefaultTableModel model = (DefaultTableModel) table.getModel();
-
-        // Find the row index based on the bookID in the data list
-        int rowIndex = -1;
-        for (int i = 0; i < libraryModelManage.getBooksList().size(); i++) {
-            Book book = libraryModelManage.getBooksList().get(i);
-            if (book.getBookID().equals(bookID)) {
-                rowIndex = i;
-                break;
-            }
-        }
-
-        // If rowIndex is valid, proceed with deletion
-        if (rowIndex != -1) {
-            // Stop any active editing in the table to avoid index conflicts
-            if (table.isEditing()) {
-                table.getCellEditor().stopCellEditing();
-            }
-
-            // Remove the book from both model and data list
-            libraryModelManage.getBooksList().remove(rowIndex); // Update the data list
-            model.removeRow(rowIndex); // Update the table model
-
-            // Clear any selection and reset lastSelectedRow to avoid stale indices
-            table.clearSelection();
-            lastSelectedRow = -1;
-
-            // Refresh the table model to prevent row indexing errors
-            model.fireTableDataChanged();
-
-            // Revalidate and repaint to ensure the table updates visually
-            table.revalidate();
-            table.repaint();
-        }
     }
 
 
