@@ -391,6 +391,4 @@ public class ManagementBookView extends JPanel {
         bookTableView.revalidate();
         bookTableView.repaint();
     }
-
-
 }

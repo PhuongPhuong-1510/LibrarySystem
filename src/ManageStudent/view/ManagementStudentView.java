@@ -1,6 +1,8 @@
 package ManageStudent.view;
 
 
+import MainApp.model.LibraryModelManage;
+import MainApp.model.Student;
 import ManageBook.view.BaseBookTableView;
 import ManageBook.view.BaseManagementPanel;
 import ManageBook.view.PanelEditor;
@@ -12,6 +14,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.List;
 
 public class ManagementStudentView extends JPanel {
     private JPanel managementStudents;
@@ -21,11 +24,13 @@ public class ManagementStudentView extends JPanel {
     private int lastSelectedRow = -1;
     private int count=0;
     private JButton lastSelectedEditButton;
+    public LibraryModelManage libraryModelManage;
 
 
 
 
-    public ManagementStudentView() {
+    public ManagementStudentView(LibraryModelManage libraryModelManage) {
+        this.libraryModelManage = libraryModelManage;
         this.setLayout(new BorderLayout());
         this.init();
         new StudentController(this);
@@ -114,18 +119,30 @@ public class ManagementStudentView extends JPanel {
     }
 
     private Object[][] fetchData() {
-        // Dữ liệu mẫu về sinh viên
-        Object[][] data = new Object[][] {
-                {"S001", "Nguyen Thi Lan", "female", "01/01/2000", null, "0123456789", "lannguyen@vnu.edu.vn", "Computer Science", "IT", createAction(0)},
-                {"S002", "Tran Minh Tu", "male", "02/02/1999", null, "0987654321", "minhtu@vnu.edu.vn", "Electrical Engineering", "Engineering", createAction(1)},
-                {"S003", "Pham Quyen", "female", "03/03/1998", null, "0912345678", "quyenpham@vnu.edu.vn", "Business Administration", "Business", createAction(2)},
-                {"S004", "Le Hoang Nam", "male", "04/04/1997", null, "0876543210", "hoangnam@vnu.edu.vn", "Mechanical Engineering", "Engineering", createAction(3)},
-                {"S005", "Bui Mai Linh", "female", "05/05/2001", null, "0765432109", "mailinh@vnu.edu.vn", "Law", "Law", createAction(4)}
-        };
+        List<Student> students = libraryModelManage.getStudentsList(); // Lấy danh sách sinh viên từ model
+        Object[][] data = new Object[students.size()][]; // Khởi tạo mảng 2 chiều để lưu dữ liệu
 
-        for (Object[] row : data) {
-            String gender = (String) row[2]; // Cập nhật chỉ số cột gender (cột thứ 2 sau Student ID và Name)
-            row[4] = createImageLabel(gender); // Cập nhật ảnh cho gender (cột thứ 4 sau Date of Birth)
+        for (int i = 0; i < students.size(); i++) {
+            Student student = students.get(i);
+            boolean ktGender = student.getGender();
+            String gender;// Lấy giới tính để sử dụng cho ảnh
+            if(ktGender){
+                gender = "Male";
+            }else{
+                gender = "Female";
+            }
+            data[i] = new Object[]{
+                    student.getID(),                // Student ID
+                    student.getName(),              // Name Student
+                    gender,                         // Gender
+                    student.getDateOfBirth(),       // Date of Birth
+                    createImageLabel(gender),       // Card Photo (ảnh giới tính)
+                    student.getPhone(),       // Phone Number
+                    student.getEmail(),             // Email
+                    student.getMajor(),             // Major
+                    student.getBranch(),            // Branch
+                    createAction(i)                 // Action buttons
+            };
         }
 
         return data;

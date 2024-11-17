@@ -216,7 +216,7 @@ public class SignupView extends JPanel {
         String contactNumber = txtContactNumber.getText().trim();
 
         // Trả về một đối tượng Student
-        return new Student(id, fullName, userName, password, contactNumber);
+        return new Student(id, fullName, userName, password, contactNumber, true, "", "", "", "");
     }
 
 }
