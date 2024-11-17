@@ -24,13 +24,13 @@ public class AddBook extends JFrame {
     private JTextField authorText;
     private JTextField languageText;
     private JTextField totalText;
-    private JTextField currentText;
+    //private JTextField currentText;
     private JTextField positionText;
 
-    public AddBook() {
+    public AddBook(LibraryModelManage libraryModelManage) {
         this.init();
         //this.addBookController= new AddBookController(this);
-        this.libraryModelManage = new LibraryModelManage();
+        this.libraryModelManage = libraryModelManage;
     }
 
     private void init() {
@@ -98,14 +98,14 @@ public class AddBook extends JFrame {
         totalText = setCustomTextField();
         JPanel totalPanel = createLabeledTextFieldPanel(new JLabel("Tatal: "), totalText);
 
-        currentText = setCustomTextField();
-        JPanel currentPanel = createLabeledTextFieldPanel(new JLabel("Current: "), currentText);
+        //currentText = setCustomTextField();
+        //JPanel currentPanel = createLabeledTextFieldPanel(new JLabel("Current: "), currentText);
 
         positionText = setCustomTextField();
         JPanel positionPanel = createLabeledTextFieldPanel(new JLabel("Position: "), positionText);
 
         quantityPanel.add(totalPanel);
-        quantityPanel.add(currentPanel);
+        //quantityPanel.add(currentPanel);
         quantityPanel.add(positionPanel);
 
         return quantityPanel;
@@ -214,12 +214,14 @@ public class AddBook extends JFrame {
         String author = this.authorText.getText()+"";
         String language = this.languageText.getText()+"";
         int total = Integer.valueOf(totalText.getText()+"");
-        String current = this.currentText.getText()+"";
+        String current = "Still";
         String position = this.positionText.getText()+"";
         Book book = new Book(id, title,imagePath, author,"Programing", language, total, current, position);
         libraryModelManage.addBookToDatabase(book);
         return book;
     }
+
+
 
     public JButton getUploadCoverButton() {
         return uploadCoverButton;
@@ -236,8 +238,8 @@ public class AddBook extends JFrame {
     public String getImagePath() {
         return imagePath;
     }
-    public static void main( String args[])
-    {
-        new AddBook();
-    }
+//    public static void main( String args[])
+//    {
+//        new AddBook();
+//    }
 }

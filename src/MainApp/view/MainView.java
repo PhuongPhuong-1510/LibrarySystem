@@ -3,6 +3,7 @@ package MainApp.view;
 import HomePage.view.HomePageView;
 import LoginPage.view.LoginView;
 import MainApp.controller.MainController;
+import MainApp.model.LibraryModelManage;
 import SignupPage.view.SignupView;
 import UserMain.view.UserView;
 
@@ -15,6 +16,7 @@ public class MainView extends JFrame {
     private JButton closeButton, minimizeButton;
     private JLayeredPane layeredPane;
     private MainController mainController;
+    public LibraryModelManage libraryModelManage;
 
 
     public MainView() {
@@ -22,6 +24,8 @@ public class MainView extends JFrame {
         setupLayeredPane();
         setupButtons();
         setupCardLayout();
+
+        libraryModelManage = new LibraryModelManage();
 
         mainController = new MainController(this);
         cardLayout.show(cardPanel, "Login"); // Show the login view initially

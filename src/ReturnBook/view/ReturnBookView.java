@@ -1,6 +1,10 @@
 package ReturnBook.view;
 
 import LoginPage.view.OvalButton;
+import MainApp.model.Book;
+import MainApp.model.Issue;
+import MainApp.model.LibraryModelManage;
+import MainApp.model.Student;
 import ReturnBook.controller.ReturnBookController;
 
 import javax.swing.*;
@@ -18,12 +22,16 @@ public class ReturnBookView extends JPanel {
     private JButton findButton;
     private JButton returnButton;
     private JTextField studentIdTitleFiled;
+    private LibraryModelManage libraryModelManage;
+    private JTextField bookIdField;
+    private JTextField studentIdField;
 
-    public ReturnBookView() {
+    public ReturnBookView(LibraryModelManage libraryModelManage) {
         this.setupMainPanel();
         this.add(layeredPane,BorderLayout.CENTER);
         this.setVisible(true);
         new ReturnBookController(this);
+        this.libraryModelManage = libraryModelManage;
     }
 
     private void setupMainPanel() {
@@ -73,39 +81,46 @@ public class ReturnBookView extends JPanel {
         bookPanel.add(titlePanel);
 
         Color labelColor = new Color(54, 54, 139);
-        bookPanel.add(createLabelAtPosition("Issue Id: ", 25, 250, 100, 30, labelColor));
-        issueIdTitleField = createTextField(150, 250, 200, 30, false);
+        int labelX = 25;  // X position for labels
+        int fieldX = 150; // X position for text fields (to align with labels)
+        int labelWidth = 100;
+        int fieldWidth = 200;
+        int fieldHeight = 30;
+        int yOffset = 250;  // Starting y-position for the first label and text field
+        int ySpacing = 40;  // Vertical spacing between each label and text field
+
+        // Adding labels and aligned text fields for each field
+        bookPanel.add(createLabelAtPosition("Issue Id: ", labelX, yOffset, labelWidth, fieldHeight, labelColor));
+        issueIdTitleField = createTextField(fieldX, yOffset, fieldWidth, fieldHeight, false);
         bookPanel.add(issueIdTitleField);
 
-        bookPanel.add(createLabelAtPosition("Book Id: ", 25, 290, 200, 30, labelColor));
-        bookIdTitleFiled = createTextField(150, 280, 200, 30, false);
+        bookPanel.add(createLabelAtPosition("Book Id: ", labelX, yOffset + ySpacing, labelWidth, fieldHeight, labelColor));
+        bookIdTitleFiled = createTextField(fieldX, yOffset + ySpacing, fieldWidth, fieldHeight, false);
         bookPanel.add(bookIdTitleFiled);
 
-        bookPanel.add(createLabelAtPosition("Book Name: ", 25, 330, 200, 30, labelColor));
-        bookNameTitleFiled = createTextField(150, 310, 200, 30, false);
+        bookPanel.add(createLabelAtPosition("Book Name: ", labelX, yOffset + 2 * ySpacing, labelWidth, fieldHeight, labelColor));
+        bookNameTitleFiled = createTextField(fieldX, yOffset + 2 * ySpacing, fieldWidth, fieldHeight, false);
         bookPanel.add(bookNameTitleFiled);
 
-        bookPanel.add(createLabelAtPosition("Student Id: ", 25, 370, 200, 30, labelColor));
-        studentIdTitleFiled= createTextField(150, 340, 200, 30, false);
+        bookPanel.add(createLabelAtPosition("Student Id: ", labelX, yOffset + 3 * ySpacing, labelWidth, fieldHeight, labelColor));
+        studentIdTitleFiled = createTextField(fieldX, yOffset + 3 * ySpacing, fieldWidth, fieldHeight, false);
         bookPanel.add(studentIdTitleFiled);
 
-        bookPanel.add(createLabelAtPosition("Student Name: ", 25, 410, 200, 30, labelColor));
-        studentNameTitleFiled = createTextField(150, 370, 200, 30, false);
+        bookPanel.add(createLabelAtPosition("Student Name: ", labelX, yOffset + 4 * ySpacing, labelWidth, fieldHeight, labelColor));
+        studentNameTitleFiled = createTextField(fieldX, yOffset + 4 * ySpacing, fieldWidth, fieldHeight, false);
         bookPanel.add(studentNameTitleFiled);
 
-
-        bookPanel.add(createLabelAtPosition("Issue Date: ", 25, 450, 200, 30, labelColor));
-        issueDateTitleFiled = createTextField(150, 370, 200, 30, false);
+        bookPanel.add(createLabelAtPosition("Issue Date: ", labelX, yOffset + 5 * ySpacing, labelWidth, fieldHeight, labelColor));
+        issueDateTitleFiled = createTextField(fieldX, yOffset + 5 * ySpacing, fieldWidth, fieldHeight, false);
         bookPanel.add(issueDateTitleFiled);
 
-
-        bookPanel.add(createLabelAtPosition("Due Date: ", 25, 490, 200, 30, labelColor));
-        dueDateTitleFiled = createTextField(150, 370, 200, 30, false);
+        bookPanel.add(createLabelAtPosition("Due Date: ", labelX, yOffset + 6 * ySpacing, labelWidth, fieldHeight, labelColor));
+        dueDateTitleFiled = createTextField(fieldX, yOffset + 6 * ySpacing, fieldWidth, fieldHeight, false);
         bookPanel.add(dueDateTitleFiled);
-
 
         return bookPanel;
     }
+
 
     private JPanel createIssuePanel() {
         JPanel issuePanel = initializeIssuePanel();
@@ -136,11 +151,11 @@ public class ReturnBookView extends JPanel {
 
     private void addIssueDetailsFields(JPanel issuePanel, Color labelColor) {
         issuePanel.add(createLabelAtPosition("Book Id: ", 25, 260, 200, 30, labelColor));
-        JTextField bookIdField = createTextField(150, 250, 100, 30, true);
+        bookIdField = createTextField(150, 250, 100, 30, true);
         issuePanel.add(bookIdField);
 
         issuePanel.add(createLabelAtPosition("Student Id: ", 25, 300, 200, 30, labelColor));
-        JTextField studentIdField = createTextField(150, 290, 100, 30, true);
+        studentIdField = createTextField(150, 290, 100, 30, true);
         issuePanel.add(studentIdField);
     }
 
@@ -221,6 +236,53 @@ public class ReturnBookView extends JPanel {
         imagePanel.add(titleContainer, BorderLayout.CENTER);
 
         return imagePanel;
+    }
+
+    public void updateIssue(){
+        String bookID = bookIdField.getText()+"";
+        String studentID = studentIdField.getText()+"";
+        Issue issue = libraryModelManage.searchIssueByBookStudent(bookID, studentID);
+
+        if (issue != null) {
+            // Populate text fields with Issue details
+            issueIdTitleField.setText(issue.getIssueID());
+            bookIdTitleFiled.setText(issue.getIssueBookID());
+            Book book = libraryModelManage.searchBookByID(issue.getIssueBookID());
+            String bookName = book.getBookName();
+            bookNameTitleFiled.setText(bookName);
+            Student student = libraryModelManage.searchStudentByID(issue.getIssueStudentID());
+            String studentName = student.getName();
+            studentIdTitleFiled.setText(issue.getIssueStudentID());
+            studentNameTitleFiled.setText(studentName);
+            issueDateTitleFiled.setText(issue.getIssueDate().toString());
+            dueDateTitleFiled.setText(issue.getDueDate().toString());
+        } else {
+
+            issueIdTitleField.setText("");
+            bookIdTitleFiled.setText("");
+            bookNameTitleFiled.setText("");
+            studentIdTitleFiled.setText("");
+            studentNameTitleFiled.setText("");
+            issueDateTitleFiled.setText("");
+            dueDateTitleFiled.setText("");
+
+            JOptionPane.showMessageDialog(this, "No issue found for the given Book ID and Student ID.", "Issue Not Found", JOptionPane.WARNING_MESSAGE);
+        }
+    }
+
+    public void returnBook() {
+        String bookID = bookIdField.getText()+"";
+        String studentID = studentIdField.getText()+"";
+        Issue issue = libraryModelManage.searchIssueByBookStudent(bookID, studentID);
+        if (issue != null && !issue.getStatus().equals("Returned")) {
+            issue.setStatus("Returned");
+            libraryModelManage.editIssueInDatabase(issue);
+            Book book = libraryModelManage.searchBookByID(issue.getIssueBookID());
+            book.setCurent("Still");
+            libraryModelManage.editBookInDatabase(book);
+        }else{
+            JOptionPane.showMessageDialog(this, "Can't not return.", "This status is Return", JOptionPane.WARNING_MESSAGE);
+        }
     }
 
     public JLayeredPane getLayeredPane() {

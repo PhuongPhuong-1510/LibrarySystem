@@ -1,5 +1,6 @@
 package SignupPage.controller;
 
+import MainApp.model.LibraryModelManage;
 import SignupPage.view.SignupView;
 import SignupPage.model.SignupModel;
 
@@ -32,6 +33,7 @@ public class SignupController implements ActionListener, MouseListener {
                 break;
             case "SIGNUP":
                 handleSignup();
+                signupView.mainView.libraryModelManage.addStudentToDatabase(signupView.getStudentFromPanel());
                 break;
         }
     }
@@ -55,6 +57,7 @@ public class SignupController implements ActionListener, MouseListener {
         } else {
             showSuccessMessage();
             signupView.getMainView().showCard("Login");
+
         }
     }
 

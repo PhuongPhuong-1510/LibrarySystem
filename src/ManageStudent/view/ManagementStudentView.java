@@ -233,23 +233,23 @@ public class ManagementStudentView extends JPanel {
     }
 
     private void toggleDeleteButton(JButton deleteButton,JButton editButton, int row) {
-        System.out.println("DeleteStudent button clicked at row: " + row);
-        count=0;
-        studentTableView.setSelectedRow(row);
-        editButton.setIcon(new ImageIcon(getClass().getResource("/ManageStudent/view/icon/studentEdit.png")));
-        int confirm = JOptionPane.showConfirmDialog(
-                null,
-                "Are you sure you want to delete this student?",
-                "Delete Confirmation",
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.QUESTION_MESSAGE
-        );
-
-        if (confirm == JOptionPane.YES_OPTION) {
-            System.out.println("Student deleted at row: " + row);
-        } else {
-            System.out.println("Student deletion canceled.");
-        }
+//        System.out.println("DeleteStudent button clicked at row: " + row);
+//        count=0;
+//        studentTableView.setSelectedRow(row);
+//        editButton.setIcon(new ImageIcon(getClass().getResource("/ManageStudent/view/icon/studentEdit.png")));
+//        int confirm = JOptionPane.showConfirmDialog(
+//                null,
+//                "Are you sure you want to delete this student?",
+//                "Delete Confirmation",
+//                JOptionPane.YES_NO_OPTION,
+//                JOptionPane.QUESTION_MESSAGE
+//        );
+//
+//        if (confirm == JOptionPane.YES_OPTION) {
+//            System.out.println("Student deleted at row: " + row);
+//        } else {
+//            System.out.println("Student deletion canceled.");
+//        }
 
     }
 

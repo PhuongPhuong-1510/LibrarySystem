@@ -26,7 +26,7 @@ public class ManagementBookController implements ActionListener, AddBookListener
 
         if (e.getSource()==managementBookView.getAddBookButton()) {
             System.out.println("Add Book button clicked!");
-            addBook = new AddBook();
+            addBook = new AddBook(managementBookView.libraryModelManage);
             AddBookController addBookController = new AddBookController(addBook, this);
             addBook.setVisible(true);
         }

@@ -2,6 +2,8 @@ package SignupPage.view;
 
 import LoginPage.view.OvalButton;
 import LoginPage.view.PlaceholderPasswordField;
+import MainApp.model.LibraryModelManage;
+import MainApp.model.Student;
 import MainApp.view.MainView;
 import SignupPage.model.SignupModel;
 
@@ -18,7 +20,7 @@ public class SignupView extends JPanel {
     private JTextField txtContactNumber;
     private JButton btnLogin;
     private JButton btnSignUp;
-    private MainView mainView;
+    public MainView mainView;
 
     private JLabel lblEmailError;
     private JLabel lblPasswordError;
@@ -204,4 +206,17 @@ public class SignupView extends JPanel {
             label.setToolTipText(errorMessage);
         }
     }
+
+    public Student getStudentFromPanel() {
+        // Lấy thông tin từ các trường trong panel
+        String id = mainView.libraryModelManage.creatStudentID();
+        String fullName = txtFullName.getText().trim();
+        String userName = txtUserName.getText().trim();
+        String password = new String(txtPassWord.getPassword()).trim();
+        String contactNumber = txtContactNumber.getText().trim();
+
+        // Trả về một đối tượng Student
+        return new Student(id, fullName, userName, password, contactNumber);
+    }
+
 }

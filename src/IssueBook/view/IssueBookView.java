@@ -2,9 +2,14 @@ package IssueBook.view;
 
 import IssueBook.controller.IssueBookController;
 import LoginPage.view.OvalButton;
+import MainApp.model.Book;
+import MainApp.model.Issue;
+import MainApp.model.LibraryModelManage;
+import MainApp.model.Student;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 
 public class IssueBookView extends JPanel {
     private JTextField bookTitleField;
@@ -22,14 +27,20 @@ public class IssueBookView extends JPanel {
     private JTextField dueDateField;
     private JButton issueButton;
     private JButton clearButton;
+    private JTextField bookIdField;
+    private JTextField studentIdField;
+    private LibraryModelManage libraryModelManage;
 
-    public IssueBookView() {
+
+    public IssueBookView(LibraryModelManage libraryModelManage) {
         setupMainPanel();
         add(createBookPanel());
         add(createStudentPanel());
         add(createIssuePanel());
         setVisible(true);
         new IssueBookController(this);
+        this.libraryModelManage = libraryModelManage;
+
     }
 
     private void setupMainPanel() {
@@ -144,11 +155,11 @@ public class IssueBookView extends JPanel {
 
     private void addIssueDetailsFields(JPanel issuePanel, Color labelColor) {
         issuePanel.add(createLabelAtPosition("Book Id: ", 25, 250, 200, 30, labelColor));
-        JTextField bookIdField = createTextField(150, 250, 100, 30, true);
+        bookIdField = createTextField(150, 250, 100, 30, true);
         issuePanel.add(bookIdField);
 
         issuePanel.add(createLabelAtPosition("Student Id: ", 25, 290, 200, 30, labelColor));
-        JTextField studentIdField = createTextField(150, 290, 100, 30, true);
+        studentIdField = createTextField(150, 290, 100, 30, true);
         issuePanel.add(studentIdField);
     }
 
@@ -277,6 +288,64 @@ public class IssueBookView extends JPanel {
 
         return imagePanel;
     }
+
+    public void updatePanel(){
+        //ArrayList<Issue> issueLisst = libraryModelManage.getIssuesList();
+         String bookID = this.bookIdField.getText()+"";
+         String studentID = this.studentIdField.getText()+"";
+         String issueDate = this.issueDateField.getText()+"";
+         String dueDate = this.dueDateField.getText()+"";
+         String status = "issued";
+
+         if(libraryModelManage.checkStudentAndBookEmpty(bookID, studentID)){
+             String issueId = this.libraryModelManage.creatIssueID();
+             Issue issue = new Issue(issueId, bookID, studentID, issueDate, dueDate, status);
+             this.libraryModelManage.addIssueToDatabase(issue);
+
+             Book book = libraryModelManage.searchBookByID(bookID);
+             Student student = libraryModelManage.searchStudentByID(studentID);
+
+             if (book != null) {
+                 // Populate book fields
+                 bookTitleField.setText(book.getBookName());
+                 authorField.setText(book.getAuthor());
+                 languageField.setText(book.getLanguage());
+                 totalField.setText(book.getTotal()+"");
+             }
+
+             if (student != null) {
+                 // Populate student fields
+                 studentNameField.setText(student.getName());
+                 contactPhoneField.setText(student.getPhone());
+                 contactEmailField.setText(student.getEmail());
+                 majorField.setText("Student");
+                 branchField.setText("Student");
+             }
+
+         }
+    }
+
+    public void removeData() {
+        // Xóa thông tin sách
+        bookIdField.setText("");
+        bookTitleField.setText("");
+        authorField.setText("");
+        languageField.setText("");
+        totalField.setText("");
+
+        // Xóa thông tin sinh viên
+        studentIdField.setText("");
+        studentNameField.setText("");
+        contactPhoneField.setText("");
+        contactEmailField.setText("");
+        majorField.setText("");
+        branchField.setText("");
+
+        // Xóa thông tin mượn sách
+        issueDateField.setText("");
+        dueDateField.setText("");
+    }
+
 
     public JButton getDueDateButton() {
         return dueDateButton;

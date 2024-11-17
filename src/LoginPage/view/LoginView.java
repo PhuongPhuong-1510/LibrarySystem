@@ -21,14 +21,13 @@ public class LoginView extends JPanel {
     private JButton btnLogin;
     private JButton btnSignUp;
     private JButton btnForgot;
-    private LibraryModelManage libraryModelManage;
+    //private LibraryModelManage libraryModelManage;
 
     public LoginView(MainView mainView) {
         this.mainView = mainView;
         this.loginModel = new LoginModel();
         initializeUIComponents();
         new LoginController(this);
-        this.libraryModelManage = new LibraryModelManage();
     }
 
     private void initializeUIComponents() {
@@ -182,15 +181,17 @@ public class LoginView extends JPanel {
         String username = txtUserName.getText();
         String password = txtPassWord.getText();
         if(!username.equals("") && !password.equals("")) {
-            ArrayList<Admin> admins = libraryModelManage.getAdminsList();
+            ArrayList<Admin> admins = mainView.libraryModelManage.getAdminsList();
             for (Admin admin : admins) {
                 if (admin.getEmail().equals(username) && admin.getPassword().equals(password)) {
+                    loginModel.setKtUser(true);
                     return true;
                 }
             }
-            ArrayList<Student> students = libraryModelManage.getStudentsList();
+            ArrayList<Student> students = mainView.libraryModelManage.getStudentsList();
             for (Student student : students) {
                 if (student.getEmail().equals(username) && student.getPassword().equals(password)) {
+                    loginModel.setKtUser(false);
                     return true;
                 }
             }

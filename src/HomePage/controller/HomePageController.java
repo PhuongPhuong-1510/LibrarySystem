@@ -2,6 +2,7 @@ package HomePage.controller;
 
 import HomePage.view.HomePageView;
 import IssueBook.view.IssueBookView;
+import MainApp.model.LibraryModelManage;
 import ManageBook.view.ManagementBookView;
 import ManageStudent.view.ManagementStudentView;
 import ReturnBook.view.ReturnBookView;
@@ -14,6 +15,7 @@ import java.awt.event.*;
 public class HomePageController implements ActionListener, MouseListener {
     private final HomePageView homePageView;
     private JMenu selectedMenu = null;
+
 
     public HomePageController(HomePageView homePageView) {
         this.homePageView = homePageView;
@@ -77,7 +79,8 @@ public class HomePageController implements ActionListener, MouseListener {
                 if(menu==homePageView.getjMenuMGMTBooks())
                 {
                     System.out.println(("MenuMGMTBooks clicked"));
-                    ManagementBookView managementBookView = new ManagementBookView();
+                    LibraryModelManage libraryModelManage = new LibraryModelManage();
+                    ManagementBookView managementBookView = new ManagementBookView(libraryModelManage);
                     homePageView.toggleMenuBar();
                     managementBookView.setPreferredSize(new Dimension(homePageView.getMainHomePanel().getWidth(),homePageView.getMainHomePanel().getHeight()));
                     homePageView.setMainHomePanel(managementBookView);
@@ -93,16 +96,18 @@ public class HomePageController implements ActionListener, MouseListener {
 
                 if(menu==homePageView.getjMenuIssueBook())
                 {
+                    LibraryModelManage libraryModelManage = new LibraryModelManage();
                     System.out.println(("Issue Button clicked"));
-                    IssueBookView issueBookView = new IssueBookView();
+                    IssueBookView issueBookView = new IssueBookView(libraryModelManage);
                     homePageView.toggleMenuBar();
                     issueBookView.setPreferredSize(new Dimension(homePageView.getMainHomePanel().getWidth(),homePageView.getMainHomePanel().getHeight()));
                     homePageView.setMainHomePanel(issueBookView);
                 }
                 if(menu==homePageView.getjMenuReturnBook())
                 {
+                    LibraryModelManage libraryModelManage = new LibraryModelManage();
                     System.out.println(("Return Button clicked"));
-                    ReturnBookView returnBookView = new ReturnBookView();
+                    ReturnBookView returnBookView = new ReturnBookView(libraryModelManage);
                     homePageView.toggleMenuBar();
                     returnBookView.setPreferredSize(new Dimension(homePageView.getMainHomePanel().getWidth(),homePageView.getMainHomePanel().getHeight()));
                     homePageView.setMainHomePanel(returnBookView);

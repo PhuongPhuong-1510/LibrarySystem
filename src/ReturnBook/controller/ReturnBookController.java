@@ -32,11 +32,10 @@ public class ReturnBookController implements ActionListener, MouseListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == returnBookView.getReturnButton()) {
-
+            returnBookView.returnBook();
         }
-
         if (e.getSource() == returnBookView.getFindButton()) {
-
+             returnBookView.updateIssue();
         }
     }
 

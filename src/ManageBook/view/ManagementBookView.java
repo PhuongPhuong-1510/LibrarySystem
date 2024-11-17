@@ -17,7 +17,7 @@ import java.util.ArrayList;
 public class ManagementBookView extends JPanel {
     private JPanel managementBooks;
     private JButton addBookButton;
-    private LibraryModelManage libraryModelManage;
+    public LibraryModelManage libraryModelManage;
     private BaseBookTableView bookTableView;
     private BaseManagementPanel managementPanel;
     private int count=0;
@@ -27,8 +27,8 @@ public class ManagementBookView extends JPanel {
 
 
 
-    public ManagementBookView() {
-        this.libraryModelManage = new LibraryModelManage();
+    public ManagementBookView(LibraryModelManage libraryModelManage) {
+        this.libraryModelManage = libraryModelManage;
         this.setLayout(new BorderLayout());
         this.init();
         new ManagementBookController(this);
@@ -167,7 +167,6 @@ public class ManagementBookView extends JPanel {
         JPanel actionPanel = new JPanel(new GridBagLayout());
         actionPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
-        // Tạo các nút chỉnh sửa và xóa cho sách
         JButton editButton = createActionButton("/ManageBook/icon/bookEdit.png", new Color(255, 240, 245));
         JButton deleteButton = createActionButton("/ManageBook/icon/bookDelete.png", new Color(255, 240, 245));
         JButton imageButton = createActionButton("/ManageBook/icon/uploadImage.png", new Color(255, 240, 245));
@@ -177,15 +176,46 @@ public class ManagementBookView extends JPanel {
         deleteButton.setToolTipText("Delete Book");
         imageButton.setToolTipText("Upload Cover");
 
-        // Xử lý sự kiện khi nhấn nút chỉnh sửa
         editButton.addActionListener(e -> {
             toggleEditButtonIcon(actionPanel,editButton,deleteButton,imageButton, row);
         });
 
         deleteButton.addActionListener(e -> {
-            toggleDeleteButton(deleteButton, editButton, row);
-        });
+            int confirm = JOptionPane.showConfirmDialog(
+                    this,
+                    "Are you sure you want to delete this book?",
+                    "Delete Confirmation",
+                    JOptionPane.YES_NO_OPTION
+            );
 
+            if (confirm == JOptionPane.YES_OPTION) {
+                JTable table = bookTableView.getTable();
+                DefaultTableModel model = (DefaultTableModel) table.getModel();
+
+                // Dừng chỉnh sửa nếu đang có ô nào đang được chỉnh sửa
+                if (table.isEditing()) {
+                    table.getCellEditor().stopCellEditing();
+                }
+
+                // Kiểm tra chỉ số dòng hợp lệ
+                if (row >= 0 && row < model.getRowCount()) {
+                    // Xóa dòng trong model
+                    model.removeRow(row);
+
+                    // Xóa sách khỏi dữ liệu
+                    Book bookToRemove = libraryModelManage.getBooksList().get(row);
+                    libraryModelManage.deleteBookFromDatabase(bookToRemove.getBookID());
+
+                    // Làm mới bảng sau khi xóa
+                    updateTable(libraryModelManage.getBooksList());
+                }
+
+                // Hủy chọn dòng để tránh lỗi khi không còn dòng nào
+                if (model.getRowCount() == 0) {
+                    table.clearSelection();
+                }
+            }
+        });
 
         imageButton.addActionListener(e -> {
             toggleImageButton(deleteButton, editButton, row);
@@ -258,30 +288,6 @@ public class ManagementBookView extends JPanel {
         bookTableView.setSelectedRow(row);
         editButton.repaint();
     }
-
-    private void toggleDeleteButton(JButton deleteButton, JButton editButton, int row) {
-        System.out.println("Delete Book button clicked at row: " + row);
-        bookTableView.setSelectedRow(row);
-        editButton.setIcon(new ImageIcon(getClass().getResource("/ManageBook/icon/bookEdit.png")));
-        int confirm = JOptionPane.showConfirmDialog(
-                null,
-                "Are you sure you want to delete this book?",
-                "Delete Confirmation",
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.QUESTION_MESSAGE
-        );
-
-        if (confirm == JOptionPane.YES_OPTION) {
-            String bookID = bookTableView.getTable().getModel().getValueAt(row, 0).toString();
-            deleteBookByID(bookID);
-            lastSelectedRow = -1;
-            libraryModelManage.deleteBookFromDatabase(bookID); // Call to delete from database if implemented
-            System.out.println("Book deleted at row: " + row);
-        } else {
-            System.out.println("Book deletion canceled.");
-        }
-    }
-
 
     private void toggleImageButton(JButton deleteButton, JButton editButton, int row) {
         chooseImage(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
@@ -362,20 +368,6 @@ public class ManagementBookView extends JPanel {
     }
 
 
-    private void deleteBookByID(String bookID) {
-        DefaultTableModel model = (DefaultTableModel) bookTableView.getTable().getModel();
-        for (int i = 0; i < model.getRowCount(); i++) {
-            if (model.getValueAt(i, 0).toString().equals(bookID)) {
-                model.removeRow(i);
-                bookTableView.revalidate();
-                bookTableView.repaint();
-                System.out.println("Book with ID " + bookID + " deleted from table.");
-                break;
-            }
-        }
-        lastSelectedRow = -1;
-    }
-
     public void updateTable(ArrayList<Book> books) {
         DefaultTableModel model = (DefaultTableModel) bookTableView.getTable().getModel();
         model.setRowCount(0);  // Xóa toàn bộ dữ liệu cũ
@@ -399,7 +391,6 @@ public class ManagementBookView extends JPanel {
         bookTableView.revalidate();
         bookTableView.repaint();
     }
-
 
 
 }

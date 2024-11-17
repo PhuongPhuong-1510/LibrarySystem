@@ -104,7 +104,14 @@ public class IssueBookController implements ActionListener, MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-
+        if (e.getSource() == issueBookView.getIssueButton()) {
+            issueBookView.updatePanel(); // Gọi phương thức để lưu thông tin
+            //JOptionPane.showMessageDialog(issueBookView, "Book issued successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+        } else if (e.getSource() == issueBookView.getClearButton()) {
+            issueBookView.removeData();
+//            clearAllFields(); // Gọi phương thức xóa dữ liệu các trường
+            JOptionPane.showMessageDialog(issueBookView, "All fields cleared.", "Info", JOptionPane.INFORMATION_MESSAGE);
+        }
     }
 
     @Override
