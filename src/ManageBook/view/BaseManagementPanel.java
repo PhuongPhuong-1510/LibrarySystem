@@ -2,6 +2,8 @@ package ManageBook.view;
 
 import MainApp.model.Book;
 import MainApp.model.LibraryModelManage;
+import MainApp.model.Student;
+import ManageStudent.view.ManagementStudentView;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -17,35 +19,39 @@ public abstract class BaseManagementPanel extends JPanel {
     private String placeholder;
     private String iconPath;
     private String text;
-    //private LibraryModelManage libraryModelManage;
     private ManagementBookView managementBookView;
+    private ManagementStudentView managementStudentView;
     private ArrayList<Book> filteredBooks = null;
+    private ArrayList<Student> filteredStudents = null;
     private Timer typingTimer;
+    private boolean isBookView;
 
-    public BaseManagementPanel(String placeholder, String iconPath, String text, ManagementBookView managementBookView) {
-        //this.libraryModelManage = new LibraryModelManage();
+    public BaseManagementPanel(String placeholder, String iconPath, String text, ManagementBookView managementBookView, boolean isBookView) {
         this.text = text;
         this.placeholder = placeholder;
         this.iconPath = iconPath;
         this.managementBookView = managementBookView;
-        this.northPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        northPanel.setBackground(new Color(150, 180, 255));
-        northPanel.setBorder(null);
+        this.isBookView = isBookView;
+        initializePanel();
+    }
 
-        JPanel searchField = createSearchPanel();
-        JButton addBookButton = createAddBookButton();
-
-        northPanel.add(searchField);
-        northPanel.add(addBookButton);
-
-        this.setLayout(new BorderLayout());
-        this.add(northPanel, BorderLayout.NORTH);
+    public BaseManagementPanel(String placeholder, String iconPath, String text, ManagementStudentView managementStudentView, boolean isBookView) {
+        this.text = text;
+        this.placeholder = placeholder;
+        this.iconPath = iconPath;
+        this.managementStudentView = managementStudentView;
+        this.isBookView = isBookView;
+        initializePanel();
     }
 
     public BaseManagementPanel(String placeholder, String iconPath, String text) {
         this.text = text;
         this.placeholder = placeholder;
         this.iconPath = iconPath;
+        initializePanel();
+    }
+
+    private void initializePanel() {
         this.northPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         northPanel.setBackground(new Color(150, 180, 255));
         northPanel.setBorder(null);
@@ -122,17 +128,31 @@ public abstract class BaseManagementPanel extends JPanel {
     }
 
     private void filterTable(String query) {
-        if (query.isEmpty()) {
-            filteredBooks = null;
-            managementBookView.updateTable(managementBookView.libraryModelManage.getBooksList());
+        if (isBookView) {
+            if (query.isEmpty()) {
+                filteredBooks = null;
+                managementBookView.updateTable(managementBookView.libraryModelManage.getBooksList());
+            } else {
+                filteredBooks = managementBookView.libraryModelManage.searchBooks(query);
+                managementBookView.updateTable(filteredBooks);
+            }
         } else {
-            filteredBooks = managementBookView.libraryModelManage.searchBooks(query);
-            managementBookView.updateTable(filteredBooks);
+            if (query.isEmpty()) {
+                filteredStudents = null;
+                managementStudentView.updateStudentTable(managementStudentView.libraryModelManage.getStudentsList());
+            } else {
+                filteredStudents = managementStudentView.libraryModelManage.searchStudents(query);
+                managementStudentView.updateStudentTable(filteredStudents);
+            }
         }
     }
 
     public void restoreTable() {
-        managementBookView.updateTable(managementBookView.libraryModelManage.getBooksList());
+        if (isBookView) {
+            managementBookView.updateTable(managementBookView.libraryModelManage.getBooksList());
+        } else {
+            managementStudentView.updateStudentTable(managementStudentView.libraryModelManage.getStudentsList());
+        }
     }
 
     protected JButton createAddBookButton() {

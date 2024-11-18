@@ -87,8 +87,9 @@ public class HomePageController implements ActionListener, MouseListener {
                 }
                 if(menu==homePageView.getjMenuMGMTSutudents())
                 {
+                    LibraryModelManage libraryModelManage = new LibraryModelManage();
                     System.out.println(("MenuStudent clicked"));
-                    ManagementStudentView managementStudentView = new ManagementStudentView();
+                    ManagementStudentView managementStudentView = new ManagementStudentView(libraryModelManage);
                     homePageView.toggleMenuBar();
                     managementStudentView.setPreferredSize(new Dimension(homePageView.getMainHomePanel().getWidth(),homePageView.getMainHomePanel().getHeight()));
                     homePageView.setMainHomePanel(managementStudentView);

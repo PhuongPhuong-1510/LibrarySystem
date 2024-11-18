@@ -7,6 +7,8 @@ import java.awt.*;
 import java.util.Objects;
 
 import LoginPage.view.PlaceholderPasswordField;
+import MainApp.model.LibraryModelManage;
+import MainApp.model.Student;
 import ManageStudent.controller.AddStudentController;
 
 public class AddStudentView extends JFrame {
@@ -19,10 +21,12 @@ public class AddStudentView extends JFrame {
     private JComboBox<String> genderComboBox;
     private JButton btnSubmit;
     private JButton btnCancel;
+    public LibraryModelManage libraryModelManage;
 
-    public AddStudentView() {
+    public AddStudentView(LibraryModelManage libraryModelManage) {
         initializeUIComponents();
-        new AddStudentController(this);
+        //new AddStudentController(this);
+        this.libraryModelManage = libraryModelManage;
     }
 
     private void initializeUIComponents() {
@@ -169,6 +173,66 @@ public class AddStudentView extends JFrame {
         return button;
     }
 
+    public Student getStudentFromPanel() {
+
+        String id = this.libraryModelManage.createStudentID();
+        String name = this.txtStudentName.getText().trim();
+        boolean gender = "Male".equals(this.genderComboBox.getSelectedItem()); // True nếu là Male
+        String dateOfBirth = this.txtDate.getText().trim();
+        String phone = this.txtPhone.getText().trim();
+        String email = this.txtEmail.getText().trim();
+        String branch = this.txtBranch.getText().trim();
+        String major = this.txtMajor.getText().trim();
+
+        // Tạo mật khẩu từ ID và 3 số cuối của số điện thoại
+        String password = id; // Mặc định là ID
+        if (phone.length() >= 3) {
+            String lastThreeDigits = phone.substring(phone.length() - 3); // Lấy 3 số cuối
+            password += lastThreeDigits; // Gộp ID với 3 số cuối
+        }
+
+        String cardPhoto = gender
+                ? "/ManageStudent/view/icon/boyicon.png"
+                : "/ManageStudent/view/icon/girlicon.png";
+
+        // Tạo đối tượng Student với mật khẩu
+        Student student = new Student(id, name, email, password, phone, gender, cardPhoto, dateOfBirth, major, branch);
+        libraryModelManage.addStudentToDatabase(student);
+
+        return student;
+    }
+
+
+    public boolean validateInputFields() {
+        if (txtStudentName.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Student Name is required.", "Missing Information", JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        if (txtDate.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Date of Birth is required.", "Missing Information", JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        if (txtPhone.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Phone Number is required.", "Missing Information", JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        if (txtEmail.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Email is required.", "Missing Information", JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        if (txtBranch.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Branch is required.", "Missing Information", JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        if (txtMajor.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Major is required.", "Missing Information", JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        return true;
+    }
+
+
+
     public JButton getSubmitButton() {
         return btnSubmit;
     }
@@ -176,6 +240,4 @@ public class AddStudentView extends JFrame {
     public JButton getCancelButton() {
         return btnCancel;
     }
-
-
 }
