@@ -6,7 +6,7 @@ import ManageStudent.view.ManagementStudentView;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class StudentController implements ActionListener {
+public class StudentController implements ActionListener, AddStudentListener {
     private ManagementStudentView managementStudentView;
     private AddStudentView addStudentView;
 
@@ -26,7 +26,8 @@ public class StudentController implements ActionListener {
 
         if (e.getSource()==managementStudentView.getAddStudentButton()) {
             System.out.println("Add Student button clicked!");
-            addStudentView = new AddStudentView();
+            addStudentView = new AddStudentView(managementStudentView.libraryModelManage);
+            AddStudentController addStudentController = new AddStudentController(addStudentView, this);
             addStudentView.setVisible(true);
         }
 
@@ -34,5 +35,10 @@ public class StudentController implements ActionListener {
     }
 
 
-
+    @Override
+    public void onStudentAdded() {
+        System.out.println("A new student has been added!");
+        managementStudentView.addStudent(addStudentView.getStudentFromPanel());
+        //addStudentView.libraryModelManage.addStudentToDatabase(addStudentView.getStudentFromPanel());
+    }
 }

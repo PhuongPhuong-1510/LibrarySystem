@@ -76,7 +76,7 @@ public class ManagementBookView extends JPanel {
             }
         };
 
-        managementPanel = new BaseManagementPanel("Search id, author, genre, title", "/ManageBook/icon/bookAdd.png", "Add Book", this) {
+        managementPanel = new BaseManagementPanel("Search id, author, genre, title", "/ManageBook/icon/bookAdd.png", "Add Book", this, true) {
             @Override
             protected JPanel createSearchPanel() {
                 return super.createSearchPanel();
@@ -86,6 +86,7 @@ public class ManagementBookView extends JPanel {
             protected JButton createAddBookButton() {
                 return super.createAddBookButton();
             }
+
         };
         addBookButton = managementPanel.getAddBookButton();
 
@@ -112,10 +113,9 @@ public class ManagementBookView extends JPanel {
     }
 
     private Object[][] fetchData() {
-        // Lấy danh sách sách từ libraryModel
+
         ArrayList<Book> booksList = libraryModelManage.getBooksList();
 
-        // Tạo mảng data để chứa dữ liệu
         Object[][] data = new Object[booksList.size()][10];
         for (int i = 0; i < booksList.size(); i++) {
             Book book = booksList.get(i);
@@ -191,26 +191,15 @@ public class ManagementBookView extends JPanel {
             if (confirm == JOptionPane.YES_OPTION) {
                 JTable table = bookTableView.getTable();
                 DefaultTableModel model = (DefaultTableModel) table.getModel();
-
-                // Dừng chỉnh sửa nếu đang có ô nào đang được chỉnh sửa
                 if (table.isEditing()) {
                     table.getCellEditor().stopCellEditing();
                 }
-
-                // Kiểm tra chỉ số dòng hợp lệ
                 if (row >= 0 && row < model.getRowCount()) {
-                    // Xóa dòng trong model
                     model.removeRow(row);
-
-                    // Xóa sách khỏi dữ liệu
                     Book bookToRemove = libraryModelManage.getBooksList().get(row);
                     libraryModelManage.deleteBookFromDatabase(bookToRemove.getBookID());
-
-                    // Làm mới bảng sau khi xóa
                     updateTable(libraryModelManage.getBooksList());
                 }
-
-                // Hủy chọn dòng để tránh lỗi khi không còn dòng nào
                 if (model.getRowCount() == 0) {
                     table.clearSelection();
                 }

@@ -99,12 +99,56 @@ public class LibraryModelManage {
         studentsList = studentDAO.getStudentsList();
     }
 
+    // Thêm sinh viên
     public void addStudentToDatabase(Student student) {
         StudentDAO studentDAO = new StudentDAO();
         studentDAO.addStudent(student);
+        studentsList.add(student); // Cập nhật danh sách cục bộ
     }
 
-    public String creatStudentID() {
+    // Sửa thông tin sinh viên
+    public void editStudentInDatabase(Student student) {
+        StudentDAO studentDAO = new StudentDAO();
+        studentDAO.editStudent(student);
+
+        // Cập nhật trong danh sách cục bộ
+        studentsList.stream()
+                .filter(s -> s.getID().equals(student.getID()))
+                .findFirst()
+                .ifPresent(existingStudent -> {
+                    int index = studentsList.indexOf(existingStudent);
+                    studentsList.set(index, student);
+                });
+    }
+
+    // Xóa sinh viên
+    public void deleteStudentFromDatabase(String studentID) {
+        StudentDAO studentDAO = new StudentDAO();
+        studentDAO.deleteStudent(studentID);
+
+        // Loại bỏ khỏi danh sách cục bộ
+        studentsList.removeIf(student -> student.getID().equals(studentID));
+    }
+
+    // Tìm kiếm sinh viên
+    public ArrayList<Student> searchStudents(String keyword) {
+        ArrayList<Student> searchResults = new ArrayList<>();
+        keyword = keyword.toLowerCase();
+
+        for (Student student : studentsList) {
+            if (student.getID().toLowerCase().contains(keyword) ||
+                    student.getName().toLowerCase().contains(keyword) ||
+                    student.getEmail().toLowerCase().contains(keyword) ||
+                    student.getPhone().toLowerCase().contains(keyword)) {
+                searchResults.add(student);
+            }
+        }
+
+        return searchResults;
+    }
+
+    // Tạo ID sinh viên mới
+    public String createStudentID() {
         int newID = 1;
         Set<String> existingIDs = studentsList.stream()
                 .map(Student::getID)
@@ -112,7 +156,7 @@ public class LibraryModelManage {
 
         String newStudentID;
         while (true) {
-            newStudentID = String.format("B%03d", newID); // Formats ID with leading zeros
+            newStudentID = String.format("S%03d", newID); // Format ID với 3 chữ số
             if (!existingIDs.contains(newStudentID)) {
                 break;
             }
@@ -120,7 +164,6 @@ public class LibraryModelManage {
         }
         return newStudentID;
     }
-
     // Quản lý admin
     public ArrayList<Admin> getAdminsList() {
         if (adminsList.isEmpty()) {

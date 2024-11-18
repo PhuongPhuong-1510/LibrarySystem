@@ -65,7 +65,7 @@ public class StudentDAO {
         }
     }
 
-    public void updateStudent(Student student) {
+    public void editStudent(Student student) {
         String query = "UPDATE student SET name = ?, email = ?, password = ?, phone = ?, gender = ?, " +
                 "cardImage = ?, dateBirth = ?, major = ?, branch = ? WHERE id = ?";
 

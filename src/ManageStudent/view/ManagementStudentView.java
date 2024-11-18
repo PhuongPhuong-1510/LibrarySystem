@@ -11,9 +11,11 @@ import ManageStudent.controller.StudentController;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ManagementStudentView extends JPanel {
@@ -25,6 +27,8 @@ public class ManagementStudentView extends JPanel {
     private int count=0;
     private JButton lastSelectedEditButton;
     public LibraryModelManage libraryModelManage;
+    private ArrayList<Student> filteredStudents = null;
+
 
 
 
@@ -79,7 +83,7 @@ public class ManagementStudentView extends JPanel {
             }
 
         };
-        managementPanel=new BaseManagementPanel("Search id, name, phone, email","/ManageStudent/view/icon/studentAdd.png","Add Student") {
+        managementPanel=new BaseManagementPanel("Search id, name, phone, email","/ManageStudent/view/icon/studentAdd.png","Add Student", this, false) {
             @Override
             protected JPanel createSearchPanel() {
                 return super.createSearchPanel();
@@ -89,6 +93,7 @@ public class ManagementStudentView extends JPanel {
             protected JButton createAddBookButton() {
                 return super.createAddBookButton();
             }
+
         };
         addStudentButton = managementPanel.getAddBookButton();
 
@@ -149,7 +154,7 @@ public class ManagementStudentView extends JPanel {
     }
 
     public JLabel createImageLabel(String gender) {
-        String imagePath = gender.equalsIgnoreCase("female")
+        String imagePath = gender.equalsIgnoreCase("Female")
                 ? "/ManageStudent/view/icon/girlicon.png"
                 : "/ManageStudent/view/icon/boyicon.png";
 
@@ -159,7 +164,6 @@ public class ManagementStudentView extends JPanel {
 
         return new JLabel(icon);
     }
-
 
 
 
@@ -201,7 +205,29 @@ public class ManagementStudentView extends JPanel {
         });
 
         deleteButton.addActionListener(e -> {
-            toggleDeleteButton(deleteButton,editButton,row);
+            int confirm = JOptionPane.showConfirmDialog(
+                    this,
+                    "Are you sure you want to delete this student?",
+                    "Delete Confirmation",
+                    JOptionPane.YES_NO_OPTION
+            );
+
+            if (confirm == JOptionPane.YES_OPTION) {
+                JTable table = studentTableView.getTable();
+                DefaultTableModel model = (DefaultTableModel) table.getModel();
+                if (table.isEditing()) {
+                    table.getCellEditor().stopCellEditing();
+                }
+                if (row >= 0 && row < model.getRowCount()) {
+                    model.removeRow(row);
+                    Student studentToRemove = libraryModelManage.getStudentsList().get(row);
+                    libraryModelManage.deleteStudentFromDatabase(studentToRemove.getID());
+                    updateStudentTable(libraryModelManage.getStudentsList());
+                }
+                if (model.getRowCount() == 0) {
+                    table.clearSelection();
+                }
+            }
 
         });
 
@@ -241,6 +267,13 @@ public class ManagementStudentView extends JPanel {
         if (count % 2 == 1) {
             editButton.setToolTipText("Please Save! ");
             editButton.setIcon(new ImageIcon(getClass().getResource("/ManageStudent/view/icon/completeStudent.png")));
+            editButton.addActionListener(e -> {
+                System.out.println("Saved");
+                Student studentToEdit = getUpdatedStudentFromRow(row) ; // Get the selected book
+                libraryModelManage.editStudentInDatabase(studentToEdit);
+                updateCardPhoto(row, studentToEdit.getGender());
+
+            });
         } else {
             editButton.setIcon(new ImageIcon(getClass().getResource("/ManageStudent/view/icon/studentEdit.png")));
         }
@@ -249,30 +282,125 @@ public class ManagementStudentView extends JPanel {
         editButton.repaint();
     }
 
-    private void toggleDeleteButton(JButton deleteButton,JButton editButton, int row) {
-//        System.out.println("DeleteStudent button clicked at row: " + row);
-//        count=0;
-//        studentTableView.setSelectedRow(row);
-//        editButton.setIcon(new ImageIcon(getClass().getResource("/ManageStudent/view/icon/studentEdit.png")));
-//        int confirm = JOptionPane.showConfirmDialog(
-//                null,
-//                "Are you sure you want to delete this student?",
-//                "Delete Confirmation",
-//                JOptionPane.YES_NO_OPTION,
-//                JOptionPane.QUESTION_MESSAGE
-//        );
-//
-//        if (confirm == JOptionPane.YES_OPTION) {
-//            System.out.println("Student deleted at row: " + row);
-//        } else {
-//            System.out.println("Student deletion canceled.");
-//        }
+    private void updateCardPhoto(int row, boolean gender) {
+        String imagePath = gender
+                ? "/ManageStudent/view/icon/boyicon.png"
+                : "/ManageStudent/view/icon/girlicon.png";
 
+        DefaultTableModel model = (DefaultTableModel) studentTableView.getTable().getModel();
+        JLabel updatedLabel = new JLabel(new ImageIcon(getClass().getResource(imagePath)));
+        model.setValueAt(updatedLabel, row, 4);
+
+        studentTableView.getTable().repaint();
+    }
+
+
+    private Student getUpdatedStudentFromRow(int row) {
+        DefaultTableModel model = (DefaultTableModel) studentTableView.getTable().getModel();
+
+        String studentID = model.getValueAt(row, 0).toString();
+        String studentName = model.getValueAt(row, 1).toString();
+        String genderStr = model.getValueAt(row, 2).toString();
+        boolean gender = true;
+        if( "Female".equals(genderStr)) gender = false;
+        else gender = true;
+        String dateOfBirth = model.getValueAt(row, 3).toString();
+
+        String cardPhoto = gender ? "/ManageStudent/view/icon/girlicon.png" : "/ManageStudent/view/icon/boyicon.png";
+
+        String phoneNumber = model.getValueAt(row, 5).toString();
+        String email = model.getValueAt(row, 6).toString();
+        String major = model.getValueAt(row, 7).toString();
+        String branch = model.getValueAt(row, 8).toString();
+
+        return new Student(studentID, studentName, email, "", phoneNumber, gender, cardPhoto, dateOfBirth, major, branch);
+    }
+
+    public void updateStudentTable(List<Student> students) {
+        DefaultTableModel model = (DefaultTableModel) studentTableView.getTable().getModel();
+        model.setRowCount(0);
+
+        for (int i = 0; i < students.size(); i++) {
+            Student student = students.get(i);
+            boolean gender = student.getGender(); // true = Male, false = Female
+
+            Object[] rowData = new Object[]{
+                    student.getID(),                       // Student ID
+                    student.getName(),                     // Name
+                    gender ? "Male" : "Female",            // Gender
+                    student.getDateOfBirth(),              // Date of Birth
+                    createImageLabel(gender ? "Male" : "Female"), // Card Photo (icon JLabel)
+                    student.getPhone(),                    // Phone Number
+                    student.getEmail(),                    // Email
+                    student.getMajor(),                    // Major
+                    student.getBranch(),                   // Branch
+                    createAction(i)                        // Action buttons (Edit/Delete)
+            };
+
+            model.addRow(rowData);
+        }
+
+
+        // Đảm bảo bảng được vẽ lại sau khi cập nhật
+        studentTableView.revalidate();
+        studentTableView.repaint();
+    }
+
+
+    public void addStudent(Student student) {
+        DefaultTableModel model = (DefaultTableModel) studentTableView.getTable().getModel();
+
+        Object[] rowData = new Object[]{
+                student.getID(),
+                student.getName(),
+                student.getGender() ? "Male" : "Female",
+                student.getDateOfBirth(),
+                createImageLabel(student.getGender() ? "Male" : "Female"),
+                student.getPhone(),
+                student.getEmail(),
+                student.getMajor(),
+                student.getBranch(),
+                createAction(model.getRowCount())
+        };
+
+        model.addRow(rowData);
+
+        studentTableView.revalidate();
+        studentTableView.repaint();
+    }
+
+    private void filterTable(String query) {
+        if (query.isEmpty()) {
+            filteredStudents = null;
+            updateStudentTable(libraryModelManage.getStudentsList());
+        } else {
+            filteredStudents = new ArrayList<>();
+            for (Student student : libraryModelManage.getStudentsList()) {
+                if (student.getID().toLowerCase().contains(query.toLowerCase())
+                        || student.getName().toLowerCase().contains(query.toLowerCase())
+                        || student.getPhone().toLowerCase().contains(query.toLowerCase())
+                        || student.getEmail().toLowerCase().contains(query.toLowerCase())) {
+                    filteredStudents.add(student);
+                }
+            }
+            updateStudentTable(filteredStudents);
+        }
+    }
+
+    private void restoreTable() {
+        updateStudentTable(libraryModelManage.getStudentsList());
     }
 
 
 
-        public JButton getAddStudentButton() {
+
+
+
+
+
+
+
+    public JButton getAddStudentButton() {
         return addStudentButton;
     }
 
