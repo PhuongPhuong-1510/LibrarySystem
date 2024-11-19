@@ -11,12 +11,14 @@ public class LibraryModelManage {
     private ArrayList<Student> studentsList;
     private ArrayList<Admin> adminsList;
     private ArrayList<Issue> issuesList;
+    private ArrayList<Reserve> reserveList;
 
     public LibraryModelManage() {
         booksList = new ArrayList<>();
         studentsList = new ArrayList<>();
         adminsList = new ArrayList<>();
         issuesList = new ArrayList<>();
+        reserveList = new ArrayList<>();
     }
 
     // Quản lý sách
@@ -302,6 +304,59 @@ public class LibraryModelManage {
         }
         JOptionPane.showMessageDialog(null, "Issue not found.");
         return null; // Return null if no matching issue is found
+    }
+
+    public ArrayList<Reserve> getReserveList() {
+        if (reserveList.isEmpty()) {
+            loadReservesFromDatabase();
+        }
+        return reserveList;
+    }
+
+    private void loadReservesFromDatabase() {
+        ReserveDAO reserveDAO = new ReserveDAO();
+        reserveDAO.loadReservesFromDatabase();
+        reserveList = reserveDAO.getReservesList();
+    }
+
+    public void addReserveToDatabase(Reserve reserve) {
+        ReserveDAO reserveDAO = new ReserveDAO();
+        reserveDAO.addReserve(reserve);
+        reserveList.add(reserve);
+    }
+
+    public void deleteReserveFromDatabase(String reserveID) {
+        ReserveDAO reserveDAO = new ReserveDAO();
+        reserveDAO.deleteReserve(reserveID);
+        reserveList.removeIf(reserve -> reserve.getReserveID().equals(reserveID)); // Update the local list
+    }
+
+    public Reserve searchReserveByID(String reserveID) {
+        for (Reserve reserve : getReserveList()) {
+            if (reserve.getReserveID().equals(reserveID)) {
+                return reserve;
+            }
+        }
+        JOptionPane.showMessageDialog(null, "Reserve not found.");
+        return null;
+    }
+
+
+    public String createReserveID() {
+        int newID = 1;
+        Set<String> existingIDs = reserveList.stream()
+                .map(Reserve::getReserveID)
+                .collect(Collectors.toSet());
+
+        String newReserveID;
+        while (true) {
+            newReserveID = String.format("R%03d", newID);
+            if (!existingIDs.contains(newReserveID)) {
+                break;
+            }
+            newID++;
+        }
+        return newReserveID;
     }
 
 
