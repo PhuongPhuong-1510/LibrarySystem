@@ -12,12 +12,14 @@ import java.awt.event.MouseListener;
 
 public class AddStudentController implements ActionListener, MouseListener {
     private final AddStudentView addStudentView;
+    private final AddStudentListener addStudentListener;
 
-    public AddStudentController(AddStudentView addStudentView) {
+    public AddStudentController(AddStudentView addStudentView, AddStudentListener addStudentListener) {
         this.addStudentView = addStudentView;
+        this.addStudentListener = addStudentListener;
+
         initializeListeners();
     }
-
     private void initializeListeners() {
 
         addStudentView.getCancelButton().addActionListener(this);
@@ -36,16 +38,19 @@ public class AddStudentController implements ActionListener, MouseListener {
                 addStudentView.setVisible(false);
                 break;
             case "SUBMIT":
+
+                if(addStudentView.validateInputFields()) {
+                    addStudentView.setVisible(true);
+                    JOptionPane.showMessageDialog(
+                            addStudentView,
+                            "Add student successfully",
+                            "Success",
+                            JOptionPane.INFORMATION_MESSAGE
+                    );
+                    addStudentListener.onStudentAdded();
+                }
                 addStudentView.revalidate();
                 addStudentView.repaint();
-
-                JOptionPane.showMessageDialog(
-                        addStudentView,
-                        "Add student successfully",
-                        "Success",
-                        JOptionPane.INFORMATION_MESSAGE
-                );
-
                 break;
 
 

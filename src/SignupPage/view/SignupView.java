@@ -209,14 +209,14 @@ public class SignupView extends JPanel {
 
     public Student getStudentFromPanel() {
         // Lấy thông tin từ các trường trong panel
-        String id = mainView.libraryModelManage.creatStudentID();
+        String id = mainView.libraryModelManage.createStudentID();
         String fullName = txtFullName.getText().trim();
         String userName = txtUserName.getText().trim();
         String password = new String(txtPassWord.getPassword()).trim();
         String contactNumber = txtContactNumber.getText().trim();
 
         // Trả về một đối tượng Student
-        return new Student(id, fullName, userName, password, contactNumber);
+        return new Student(id, fullName, userName, password, contactNumber, true, "", "", "", "");
     }
 
 }
