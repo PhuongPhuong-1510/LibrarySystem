@@ -295,6 +295,19 @@ public class LibraryModelManage {
         return null; // Return null if the student is not found
     }
 
+    public Student searchStudentByEmailPassword(String studentEmail, String studentPassword) {
+        ArrayList<Student> studentsList = getStudentsList(); // Lấy danh sách sinh viên
+        for (Student student : studentsList) {
+            // So sánh email và mật khẩu
+            if (student.getEmail().equals(studentEmail) &&
+                    student.getPassword().equals(studentPassword)) {
+                return student; // Trả về đối tượng sinh viên nếu tìm thấy
+            }
+        }
+        return null; // Trả về null nếu không tìm thấy sinh viên phù hợp
+    }
+
+
     public Issue searchIssueByBookStudent(String bookID, String studentID) {
         ArrayList<Issue> issueslist = getIssuesList();
         for (Issue issue : issueslist) {
@@ -344,7 +357,8 @@ public class LibraryModelManage {
 
     public String createReserveID() {
         int newID = 1;
-        Set<String> existingIDs = reserveList.stream()
+        ArrayList<Reserve> reservelist = getReserveList();
+        Set<String> existingIDs = reservelist.stream()
                 .map(Reserve::getReserveID)
                 .collect(Collectors.toSet());
 
