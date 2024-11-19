@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class LoginView extends JPanel {
-    private  LoginModel loginModel;
+
     private  MainView mainView;
     private JTextField txtUserName;
     private JTextField txtPassWord;
@@ -25,7 +25,6 @@ public class LoginView extends JPanel {
 
     public LoginView(MainView mainView) {
         this.mainView = mainView;
-        this.loginModel = new LoginModel();
         initializeUIComponents();
         new LoginController(this);
     }
@@ -177,25 +176,34 @@ public class LoginView extends JPanel {
         this.cmbUserType = cmbUserType;
     }
 
-    public boolean checkLogin(){
+    public boolean checkAdmin() {
         String username = txtUserName.getText();
         String password = txtPassWord.getText();
-        if(!username.equals("") && !password.equals("")) {
-            ArrayList<Admin> admins = mainView.libraryModelManage.getAdminsList();
-            for (Admin admin : admins) {
-                if (admin.getEmail().equals(username) && admin.getPassword().equals(password)) {
-                    loginModel.setKtUser(true);
-                    return true;
-                }
-            }
-            ArrayList<Student> students = mainView.libraryModelManage.getStudentsList();
-            for (Student student : students) {
-                if (student.getEmail().equals(username) && student.getPassword().equals(password)) {
-                    loginModel.setKtUser(false);
-                    return true;
-                }
+        ArrayList<Admin> admins = mainView.libraryModelManage.getAdminsList();
+        for (Admin admin : admins) {
+            if (admin.getEmail().equals(username) && admin.getPassword().equals(password)) {
+                return true;
             }
         }
         return false;
+    }
+
+    public boolean checkStudent() {
+        String username = txtUserName.getText();
+        String password = txtPassWord.getText();
+        ArrayList<Student> students = mainView.libraryModelManage.getStudentsList();
+        for (Student student : students) {
+            if (student.getEmail().equals(username) && student.getPassword().equals(password)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Student getStudentFromLogin() {
+        String username = txtUserName.getText();
+        String password = txtPassWord.getText();
+        System.out.println(username);
+        return mainView.libraryModelManage.searchStudentByEmailPassword(username, password);
     }
 }
