@@ -4,6 +4,8 @@ package UserMain.view;
 import LoginPage.view.OvalButton;
 import MainApp.model.Book;
 import MainApp.model.LibraryModelManage;
+import MainApp.model.Reserve;
+import MainApp.model.Student;
 import MainApp.view.MainView;
 import ManageBook.view.BaseBookTableView;
 import ManageBook.view.PanelEditor;
@@ -18,6 +20,8 @@ import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.net.URL;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.text.SimpleDateFormat;
@@ -43,12 +47,16 @@ public class UserView extends JPanel {
     private BaseBookTableView bookTableView;
     private DefaultTableModel modelCart;
     private JTable tableCart;
-    private LibraryModelManage libraryModelManage;
+    public LibraryModelManage libraryModelManage;
     private JButton btnRegister;
     private JButton btnSearch;
+    public Student student;
 
 
-    public UserView(MainView mainView) {
+    public UserView(MainView mainView, Student student, LibraryModelManage libraryModelManage) {
+        this.libraryModelManage = libraryModelManage;
+        this.student = student;
+        this.mainView = mainView;
         this.libraryModelManage = new LibraryModelManage();
         this.mainView = mainView;
         init();
@@ -543,6 +551,35 @@ public class UserView extends JPanel {
         return panelCart;
     }
 
+    public ArrayList<Reserve> createReserveList() {
+        ArrayList<Reserve> reserves = new ArrayList<>();
+
+        DefaultTableModel model = (DefaultTableModel) tableCart.getModel();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy"); // Định dạng ngày tháng
+
+        for (int i = 0; i < model.getRowCount(); i++) {
+            String bookID = (String) model.getValueAt(i, 0);
+            String studentID = this.student.getID();
+
+            LocalDate reservedDate = LocalDate.now();
+            LocalDate dueDate = reservedDate.plusDays(100); // Cộng thêm 100 ngày
+
+            // Định dạng ngày thành chuỗi dd/MM/yyyy
+            String formattedReservedDate = reservedDate.format(formatter);
+            String formattedDueDate = dueDate.format(formatter);
+
+            // Chuyển đổi sang java.sql.Date nếu cần lưu vào cơ sở dữ liệu
+            java.sql.Date sqlReservedDate = java.sql.Date.valueOf(reservedDate);
+            java.sql.Date sqlDueDate = java.sql.Date.valueOf(dueDate);
+
+            Reserve reserve = new Reserve(null, bookID, studentID, sqlReservedDate, sqlDueDate);
+            reserves.add(reserve);
+        }
+
+        return reserves;
+    }
+
+
 
     private JButton createButton(String text) {
         JButton button = new OvalButton(text);
@@ -744,6 +781,11 @@ public class UserView extends JPanel {
 
     public JButton getBtnRegister() {
         return btnRegister;
+    }
+
+    public void setStudent(Student student) {
+        this.student = student;
+        // Cập nhật giao diện dựa trên student mới
     }
 
     public JButton getBtnSearch() {

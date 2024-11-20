@@ -42,7 +42,7 @@ public class SignupController implements ActionListener, MouseListener {
         int response = JOptionPane.showConfirmDialog(signupView, "Do you want to continue?", "Confirmation",
                 JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
         if (response == JOptionPane.YES_OPTION) {
-            signupView.getMainView().showCard("Login");
+            signupView.getMainView().showCard("Login", null);
         }
     }
 
@@ -56,7 +56,7 @@ public class SignupController implements ActionListener, MouseListener {
             showErrorMessages(errors);
         } else {
             showSuccessMessage();
-            signupView.getMainView().showCard("Login");
+            signupView.getMainView().showCard("Login", null);
 
         }
     }

@@ -4,6 +4,7 @@ import HomePage.view.HomePageView;
 import LoginPage.view.LoginView;
 import MainApp.controller.MainController;
 import MainApp.model.LibraryModelManage;
+import MainApp.model.Student;
 import SignupPage.view.SignupView;
 import UserMain.view.UserView;
 
@@ -66,7 +67,7 @@ public class MainView extends JFrame {
         cardPanel.add(new LoginView(this), "Login");
         cardPanel.add(new SignupView(this), "Signup");
         cardPanel.add(new HomePageView(this), "HomePage");
-        cardPanel.add(new UserView(this),"UserView");
+        //cardPanel.add(new UserView(this),"UserView");
 
         layeredPane.add(cardPanel, JLayeredPane.DEFAULT_LAYER);
 
@@ -99,7 +100,7 @@ public class MainView extends JFrame {
         }
     }
 
-    public void showCard(String cardName) {
+    public void showCard(String cardName, Student student) {
         CardLayout cl = (CardLayout) cardPanel.getLayout();
         switch (cardName) {
             case "Login":
@@ -112,7 +113,8 @@ public class MainView extends JFrame {
                 cardPanel.add(new HomePageView(this), "HomePage");
                 break;
             case "UserView":
-                cardPanel.add(new UserView(this),"UserView");
+                cardPanel.add(new UserView(this, student, libraryModelManage), "UserView");
+                cl.show(cardPanel, "UserView");
                 break;
         }
         cl.show(cardPanel, cardName);

@@ -68,7 +68,7 @@ public class HomePageController implements ActionListener, MouseListener {
                 }
                 if (menu == homePageView.getjMenuLogout()) {
                     System.out.println("Logout clicked!");
-                    homePageView.getMainView().showCard("Login");
+                    homePageView.getMainView().showCard("Login", null);
                 }
                 if (menu==homePageView.getjMenuHomePage())
                 {
