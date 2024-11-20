@@ -296,6 +296,15 @@ public class LibraryModelManage {
         return null; // Return null if the student is not found
     }
 
+    public ArrayList<Book> searchBooks(String bookId, String bookName, String author, String genre) {
+        return booksList.stream()
+                .filter(book -> (bookId.isEmpty() || book.getBookID().contains(bookId)) &&
+                        (bookName.isEmpty() || book.getBookName().toLowerCase().contains(bookName.toLowerCase())) &&
+                        (author.isEmpty() || book.getAuthor().toLowerCase().contains(author.toLowerCase())) &&
+                        (genre.equals("All") || book.getCategory().equalsIgnoreCase(genre)))
+                .collect(Collectors.toCollection(ArrayList::new));
+    }
+
     public Student searchStudentByEmailPassword(String studentEmail, String studentPassword) {
         ArrayList<Student> studentsList = getStudentsList(); // Lấy danh sách sinh viên
         for (Student student : studentsList) {

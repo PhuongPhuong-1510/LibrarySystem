@@ -445,6 +445,7 @@ public class UserView extends JPanel {
         JPanel panelSearchButton = new JPanel();
         panelSearchButton.setOpaque(false);
         btnSearch = createButton("SEARCH");
+        btnSearch.addActionListener(e -> performSearch());
         panelSearchButton.add(btnSearch);
         panelSearch.add(panelSearchButton);
 
@@ -658,7 +659,32 @@ public class UserView extends JPanel {
         homePagePanel.repaint();
     }
 
+    private void performSearch() {
+        String bookId = txtBookId.getText().trim();
+        String bookName = txtBookName.getText().trim();
+        String author = txtAuthor.getText().trim();
+        String genre = cboGenre.getSelectedItem().toString();
 
+        ArrayList<Book> searchResults = libraryModelManage.searchBooks(bookId, bookName, author, genre);
+        updateTable(searchResults);
+    }
+
+    private void updateTable(ArrayList<Book> books) {
+        DefaultTableModel model = (DefaultTableModel) bookTableView.getTable().getModel();
+        model.setRowCount(0);
+        for (Book book : books) {
+            model.addRow(new Object[]{
+                    book.getBookID(),
+                    book.getBookName(),
+                    createImageLabel(book.getImage()),
+                    book.getAuthor(),
+                    book.getCategory(),
+                    book.getLanguage(),
+                    book.getCurent(),
+                    createAction(book, model.getRowCount())
+            });
+        }
+    }
 
     public MainView getMainView() {
         return mainView;
