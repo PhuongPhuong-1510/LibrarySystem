@@ -152,7 +152,8 @@ public class LibraryModelManage {
     // Tạo ID sinh viên mới
     public String createStudentID() {
         int newID = 1;
-        Set<String> existingIDs = studentsList.stream()
+        ArrayList<Student> studentslist = getStudentsList();
+        Set<String> existingIDs = studentslist.stream()
                 .map(Student::getID)
                 .collect(Collectors.toSet());
 

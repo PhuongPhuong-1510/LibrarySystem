@@ -211,7 +211,7 @@ public class SignupView extends JPanel {
         String id = mainView.libraryModelManage.createStudentID();
         String fullName = txtFullName.getText().trim();
         String userName = txtUserName.getText().trim();
-        String password = new String(txtPassWord.getPassword()).trim();
+        String password = txtPassWord.getText().trim();
         String contactNumber = txtContactNumber.getText().trim();
 
         return new Student(id, fullName, userName, password, contactNumber, true, "", "", "", "");
