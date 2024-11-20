@@ -1,32 +1,39 @@
 package UserHistory.view;
 
+import MainApp.model.*;
 import ViewRecord.view.TableViewRecord;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class HistoryView extends JPanel {
 
-    public HistoryView() {
+    private Student student;
+    private LibraryModelManage libraryModelManage;
+
+    public HistoryView(Student student, LibraryModelManage libraryModelManage) {
+        this.student = student;
+        this.libraryModelManage = libraryModelManage;
         this.setLayout(new BorderLayout());
         JLayeredPane layeredPane = new JLayeredPane();
         layeredPane.setLayout(null);
 
-        JPanel reservePanel = createPanel("List of Reserved Books",
+        JPanel reservePanel = createPanel(
+                "List of Reserved Books",
                 new String[]{"Book ID", "Book Name", "Reservation Date", "Due Date"},
-                new Object[][]{
-                        {"EM28CP1", "Chuyên đề kế toán", "15-05-2018", "17-05-2018"},
-                        {"OL28CP3", "Vật lý đại cương 2", "15-05-2018", "17-05-2018"},
-                        {"OL28CP4", "Vật lý đại cương 2", "15-05-2018", "17-05-2018"}
-                });
+                libraryModelManage.getReserveList()
+        );
         reservePanel.setBounds(15, 10, 550, 545);
         layeredPane.add(reservePanel, Integer.valueOf(1));
 
-        JPanel issuedPanel = createPanel("List of Issued Books",
+        JPanel issuedPanel = createPanel(
+                "List of Issued Books",
                 new String[]{"Book ID", "Book Name", "Issued Date", "Due Date"},
-                new Object[][]{});
+                libraryModelManage.getIssuesList()
+        );
         issuedPanel.setBounds(635, 10, 550, 545);
         layeredPane.add(issuedPanel, Integer.valueOf(1));
 
@@ -52,14 +59,17 @@ public class HistoryView extends JPanel {
     }
 
 
-    private JPanel createPanel(String title, String[] columns, Object[][] data) {
+    private JPanel createPanel(String title, String[] columns, ArrayList<?> records) {
         JPanel panel = new JPanel(new BorderLayout());
-        panel.setBackground(new Color(142,207,243));
+        panel.setBackground(new Color(142, 207, 243));
         panel.setBorder(new EmptyBorder(10, 10, 10, 10));
 
         JLabel label = createTitleLabel(title);
-        label.setForeground(new Color(72,118,255));
+        label.setForeground(new Color(72, 118, 255));
         panel.add(label, BorderLayout.NORTH);
+
+        // Lọc dữ liệu theo studentID
+        Object[][] data = filterData(records);
 
         TableViewRecord tableViewRecord = createTable(columns, data);
         panel.add(tableViewRecord, BorderLayout.CENTER);
@@ -85,4 +95,42 @@ public class HistoryView extends JPanel {
             }
         };
     }
+
+    public String getBookName(String bookID) {
+        Book book = libraryModelManage.searchBookByID(bookID);
+        return book != null ? book.getBookName() : "Unknown";
+    }
+
+
+    private Object[][] filterData(ArrayList<?> records) {
+        ArrayList<Object[]> filteredList = new ArrayList<>();
+
+        for (Object record : records) {
+            if (record instanceof Reserve) {
+                Reserve reserve = (Reserve) record;
+                if (Objects.equals(reserve.getId(), student.getID())) {
+                    filteredList.add(new Object[]{
+                            reserve.getBookID(),
+                            getBookName(reserve.getBookID()),
+                            reserve.getReservedDate(),
+                            reserve.getDueDate()
+                    });
+                }
+            } else if (record instanceof Issue) {
+                Issue issue = (Issue) record;
+                if (Objects.equals(issue.getIssueStudentID(), student.getID())) {
+                    filteredList.add(new Object[]{
+                            issue.getIssueBookID(),
+                            getBookName(issue.getIssueBookID()),
+                            issue.getIssueDate(),
+                            issue.getDueDate()
+                    });
+                }
+            }
+        }
+
+        return filteredList.toArray(new Object[0][0]);
+    }
+
+
 }

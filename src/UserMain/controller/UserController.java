@@ -79,7 +79,7 @@ public class UserController implements ActionListener, MouseListener {
                 if(menu==userView.getjMenuHistory())
                 {
                     System.out.println(("History Button clicked"));
-                    HistoryView historyView = new HistoryView();
+                    HistoryView historyView = new HistoryView(userView.student, userView.libraryModelManage);
                     userView.toggleMenuBar();
                     historyView.setPreferredSize(new Dimension(userView.getMainHomePanel().getWidth(),userView.getMainHomePanel().getHeight()));
                     userView.setMainHomePanel(historyView);

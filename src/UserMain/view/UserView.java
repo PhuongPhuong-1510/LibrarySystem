@@ -2,10 +2,7 @@ package UserMain.view;
 
 
 import LoginPage.view.OvalButton;
-import MainApp.model.Book;
-import MainApp.model.LibraryModelManage;
-import MainApp.model.Reserve;
-import MainApp.model.Student;
+import MainApp.model.*;
 import MainApp.view.MainView;
 import ManageBook.view.BaseBookTableView;
 import ManageBook.view.PanelEditor;
@@ -330,7 +327,7 @@ public class UserView extends JPanel {
             data[i][4] = book.getCategory();
             data[i][5] = book.getLanguage();
             data[i][6] = book.getCurent();
-            data[i][7] = createAction(i);
+            data[i][7] = createAction(book, i);
         }
 
         return data;
@@ -365,26 +362,45 @@ public class UserView extends JPanel {
         return button;
     }
 
-    public JPanel createAction(int row) {
-        JPanel actionPanel=new JPanel(new BorderLayout());
+    public JPanel createAction(Book book, int row) {
+        JPanel actionPanel = new JPanel(new BorderLayout());
         JButton cardButton = createActionButton("/UserMain/view/icon/card.png", new Color(255, 240, 245));
         cardButton.setToolTipText("Reserve Book");
-        cardButton.addActionListener(e -> {
-            toggleCardButton(actionPanel,cardButton, row);
-        });
+
+
+        boolean isDisabled = isBookReservedOrIssued(book.getBookID(), student.getID());
+        cardButton.setEnabled(!isDisabled);
+
+        if (!isDisabled) {
+            cardButton.addActionListener(e -> {
+                toggleCardButton(actionPanel, cardButton, row);
+            });
+        }
+
         actionPanel.add(cardButton);
         return actionPanel;
-
-
     }
 
+    private boolean isBookReservedOrIssued(String bookId, String studentId) {
+        for (Issue issue : libraryModelManage.getIssuesList()) {
+            if (issue.getIssueBookID().equals(bookId) && issue.getIssueStudentID().equals(studentId)) {
+                return true;
+            }
+        }
+        for (Reserve reserve : libraryModelManage.getReserveList()) {
+            if (reserve.getBookID().equals(bookId) && reserve.getId().equals(studentId)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
     private void toggleCardButton(JPanel actionPanel, JButton cardButton, int row) {
         System.out.println("Button clicked");
         bookTableView.setSelectedRow(row);
-        String bookId = bookTableView.getCellValue(row, 0).toString(); // Lấy Book ID từ cột 0
-        String bookTitle = bookTableView.getCellValue(row, 1).toString(); // Lấy Book Name từ cột 1
+        String bookId = bookTableView.getCellValue(row, 0).toString();
+        String bookTitle = bookTableView.getCellValue(row, 1).toString();
 
-        // Thêm sách vào bảng cardTable
         addBookToTable(bookId, bookTitle);
         cardButton.setEnabled(false);
 
@@ -564,11 +580,9 @@ public class UserView extends JPanel {
             LocalDate reservedDate = LocalDate.now();
             LocalDate dueDate = reservedDate.plusDays(100); // Cộng thêm 100 ngày
 
-            // Định dạng ngày thành chuỗi dd/MM/yyyy
             String formattedReservedDate = reservedDate.format(formatter);
             String formattedDueDate = dueDate.format(formatter);
 
-            // Chuyển đổi sang java.sql.Date nếu cần lưu vào cơ sở dữ liệu
             java.sql.Date sqlReservedDate = java.sql.Date.valueOf(reservedDate);
             java.sql.Date sqlDueDate = java.sql.Date.valueOf(dueDate);
 
