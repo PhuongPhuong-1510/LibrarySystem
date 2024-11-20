@@ -33,7 +33,6 @@ public class SignupController implements ActionListener, MouseListener {
                 break;
             case "SIGNUP":
                 handleSignup();
-                signupView.mainView.libraryModelManage.addStudentToDatabase(signupView.getStudentFromPanel());
                 break;
         }
     }
@@ -55,6 +54,7 @@ public class SignupController implements ActionListener, MouseListener {
         if (hasErrors(errors)) {
             showErrorMessages(errors);
         } else {
+            signupView.mainView.libraryModelManage.addStudentToDatabase(signupView.getStudentFromPanel());
             showSuccessMessage();
             signupView.getMainView().showCard("Login", null);
 
