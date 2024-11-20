@@ -187,6 +187,7 @@ public class UserView extends JPanel {
         mainPanel.setBackground(new Color(230, 230, 250));
         mainPanel.setPreferredSize(new Dimension(800, 582));
 
+
         mainPanel.add(createSearchPanel(), BorderLayout.WEST);
         mainPanel.add(createCartPanel(), BorderLayout.EAST);
         mainPanel.add(createBooksPanel(), BorderLayout.CENTER);
@@ -561,10 +562,42 @@ public class UserView extends JPanel {
 
         btnRegister = createButton("Register");
         panelCart.add(btnRegister, BorderLayout.SOUTH);
+        btnRegister.addActionListener(e -> {
+            System.out.println("Register button clicked!");
+            System.out.println(student.getID());
+            handleRegisterAction();
+
+            ArrayList<Reserve> reserves = createReserveList();
+            for (Reserve reserve : reserves) {
+
+                String bookID = reserve.getBookID();
+                Book book = libraryModelManage.searchBookByID(bookID);
+                book.setCurent("Reserved");
+                libraryModelManage.editBookInDatabase(book);
+
+                String reserveID = libraryModelManage.createReserveID();
+                reserve.setReserveID(reserveID);
+                libraryModelManage.addReserveToDatabase(reserve);
+
+            }
+
+            System.out.println("All reserves added to the database.");
+        });
 
         addBooksToTable();
 
         return panelCart;
+    }
+
+    private void handleRegisterAction() {
+        String bookId = getTxtBookId().getText();
+        String bookName = getTxtBookName().getText();
+
+        if (bookId.isEmpty() || bookName.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please fill in all required fields.");
+        } else {
+            System.out.println("Registering book: " + bookName);
+        }
     }
 
     public ArrayList<Reserve> createReserveList() {
@@ -619,6 +652,7 @@ public class UserView extends JPanel {
         if (mainHomePanel != null) {
             homePagePanel.remove(mainHomePanel);
         }
+
         mainHomePanel = newPanel;
         homePagePanel.add(mainHomePanel, BorderLayout.CENTER);
         homePagePanel.revalidate();

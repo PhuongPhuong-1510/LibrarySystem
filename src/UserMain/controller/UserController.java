@@ -199,6 +199,4 @@ public class UserController implements ActionListener, MouseListener {
         button.repaint();
     }
 
-
 }
-
