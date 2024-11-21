@@ -1,6 +1,7 @@
 package SignupPage.controller;
 
 import MainApp.model.LibraryModelManage;
+import MainApp.model.Student;
 import SignupPage.view.SignupView;
 import SignupPage.model.SignupModel;
 
@@ -33,7 +34,6 @@ public class SignupController implements ActionListener, MouseListener {
                 break;
             case "SIGNUP":
                 handleSignup();
-                signupView.mainView.libraryModelManage.addStudentToDatabase(signupView.getStudentFromPanel());
                 break;
         }
     }
@@ -55,11 +55,31 @@ public class SignupController implements ActionListener, MouseListener {
         if (hasErrors(errors)) {
             showErrorMessages(errors);
         } else {
+
+            if (isEmailAlreadyRegistered(signupModel.getEmail())) {
+                JOptionPane.showMessageDialog(signupView,
+                        "Email đã tồn tại. Vui lòng sử dụng email khác.",
+                        "Lỗi",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            signupView.mainView.libraryModelManage.addStudentToDatabase(signupView.getStudentFromPanel());
             showSuccessMessage();
             signupView.getMainView().showCard("Login", null);
 
         }
     }
+
+    private boolean isEmailAlreadyRegistered(String email) {
+        for (Student student : signupView.mainView.libraryModelManage.getStudentsList()) {
+            if (student.getEmail().equalsIgnoreCase(email)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     private void gatherInputData() {
         signupModel.setEmail(signupView.getUserName());

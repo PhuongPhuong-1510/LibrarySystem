@@ -139,13 +139,20 @@ public class ManagementBookView extends JPanel {
     private JLabel createImageLabel(String path) {
         ImageIcon icon;
         if (path != null && getClass().getResource(path) != null) {
+            int relativePathIndex = path.indexOf("/ManageBook/icon/");
+            if (relativePathIndex != -1) {
+                path = path.substring(relativePathIndex);
+            }
+
             icon = new ImageIcon(getClass().getResource(path));
+            icon.setDescription(path);
         } else {
             System.out.println("Image not found at path: " + path);
-            icon = new ImageIcon(new BufferedImage(05, 05, BufferedImage.TYPE_INT_ARGB)); // Placeholder
+            icon = new ImageIcon(new BufferedImage(5, 5, BufferedImage.TYPE_INT_ARGB)); // Placeholder
         }
         return new JLabel(icon);
     }
+
 
     public JButton createActionButton(String iconPath, Color bgColor) {
         JButton button = new JButton(new ImageIcon(getClass().getResource(iconPath)));
@@ -310,10 +317,16 @@ public class ManagementBookView extends JPanel {
     public void addBook(Book book) {
         DefaultTableModel model = (DefaultTableModel) bookTableView.getTable().getModel();
 
+        String imagePath = book.getImage();
+        int relativePathIndex = imagePath.indexOf("/ManageBook/icon/");
+        if (relativePathIndex != -1) {
+            imagePath = imagePath.substring(relativePathIndex); 
+        }
+
         Object[] rowData = new Object[]{
                 book.getBookID(),
                 book.getBookName(),
-                createImageLabel(book.getImage()),
+                createImageLabel(imagePath),
                 book.getAuthor(),
                 book.getCategory(),
                 book.getLanguage(),
@@ -335,15 +348,18 @@ public class ManagementBookView extends JPanel {
         String bookID = model.getValueAt(row, 0).toString();
         String bookName = model.getValueAt(row, 1).toString();
 
-        // Trích xuất đường dẫn từ JLabel của ảnh
         Object imageObject = model.getValueAt(row, 2);
         String image = "";
         if (imageObject instanceof JLabel) {
             JLabel imageLabel = (JLabel) imageObject;
             ImageIcon icon = (ImageIcon) imageLabel.getIcon();
-            image = icon.getDescription(); // Nếu ImageIcon có description là đường dẫn hình ảnh
-        } else {
-            image = imageObject.toString();
+            if (icon != null && icon.getDescription() != null) {
+                image = icon.getDescription();
+                int relativePathIndex = image.indexOf("/ManageBook/icon/");
+                if (relativePathIndex != -1) {
+                    image = image.substring(relativePathIndex);
+                }
+            }
         }
 
         String author = model.getValueAt(row, 3).toString();

@@ -79,7 +79,7 @@ public class UserController implements ActionListener, MouseListener {
                 if(menu==userView.getjMenuHistory())
                 {
                     System.out.println(("History Button clicked"));
-                    HistoryView historyView = new HistoryView();
+                    HistoryView historyView = new HistoryView(userView.student, userView.libraryModelManage);
                     userView.toggleMenuBar();
                     historyView.setPreferredSize(new Dimension(userView.getMainHomePanel().getWidth(),userView.getMainHomePanel().getHeight()));
                     userView.setMainHomePanel(historyView);
@@ -143,23 +143,23 @@ public class UserController implements ActionListener, MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        if (e.getSource() == userView.getBtnRegister()) {
-            System.out.println("Register button clicked!");
-            System.out.println(userView.student.getID());
-            handleRegisterAction();
-
-            ArrayList<Reserve> reserves = userView.createReserveList();
-            for (Reserve reserve : reserves) {
-
-                String reserveID = userView.libraryModelManage.createReserveID();
-                reserve.setReserveID(reserveID);
-                userView.libraryModelManage.addReserveToDatabase(reserve);
-            }
-
-            System.out.println("All reserves added to the database.");
-        } else if (e.getSource() == userView.getBtnSearch()) {
-            System.out.println("Search button clicked!");
-        }
+//        if (e.getSource() == userView.getBtnRegister()) {
+//            System.out.println("Register button clicked!");
+//            System.out.println(userView.student.getID());
+//            handleRegisterAction();
+//
+//            ArrayList<Reserve> reserves = userView.createReserveList();
+//            for (Reserve reserve : reserves) {
+//
+//                String reserveID = userView.libraryModelManage.createReserveID();
+//                reserve.setReserveID(reserveID);
+//                userView.libraryModelManage.addReserveToDatabase(reserve);
+//            }
+//
+//            System.out.println("All reserves added to the database.");
+//        } else if (e.getSource() == userView.getBtnSearch()) {
+//            System.out.println("Search button clicked!");
+//        }
     }
 
 
@@ -199,6 +199,4 @@ public class UserController implements ActionListener, MouseListener {
         button.repaint();
     }
 
-
 }
-
