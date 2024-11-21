@@ -563,6 +563,7 @@ public class UserView extends JPanel {
         btnRegister = createButton("Register");
         panelCart.add(btnRegister, BorderLayout.SOUTH);
         btnRegister.addActionListener(e -> {
+
             System.out.println("Register button clicked!");
             System.out.println(student.getID());
             handleRegisterAction();
@@ -582,6 +583,9 @@ public class UserView extends JPanel {
             }
 
             System.out.println("All reserves added to the database.");
+            // Xoá toàn bộ dòng trong bảng
+            DefaultTableModel model = (DefaultTableModel) table.getModel();
+            model.setRowCount(0);
         });
 
         addBooksToTable();
