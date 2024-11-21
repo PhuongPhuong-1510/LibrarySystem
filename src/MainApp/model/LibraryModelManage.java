@@ -11,12 +11,14 @@ public class LibraryModelManage {
     private ArrayList<Student> studentsList;
     private ArrayList<Admin> adminsList;
     private ArrayList<Issue> issuesList;
+    private ArrayList<Reserve> reserveList;
 
     public LibraryModelManage() {
         booksList = new ArrayList<>();
         studentsList = new ArrayList<>();
         adminsList = new ArrayList<>();
         issuesList = new ArrayList<>();
+        reserveList = new ArrayList<>();
     }
 
     // Quản lý sách
@@ -150,7 +152,8 @@ public class LibraryModelManage {
     // Tạo ID sinh viên mới
     public String createStudentID() {
         int newID = 1;
-        Set<String> existingIDs = studentsList.stream()
+        ArrayList<Student> studentslist = getStudentsList();
+        Set<String> existingIDs = studentslist.stream()
                 .map(Student::getID)
                 .collect(Collectors.toSet());
 
@@ -293,6 +296,28 @@ public class LibraryModelManage {
         return null; // Return null if the student is not found
     }
 
+    public ArrayList<Book> searchBooks(String bookId, String bookName, String author, String genre) {
+        return booksList.stream()
+                .filter(book -> (bookId.isEmpty() || book.getBookID().contains(bookId)) &&
+                        (bookName.isEmpty() || book.getBookName().toLowerCase().contains(bookName.toLowerCase())) &&
+                        (author.isEmpty() || book.getAuthor().toLowerCase().contains(author.toLowerCase())) &&
+                        (genre.equals("All") || book.getCategory().equalsIgnoreCase(genre)))
+                .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    public Student searchStudentByEmailPassword(String studentEmail, String studentPassword) {
+        ArrayList<Student> studentsList = getStudentsList(); // Lấy danh sách sinh viên
+        for (Student student : studentsList) {
+            // So sánh email và mật khẩu
+            if (student.getEmail().equals(studentEmail) &&
+                    student.getPassword().equals(studentPassword)) {
+                return student; // Trả về đối tượng sinh viên nếu tìm thấy
+            }
+        }
+        return null; // Trả về null nếu không tìm thấy sinh viên phù hợp
+    }
+
+
     public Issue searchIssueByBookStudent(String bookID, String studentID) {
         ArrayList<Issue> issueslist = getIssuesList();
         for (Issue issue : issueslist) {
@@ -302,6 +327,60 @@ public class LibraryModelManage {
         }
         JOptionPane.showMessageDialog(null, "Issue not found.");
         return null; // Return null if no matching issue is found
+    }
+
+    public ArrayList<Reserve> getReserveList() {
+        if (reserveList.isEmpty()) {
+            loadReservesFromDatabase();
+        }
+        return reserveList;
+    }
+
+    private void loadReservesFromDatabase() {
+        ReserveDAO reserveDAO = new ReserveDAO();
+        reserveDAO.loadReservesFromDatabase();
+        reserveList = reserveDAO.getReservesList();
+    }
+
+    public void addReserveToDatabase(Reserve reserve) {
+        ReserveDAO reserveDAO = new ReserveDAO();
+        reserveDAO.addReserve(reserve);
+        reserveList.add(reserve);
+    }
+
+    public void deleteReserveFromDatabase(String reserveID) {
+        ReserveDAO reserveDAO = new ReserveDAO();
+        reserveDAO.deleteReserve(reserveID);
+        reserveList.removeIf(reserve -> reserve.getReserveID().equals(reserveID)); // Update the local list
+    }
+
+    public Reserve searchReserveByID(String reserveID) {
+        for (Reserve reserve : getReserveList()) {
+            if (reserve.getReserveID().equals(reserveID)) {
+                return reserve;
+            }
+        }
+        JOptionPane.showMessageDialog(null, "Reserve not found.");
+        return null;
+    }
+
+
+    public String createReserveID() {
+        int newID = 1;
+        ArrayList<Reserve> reservelist = getReserveList();
+        Set<String> existingIDs = reservelist.stream()
+                .map(Reserve::getReserveID)
+                .collect(Collectors.toSet());
+
+        String newReserveID;
+        while (true) {
+            newReserveID = String.format("R%03d", newID);
+            if (!existingIDs.contains(newReserveID)) {
+                break;
+            }
+            newID++;
+        }
+        return newReserveID;
     }
 
 

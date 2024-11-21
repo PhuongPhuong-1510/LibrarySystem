@@ -1,6 +1,7 @@
 package LoginPage.controller;
 
 import LoginPage.view.LoginView;
+import MainApp.model.Student;
 
 import javax.swing.*;
 import java.awt.*;
@@ -30,19 +31,21 @@ public class LoginController implements ActionListener, MouseListener {
         switch (e.getActionCommand()) {
             case "LOGIN":
                 String userType = (String) loginView.getCmbUserType().getSelectedItem();
-                if ("Admin".equals(userType)) {
+                if ("Admin".equals(userType) && loginView.checkAdmin()) {
                     System.out.println("Login as Admin");
-                    loginView.getMainView().showCard("HomePage");
-                } else if ("User".equals(userType)) {
+                    loginView.getMainView().showCard("HomePage", null);
+                } else if ("User".equals(userType) && loginView.checkStudent()) {
                     System.out.println("Login as User");
-                    loginView.getMainView().showCard("UserView");
+                    Student student = loginView.getStudentFromLogin();
+                    System.out.println(student.getID());
+                    loginView.getMainView().showCard("UserView", student);
                 } else {
                     JOptionPane.showMessageDialog(loginView, "Please select a user type!");
                 }
                 break;
             case "SIGNUP":
                 System.out.println("Signup button clicked!");
-                loginView.getMainView().showCard("Signup");
+                loginView.getMainView().showCard("Signup", null);
                 break;
             default:
                 break;

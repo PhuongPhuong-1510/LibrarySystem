@@ -1,5 +1,7 @@
 package UserMain.controller;
 
+import MainApp.model.LibraryModelManage;
+import MainApp.model.Reserve;
 import UserAccount.view.AccountView;
 import UserHistory.view.HistoryView;
 import UserMain.view.UserView;
@@ -8,6 +10,7 @@ import UserMain.view.UserView;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
 
 public class UserController implements ActionListener, MouseListener {
     private final UserView userView;
@@ -31,6 +34,7 @@ public class UserController implements ActionListener, MouseListener {
 
         userView.getBtnSearch().addMouseListener(this);
         userView.getBtnRegister().addMouseListener(this);
+        userView.getBtnRegister().addActionListener(this);
 
 
     }
@@ -64,7 +68,7 @@ public class UserController implements ActionListener, MouseListener {
                 }
                 if (menu == userView.getjMenuOut()) {
                     System.out.println("Logout clicked!");
-                    userView.getMainView().showCard("Login");
+                    userView.getMainView().showCard("Login", null);
                 }
                 if (menu==userView.getjMenuHomePage())
                 {
@@ -75,7 +79,7 @@ public class UserController implements ActionListener, MouseListener {
                 if(menu==userView.getjMenuHistory())
                 {
                     System.out.println(("History Button clicked"));
-                    HistoryView historyView = new HistoryView();
+                    HistoryView historyView = new HistoryView(userView.student, userView.libraryModelManage);
                     userView.toggleMenuBar();
                     historyView.setPreferredSize(new Dimension(userView.getMainHomePanel().getWidth(),userView.getMainHomePanel().getHeight()));
                     userView.setMainHomePanel(historyView);
@@ -88,8 +92,6 @@ public class UserController implements ActionListener, MouseListener {
                     accountView.setPreferredSize(new Dimension(userView.getMainHomePanel().getWidth(),userView.getMainHomePanel().getHeight()));
                     userView.setMainHomePanel(accountView);
                 }
-
-
 
             }
 
@@ -127,9 +129,39 @@ public class UserController implements ActionListener, MouseListener {
     public void mousePressed(MouseEvent e) {
     }
 
+    private void handleRegisterAction() {
+        String bookId = userView.getTxtBookId().getText();
+        String bookName = userView.getTxtBookName().getText();
+
+        if (bookId.isEmpty() || bookName.isEmpty()) {
+            JOptionPane.showMessageDialog(userView, "Please fill in all required fields.");
+        } else {
+            System.out.println("Registering book: " + bookName);
+        }
+    }
+
+
     @Override
     public void mouseClicked(MouseEvent e) {
+//        if (e.getSource() == userView.getBtnRegister()) {
+//            System.out.println("Register button clicked!");
+//            System.out.println(userView.student.getID());
+//            handleRegisterAction();
+//
+//            ArrayList<Reserve> reserves = userView.createReserveList();
+//            for (Reserve reserve : reserves) {
+//
+//                String reserveID = userView.libraryModelManage.createReserveID();
+//                reserve.setReserveID(reserveID);
+//                userView.libraryModelManage.addReserveToDatabase(reserve);
+//            }
+//
+//            System.out.println("All reserves added to the database.");
+//        } else if (e.getSource() == userView.getBtnSearch()) {
+//            System.out.println("Search button clicked!");
+//        }
     }
+
 
     @Override
     public void mouseReleased(MouseEvent e) {
@@ -166,5 +198,5 @@ public class UserController implements ActionListener, MouseListener {
         button.revalidate();
         button.repaint();
     }
-}
 
+}

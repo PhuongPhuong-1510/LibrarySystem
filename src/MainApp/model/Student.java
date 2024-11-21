@@ -9,6 +9,7 @@ public class Student extends User {
     private String major;
     private String branch;
     private ArrayList<Book> borrowedBooksList;
+    private ArrayList<Book> reservedBooksList;
 
     public Student(String ID, String name,  String email, String password, String phone, boolean gender, String cardPhoto, String dateOfBirth, String major, String branch) {
         super(ID, name, email, password, phone);
@@ -72,5 +73,12 @@ public class Student extends User {
 
     public void setBorrowedBooksList(ArrayList<Book> borrowedBooksList) {
         this.borrowedBooksList = borrowedBooksList;
+    }
+
+    public ArrayList<Book> getReservedBooksList() {
+        return reservedBooksList;
+    }
+    public void setReservedBooksList(ArrayList<Book> reservedBooksList) {
+        this.reservedBooksList = reservedBooksList;
     }
 }

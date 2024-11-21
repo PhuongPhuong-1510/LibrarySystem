@@ -1,5 +1,6 @@
 package HomePage.controller;
 
+import API.ApiView;
 import HomePage.view.HomePageView;
 import IssueBook.view.IssueBookView;
 import MainApp.model.LibraryModelManage;
@@ -37,6 +38,7 @@ public class HomePageController implements ActionListener, MouseListener {
         addMenuHoverEffect(homePageView.getjMenuMGMTBooks());
 //        addMenuHoverEffect(homePageView.getjMenuViewBooks());
         addMenuHoverEffect(homePageView.getjMenuViewRecords());
+        addMenuHoverEffect(homePageView.getjMenuSearchApi());
     }
 
     private MouseAdapter createButtonHoverListener(Color hoverColor, Color defaultColor) {
@@ -68,7 +70,7 @@ public class HomePageController implements ActionListener, MouseListener {
                 }
                 if (menu == homePageView.getjMenuLogout()) {
                     System.out.println("Logout clicked!");
-                    homePageView.getMainView().showCard("Login");
+                    homePageView.getMainView().showCard("Login", null);
                 }
                 if (menu==homePageView.getjMenuHomePage())
                 {
@@ -123,6 +125,15 @@ public class HomePageController implements ActionListener, MouseListener {
                     viewRecordView.setPreferredSize(new Dimension(homePageView.getMainHomePanel().getWidth(),homePageView.getMainHomePanel().getHeight()));
                     homePageView.setMainHomePanel(viewRecordView);
                 }
+                if(menu==homePageView.getjMenuSearchApi())
+                {
+                    System.out.println(("search API Button clicked"));
+                    ApiView apiView = new ApiView();
+                    homePageView.toggleMenuBar();
+                    apiView.setPreferredSize(new Dimension(homePageView.getMainHomePanel().getWidth(),homePageView.getMainHomePanel().getHeight()));
+                    homePageView.setMainHomePanel(apiView);
+                }
+
 
 
             }
