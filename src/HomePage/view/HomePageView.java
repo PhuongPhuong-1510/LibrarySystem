@@ -34,6 +34,7 @@ public class HomePageView extends JPanel {
     private JMenu jMenuHomePage, jMenuLogout, jMenuLMSDashBoard, jMenuMGMTBooks, jMenuMGMTSutudents,
             jMenuIssueBook, jMenuReturnBook, jMenuViewRecords;
     private JMenu jMenuAboutProject;
+    private JMenu jMenuItemAPI;
 
     public HomePageView(MainView mainView) {
         this.mainView = mainView;
@@ -72,13 +73,14 @@ public class HomePageView extends JPanel {
         jMenuHomePage.setBackground(new Color(185,173,173));
         jMenuHomePage.setOpaque(true);
         jMenuLMSDashBoard = createMenu("LMS Notification", "/HomePage/view/icon/notification.png", 50);
-        jMenuMGMTBooks = createMenu("Manage Books", "/HomePage/view/icon/icons8_Books_26px.png", 130);
-        jMenuMGMTSutudents = createMenu("Manage Students", "/HomePage/view/icon/icons8_Read_Online_26px.png", 180);
-        jMenuIssueBook = createMenu("Issue Book", "/HomePage/view/icon/icons8_Sell_26px.png", 230);
-        jMenuReturnBook = createMenu("Return Book", "/HomePage/view/icon/icons8_Return_Purchase_26px.png", 280);
-        jMenuViewRecords = createMenu("View Records", "/HomePage/view/icon/icons8_View_Details_26px.png", 330);
-        jMenuAboutProject = createMenu("About Project", "/HomePage/view/icon/icons8_Books_26px.png", 380);
-        jMenuLogout = createMenu("Logout", "/HomePage/view/icon/icons8_Exit_26px_2.png", 430);
+        jMenuItemAPI = createMenu("Search Book API", "/HomePage/view/icon/searchAPI.png", 130);
+        jMenuMGMTBooks = createMenu("Manage Books", "/HomePage/view/icon/icons8_Books_26px.png", 180);
+        jMenuMGMTSutudents = createMenu("Manage Students", "/HomePage/view/icon/icons8_Read_Online_26px.png", 230);
+        jMenuIssueBook = createMenu("Issue Book", "/HomePage/view/icon/icons8_Sell_26px.png", 280);
+        jMenuReturnBook = createMenu("Return Book", "/HomePage/view/icon/icons8_Return_Purchase_26px.png", 330);
+        jMenuViewRecords = createMenu("View Records", "/HomePage/view/icon/icons8_View_Details_26px.png", 380);
+        jMenuAboutProject = createMenu("About Project", "/HomePage/view/icon/icons8_Books_26px.png", 430);
+        jMenuLogout = createMenu("Logout", "/HomePage/view/icon/icons8_Exit_26px_2.png", 480);
 
         JLabel lblMenu = new JLabel("Features");
         lblMenu.setFont(new Font("Tahoma", Font.PLAIN, 15));
@@ -526,6 +528,10 @@ public class HomePageView extends JPanel {
 
     public JMenu getjMenuAboutProject() {
         return jMenuAboutProject;
+    }
+
+    public JMenu getjMenuSearchApi(){
+        return  jMenuItemAPI;
     }
 
     public MainView getMainView()
