@@ -2,10 +2,7 @@ package UserMain.view;
 
 
 import LoginPage.view.OvalButton;
-import MainApp.model.Book;
-import MainApp.model.LibraryModelManage;
-import MainApp.model.Reserve;
-import MainApp.model.Student;
+import MainApp.model.*;
 import MainApp.view.MainView;
 import ManageBook.view.BaseBookTableView;
 import ManageBook.view.PanelEditor;
@@ -57,7 +54,6 @@ public class UserView extends JPanel {
         this.libraryModelManage = libraryModelManage;
         this.student = student;
         this.mainView = mainView;
-        this.libraryModelManage = new LibraryModelManage();
         this.mainView = mainView;
         init();
         new UserController(this);
@@ -189,6 +185,7 @@ public class UserView extends JPanel {
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.setBackground(new Color(230, 230, 250));
         mainPanel.setPreferredSize(new Dimension(800, 582));
+
 
         mainPanel.add(createSearchPanel(), BorderLayout.WEST);
         mainPanel.add(createCartPanel(), BorderLayout.EAST);
@@ -330,7 +327,7 @@ public class UserView extends JPanel {
             data[i][4] = book.getCategory();
             data[i][5] = book.getLanguage();
             data[i][6] = book.getCurent();
-            data[i][7] = createAction(i);
+            data[i][7] = createAction(book, i);
         }
 
         return data;
@@ -365,26 +362,45 @@ public class UserView extends JPanel {
         return button;
     }
 
-    public JPanel createAction(int row) {
-        JPanel actionPanel=new JPanel(new BorderLayout());
+    public JPanel createAction(Book book, int row) {
+        JPanel actionPanel = new JPanel(new BorderLayout());
         JButton cardButton = createActionButton("/UserMain/view/icon/card.png", new Color(255, 240, 245));
         cardButton.setToolTipText("Reserve Book");
-        cardButton.addActionListener(e -> {
-            toggleCardButton(actionPanel,cardButton, row);
-        });
+
+
+        boolean isDisabled = isBookReservedOrIssued(book.getBookID(), student.getID());
+        cardButton.setEnabled(!isDisabled);
+
+        if (!isDisabled) {
+            cardButton.addActionListener(e -> {
+                toggleCardButton(actionPanel, cardButton, row);
+            });
+        }
+
         actionPanel.add(cardButton);
         return actionPanel;
-
-
     }
 
+    private boolean isBookReservedOrIssued(String bookId, String studentId) {
+        for (Issue issue : libraryModelManage.getIssuesList()) {
+            if (issue.getIssueBookID().equals(bookId) && issue.getIssueStudentID().equals(studentId)) {
+                return true;
+            }
+        }
+        for (Reserve reserve : libraryModelManage.getReserveList()) {
+            if (reserve.getBookID().equals(bookId) && reserve.getId().equals(studentId)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
     private void toggleCardButton(JPanel actionPanel, JButton cardButton, int row) {
         System.out.println("Button clicked");
         bookTableView.setSelectedRow(row);
-        String bookId = bookTableView.getCellValue(row, 0).toString(); // Lấy Book ID từ cột 0
-        String bookTitle = bookTableView.getCellValue(row, 1).toString(); // Lấy Book Name từ cột 1
+        String bookId = bookTableView.getCellValue(row, 0).toString();
+        String bookTitle = bookTableView.getCellValue(row, 1).toString();
 
-        // Thêm sách vào bảng cardTable
         addBookToTable(bookId, bookTitle);
         cardButton.setEnabled(false);
 
@@ -429,6 +445,7 @@ public class UserView extends JPanel {
         JPanel panelSearchButton = new JPanel();
         panelSearchButton.setOpaque(false);
         btnSearch = createButton("SEARCH");
+        btnSearch.addActionListener(e -> performSearch());
         panelSearchButton.add(btnSearch);
         panelSearch.add(panelSearchButton);
 
@@ -545,10 +562,42 @@ public class UserView extends JPanel {
 
         btnRegister = createButton("Register");
         panelCart.add(btnRegister, BorderLayout.SOUTH);
+        btnRegister.addActionListener(e -> {
+            System.out.println("Register button clicked!");
+            System.out.println(student.getID());
+            handleRegisterAction();
+
+            ArrayList<Reserve> reserves = createReserveList();
+            for (Reserve reserve : reserves) {
+
+                String bookID = reserve.getBookID();
+                Book book = libraryModelManage.searchBookByID(bookID);
+                book.setCurent("Reserved");
+                libraryModelManage.editBookInDatabase(book);
+
+                String reserveID = libraryModelManage.createReserveID();
+                reserve.setReserveID(reserveID);
+                libraryModelManage.addReserveToDatabase(reserve);
+
+            }
+
+            System.out.println("All reserves added to the database.");
+        });
 
         addBooksToTable();
 
         return panelCart;
+    }
+
+    private void handleRegisterAction() {
+        String bookId = getTxtBookId().getText();
+        String bookName = getTxtBookName().getText();
+
+        if (bookId.isEmpty() || bookName.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please fill in all required fields.");
+        } else {
+            System.out.println("Registering book: " + bookName);
+        }
     }
 
     public ArrayList<Reserve> createReserveList() {
@@ -564,11 +613,9 @@ public class UserView extends JPanel {
             LocalDate reservedDate = LocalDate.now();
             LocalDate dueDate = reservedDate.plusDays(100); // Cộng thêm 100 ngày
 
-            // Định dạng ngày thành chuỗi dd/MM/yyyy
             String formattedReservedDate = reservedDate.format(formatter);
             String formattedDueDate = dueDate.format(formatter);
 
-            // Chuyển đổi sang java.sql.Date nếu cần lưu vào cơ sở dữ liệu
             java.sql.Date sqlReservedDate = java.sql.Date.valueOf(reservedDate);
             java.sql.Date sqlDueDate = java.sql.Date.valueOf(dueDate);
 
@@ -605,13 +652,39 @@ public class UserView extends JPanel {
         if (mainHomePanel != null) {
             homePagePanel.remove(mainHomePanel);
         }
+
         mainHomePanel = newPanel;
         homePagePanel.add(mainHomePanel, BorderLayout.CENTER);
         homePagePanel.revalidate();
         homePagePanel.repaint();
     }
 
+    private void performSearch() {
+        String bookId = txtBookId.getText().trim();
+        String bookName = txtBookName.getText().trim();
+        String author = txtAuthor.getText().trim();
+        String genre = cboGenre.getSelectedItem().toString();
 
+        ArrayList<Book> searchResults = libraryModelManage.searchBooks(bookId, bookName, author, genre);
+        updateTable(searchResults);
+    }
+
+    private void updateTable(ArrayList<Book> books) {
+        DefaultTableModel model = (DefaultTableModel) bookTableView.getTable().getModel();
+        model.setRowCount(0);
+        for (Book book : books) {
+            model.addRow(new Object[]{
+                    book.getBookID(),
+                    book.getBookName(),
+                    createImageLabel(book.getImage()),
+                    book.getAuthor(),
+                    book.getCategory(),
+                    book.getLanguage(),
+                    book.getCurent(),
+                    createAction(book, model.getRowCount())
+            });
+        }
+    }
 
     public MainView getMainView() {
         return mainView;
