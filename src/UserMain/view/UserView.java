@@ -382,15 +382,9 @@ public class UserView extends JPanel {
     }
 
     private boolean isBookReservedOrIssued(String bookId, String studentId) {
-        for (Issue issue : libraryModelManage.getIssuesList()) {
-            if (issue.getIssueBookID().equals(bookId) && issue.getIssueStudentID().equals(studentId)) {
-                return true;
-            }
-        }
-        for (Reserve reserve : libraryModelManage.getReserveList()) {
-            if (reserve.getBookID().equals(bookId) && reserve.getId().equals(studentId)) {
-                return true;
-            }
+        Book book = libraryModelManage.searchBookByID(bookId);
+        if(!book.getCurent().equals("Still")){
+            return true;
         }
 
         return false;
