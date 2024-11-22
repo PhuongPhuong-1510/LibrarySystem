@@ -44,6 +44,28 @@ public class LibraryModelManage {
     public void editBookInDatabase(Book book) {
         BookDAO bookDAO = new BookDAO();
         bookDAO.editBook(book);
+        editBook(book);
+    }
+
+
+    public void editBook(Book updatedBook) {
+        if (updatedBook == null || updatedBook.getBookID() == null) {
+            System.out.println("Invalid book data.");
+            return;
+        }
+        for (Book book : booksList) {
+            if (book.getBookID().equals(updatedBook.getBookID())) {
+                book.setBookName(updatedBook.getBookName());
+                book.setAuthor(updatedBook.getAuthor());
+                book.setCurent(updatedBook.getCurent());
+                book.setImage(updatedBook.getImage());
+                book.setLanguage(updatedBook.getLanguage());
+                book.setTotal(updatedBook.getTotal());
+                book.setCategory(updatedBook.getCategory());
+                book.setPosition(updatedBook.getPosition());
+                break;
+            }
+        }
     }
 
     public void deleteBookFromDatabase(String bookID) {
@@ -70,6 +92,7 @@ public class LibraryModelManage {
 
     public String creatBookID() {
         int newID = 1;
+        //ArrayList<Book> bookslist = getBooksList();
         Set<String> existingIDs = booksList.stream()
                 .map(Book::getBookID)
                 .collect(Collectors.toSet());
@@ -112,6 +135,7 @@ public class LibraryModelManage {
     public void editStudentInDatabase(Student student) {
         StudentDAO studentDAO = new StudentDAO();
         studentDAO.editStudent(student);
+        editStudent(student);
 
         // Cập nhật trong danh sách cục bộ
         studentsList.stream()
@@ -122,6 +146,27 @@ public class LibraryModelManage {
                     studentsList.set(index, student);
                 });
     }
+
+    public void editStudent(Student updatedStudent) {
+        if (updatedStudent == null || updatedStudent.getID() == null) {
+            System.out.println("Invalid student data.");
+            return;
+        }
+        for (Student student : studentsList) {
+            if (student.getID().equals(updatedStudent.getID())) {
+                student.setName(updatedStudent.getName());
+                student.setEmail(updatedStudent.getEmail());
+                student.setPassword(updatedStudent.getPassword());
+                student.setPhone(updatedStudent.getPhone());
+                student.setGender(updatedStudent.getGender());
+                student.setDateOfBirth(updatedStudent.getDateOfBirth());
+                student.setMajor(updatedStudent.getMajor());
+                student.setBranch(updatedStudent.getBranch());
+                break;
+            }
+        }
+    }
+
 
     // Xóa sinh viên
     public void deleteStudentFromDatabase(String studentID) {

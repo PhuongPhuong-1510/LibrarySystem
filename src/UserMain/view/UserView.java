@@ -333,17 +333,32 @@ public class UserView extends JPanel {
         return data;
     }
 
-
-
     private JLabel createImageLabel(String path) {
+        String relativePath = getRelativeImagePath(path); // Lấy đường dẫn tương đối
         ImageIcon icon;
-        if (path != null && getClass().getResource(path) != null) {
-            icon = new ImageIcon(getClass().getResource(path));
+
+        if (relativePath != null && getClass().getResource(relativePath) != null) {
+            icon = new ImageIcon(getClass().getResource(relativePath));
+            icon.setDescription(relativePath);
         } else {
             System.out.println("Image not found at path: " + path);
-            icon = new ImageIcon(new BufferedImage(05, 05, BufferedImage.TYPE_INT_ARGB)); // Placeholder
+            icon = new ImageIcon(new BufferedImage(5, 5, BufferedImage.TYPE_INT_ARGB)); // Placeholder ảnh trống
         }
+
         return new JLabel(icon);
+    }
+    private String getRelativeImagePath(String imagePath) {
+        if (imagePath == null || imagePath.isEmpty()) {
+            return null;
+        }
+        String normalizedPath = imagePath.replace("\\", "/");
+        String target = "/ManageBook/icon/";
+        int relativePathIndex = normalizedPath.indexOf(target);
+        if (relativePathIndex != -1) {
+            return normalizedPath.substring(relativePathIndex);
+        }
+
+        return null;
     }
 
     public JButton createActionButton(String iconPath, Color bgColor) {
