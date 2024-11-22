@@ -137,21 +137,18 @@ public class ManagementBookView extends JPanel {
 
 
     private JLabel createImageLabel(String path) {
+        String relativePath = getRelativeImagePath(path);
         ImageIcon icon;
-        if (path != null && getClass().getResource(path) != null) {
-            int relativePathIndex = path.indexOf("/ManageBook/icon/");
-            if (relativePathIndex != -1) {
-                path = path.substring(relativePathIndex);
-            }
-
-            icon = new ImageIcon(getClass().getResource(path));
-            icon.setDescription(path);
+        if (relativePath != null && getClass().getResource(relativePath) != null) {
+            icon = new ImageIcon(getClass().getResource(relativePath));
+            icon.setDescription(relativePath);
         } else {
             System.out.println("Image not found at path: " + path);
             icon = new ImageIcon(new BufferedImage(5, 5, BufferedImage.TYPE_INT_ARGB)); // Placeholder
         }
         return new JLabel(icon);
     }
+
 
 
     public JButton createActionButton(String iconPath, Color bgColor) {
@@ -317,10 +314,12 @@ public class ManagementBookView extends JPanel {
     public void addBook(Book book) {
         DefaultTableModel model = (DefaultTableModel) bookTableView.getTable().getModel();
 
-        String imagePath = book.getImage();
-        int relativePathIndex = imagePath.indexOf("/ManageBook/icon/");
-        if (relativePathIndex != -1) {
-            imagePath = imagePath.substring(relativePathIndex); 
+        // Lấy đường dẫn ảnh tương đối
+        String imagePath = getRelativeImagePath(book.getImage());
+
+        // Nếu imagePath vẫn null, sử dụng một đường dẫn mặc định hoặc placeholder
+        if (imagePath == null) {
+            imagePath = "/ManageBook/icon/default.png"; // Đảm bảo bạn có ảnh default.png trong thư mục icon
         }
 
         Object[] rowData = new Object[]{
@@ -341,6 +340,25 @@ public class ManagementBookView extends JPanel {
         bookTableView.revalidate();
         bookTableView.repaint();
     }
+
+
+    private String getRelativeImagePath(String imagePath) {
+        if (imagePath == null) {
+            return null; // Trả về null nếu đường dẫn gốc không tồn tại
+        }
+
+        // Thay tất cả các dấu '\' thành '/' để đồng nhất
+        String normalizedPath = imagePath.replace("\\", "/");
+
+        // Tìm vị trí chuỗi con "/ManageBook/icon/"
+        int relativePathIndex = normalizedPath.indexOf("/ManageBook/icon/");
+        if (relativePathIndex != -1) {
+            return normalizedPath.substring(relativePathIndex);
+        }
+
+        return null; // Trả về null nếu chuỗi không chứa "/ManageBook/icon/"
+    }
+
 
     private Book getUpdatedBookFromRow(int row) {
         DefaultTableModel model = (DefaultTableModel) bookTableView.getTable().getModel();
