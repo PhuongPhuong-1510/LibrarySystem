@@ -70,7 +70,8 @@ public class LibraryModelManage {
 
     public String creatBookID() {
         int newID = 1;
-        Set<String> existingIDs = booksList.stream()
+        ArrayList<Book> bookslist = getBooksList();
+        Set<String> existingIDs = bookslist.stream()
                 .map(Book::getBookID)
                 .collect(Collectors.toSet());
 

@@ -1,5 +1,8 @@
 package API;
 
+import MainApp.model.Book;
+import MainApp.model.LibraryModelManage;
+
 import javax.swing.*;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
@@ -14,15 +17,17 @@ public class ApiView extends JPanel {
     private static final long serialVersionUID = 1L;
     private final JPanel panel;
     private JTextField textField;
+    private LibraryModelManage libraryModelManage;
 
     /**
      * Create the panel.
      */
 
 
-    public ApiView() {
+    public ApiView(LibraryModelManage libraryModelManage) {
         ApiController apiController = new ApiController(this);
         setLayout(null);
+        this.libraryModelManage = libraryModelManage;
 
         textField = new JTextField();
         textField.setFont(new Font("Tahoma", Font.BOLD, 20));
@@ -145,6 +150,29 @@ public class ApiView extends JPanel {
             JButton btnAdd = new JButton("Add");
             btnAdd.setBackground(new Color(75, 0, 130));
             btnAdd.setForeground(Color.WHITE);
+            btnAdd.addActionListener(e ->{
+                String bookID = libraryModelManage.creatBookID();
+                System.out.println("Book ID: " + bookID);
+                String bookName = title;
+                String bookAuthor = author;
+                String bookCategory = category;
+                String bookLanguage = language;
+                int total = 1;
+                String curent = "Still";
+                String bookPosition = position;
+//                private String bookID;
+//                private String bookName;
+//                private String image;
+//                private String author;
+//                private String category;
+//                private String language;
+//                private int total;
+//                private String curent;
+//                private String Position;
+
+                Book bookk = new Book(bookID, bookName, " ",bookAuthor, bookCategory, bookLanguage, total, curent, bookPosition);
+                libraryModelManage.addBookToDatabase(bookk);
+            });
             panel_2.add(btnAdd);
 
             JButton btnSee = new JButton("See");

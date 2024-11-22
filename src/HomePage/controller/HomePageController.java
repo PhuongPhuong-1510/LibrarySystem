@@ -125,8 +125,9 @@ public class HomePageController implements ActionListener, MouseListener {
                 }
                 if(menu==homePageView.getjMenuSearchApi())
                 {
+                    LibraryModelManage libraryModelManage = new LibraryModelManage();
                     System.out.println(("search API Button clicked"));
-                    ApiView apiView = new ApiView();
+                    ApiView apiView = new ApiView(libraryModelManage);
                     homePageView.toggleMenuBar();
                     apiView.setPreferredSize(new Dimension(homePageView.getMainHomePanel().getWidth(),homePageView.getMainHomePanel().getHeight()));
                     homePageView.setMainHomePanel(apiView);
