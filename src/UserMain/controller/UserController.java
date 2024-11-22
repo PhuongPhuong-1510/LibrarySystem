@@ -143,23 +143,23 @@ public class UserController implements ActionListener, MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        if (e.getSource() == userView.getBtnRegister()) {
-            System.out.println("Register button clicked!");
-            System.out.println(userView.student.getID());
-            handleRegisterAction();
-
-            ArrayList<Reserve> reserves = userView.createReserveList();
-            for (Reserve reserve : reserves) {
-
-                String reserveID = userView.libraryModelManage.createReserveID();
-                reserve.setReserveID(reserveID);
-                userView.libraryModelManage.addReserveToDatabase(reserve);
-            }
-
-            System.out.println("All reserves added to the database.");
-        } else if (e.getSource() == userView.getBtnSearch()) {
-            System.out.println("Search button clicked!");
-        }
+//        if (e.getSource() == userView.getBtnRegister()) {
+//            System.out.println("Register button clicked!");
+//            System.out.println(userView.student.getID());
+//            handleRegisterAction();
+//
+//            ArrayList<Reserve> reserves = userView.createReserveList();
+//            for (Reserve reserve : reserves) {
+//
+//                String reserveID = userView.libraryModelManage.createReserveID();
+//                reserve.setReserveID(reserveID);
+//                userView.libraryModelManage.addReserveToDatabase(reserve);
+//            }
+//
+//            System.out.println("All reserves added to the database.");
+//        } else if (e.getSource() == userView.getBtnSearch()) {
+//            System.out.println("Search button clicked!");
+//        }
     }
 
 
