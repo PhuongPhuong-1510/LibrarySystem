@@ -10,6 +10,12 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Font;
 import java.awt.Color;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 
 public class ApiView extends JPanel {
@@ -28,6 +34,7 @@ public class ApiView extends JPanel {
         ApiController apiController = new ApiController(this);
         setLayout(null);
         this.libraryModelManage = libraryModelManage;
+        libraryModelManage.getBooksList();
 
         textField = new JTextField();
         textField.setFont(new Font("Tahoma", Font.BOLD, 20));
@@ -120,92 +127,141 @@ public class ApiView extends JPanel {
     }
 
     public void searchBooks(String query) {
-        // Gọi API Google Books với từ khóa
-        String jsonResponse = GoogleBooksAPI.searchBooks(query);
-        List<String[]> books = BookParser.getBookDetails(jsonResponse);
+        if (!isInternetAvailable()) {
+            JOptionPane.showMessageDialog(this, "No Internet connection. Please check your connection and try again.",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        showLoadingDialog();
 
-        panel.removeAll();
+        searchWorker = new SwingWorker<Void, Void>() {
+            @Override
+            protected Void doInBackground() {
+                try {
+                    String jsonResponse = GoogleBooksAPI.searchBooks(query);
+                    List<String[]> books = BookParser.getBookDetails(jsonResponse);
 
-        for (int i = 0; i < books.size() && i < 50; i++) {
-            String[] book = books.get(i);
-            final String title = book[0];  // Sử dụng biến final
-            final String author = book[1];
-            final String language = book[2];
-            final String category = book[3];
-            final String position = book[4];
+                    SwingUtilities.invokeLater(() -> {
+                        panel.removeAll();
 
-            String displayedTitle = title;
-            if (displayedTitle.length() > 50) {
-                displayedTitle = displayedTitle.substring(0, 50) + "...";
+                        for (int i = 0; i < books.size() && i < 50; i++) {
+                            String[] book = books.get(i);
+                            final String title = book[0];
+                            final String author = book[1];
+                            final String language = book[2];
+                            final String category = book[3];
+                            final String imageUrl = book[4];
+                            final String infoLink = book[5];
+
+                            String displayedTitle = title.length() > 50 ? title.substring(0, 50) + "..." : title;
+
+                            JPanel panel_1 = new JPanel(new BorderLayout(0, 0));
+                            panel_1.setBackground(Color.WHITE);
+
+                            JPanel panel_2 = new JPanel(new GridLayout(1, 2, 10, 10));
+                            panel_1.add(panel_2, BorderLayout.EAST);
+
+                            JButton btnAdd = new JButton("Add");
+                            btnAdd.setBackground(new Color(75, 0, 130));
+                            btnAdd.setForeground(Color.WHITE);
+                            btnAdd.addActionListener(e -> {
+                                String bookID = libraryModelManage.creatBookID();
+                                Book bookk = new Book(bookID, title, "", author, category, language, 1, "Still", "B1");
+                                libraryModelManage.addBookToDatabase(bookk);
+                                JOptionPane.showMessageDialog(null, "Book \"" + title + "\" has been added successfully!",
+                                        "Book Added", JOptionPane.INFORMATION_MESSAGE);
+                            });
+                            panel_2.add(btnAdd);
+
+                            JButton btnSee = new JButton("See");
+                            btnSee.setBackground(new Color(0, 0, 128));
+                            btnSee.setForeground(Color.WHITE);
+                            btnSee.addActionListener(e -> {
+                                JFrame chiTietFrame = new JFrame("Chi Tiết");
+                                chiTietFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                                chiTietFrame.setSize(1000, 600);
+                                chiTietFrame.setLocationRelativeTo(null);
+                                ChiTiet chiTietPanel = new ChiTiet(title, author, language, category, imageUrl, infoLink);
+                                chiTietFrame.getContentPane().add(chiTietPanel);
+                                chiTietFrame.setVisible(true);
+                            });
+                            panel_2.add(btnSee);
+
+                            JMenuItem mntmNewMenuItem = new JMenuItem(displayedTitle);
+                            panel_1.add(mntmNewMenuItem, BorderLayout.CENTER);
+                            mntmNewMenuItem.setBackground(Color.WHITE);
+                            mntmNewMenuItem.setFont(new Font("Tahoma", Font.BOLD, 20));
+
+                            panel.add(panel_1);
+                        }
+
+                        panel.revalidate();
+                        panel.repaint();
+                    });
+                } catch (Exception ex) {
+                    SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(ApiView.this,
+                            "An error occurred while searching. Please try again.",
+                            "Error", JOptionPane.ERROR_MESSAGE));
+                }
+                return null;
             }
 
-            JPanel panel_1 = new JPanel();
-            panel_1.setLayout(new BorderLayout(0, 0));
-            panel_1.setBackground(Color.WHITE);
+            @Override
+            protected void done() {
+                hideLoadingDialog();
+            }
+        };
 
-            JPanel panel_2 = new JPanel();
-            panel_1.add(panel_2, BorderLayout.EAST);
-            panel_2.setLayout(new GridLayout(1, 2, 10, 10));
-
-            JButton btnAdd = new JButton("Add");
-            btnAdd.setBackground(new Color(75, 0, 130));
-            btnAdd.setForeground(Color.WHITE);
-            btnAdd.addActionListener(e ->{
-                String bookID = libraryModelManage.creatBookID();
-                System.out.println("Book ID: " + bookID);
-                String bookName = title;
-                String bookAuthor = author;
-                String bookCategory = category;
-                String bookLanguage = language;
-                int total = 1;
-                String curent = "Still";
-                String bookPosition = position;
-//                private String bookID;
-//                private String bookName;
-//                private String image;
-//                private String author;
-//                private String category;
-//                private String language;
-//                private int total;
-//                private String curent;
-//                private String Position;
-
-                Book bookk = new Book(bookID, bookName, " ",bookAuthor, bookCategory, bookLanguage, total, curent, bookPosition);
-                libraryModelManage.addBookToDatabase(bookk);
-            });
-            panel_2.add(btnAdd);
-
-            JButton btnSee = new JButton("See");
-            btnSee.setBackground(new Color(0, 0, 128));
-            btnSee.setForeground(Color.WHITE);
-            panel_2.add(btnSee);
-
-            btnSee.addActionListener(e -> {
-                JFrame chiTietFrame = new JFrame("Chi Tiết");
-                chiTietFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-                chiTietFrame.setSize(1000, 600);
-                chiTietFrame.setLocationRelativeTo(null);
-                ChiTiet chiTietPanel = new ChiTiet(title, author, language, category, position);
-                chiTietFrame.getContentPane().add(chiTietPanel);
-                chiTietFrame.setVisible(true);
-            });
-
-            JMenuItem mntmNewMenuItem = new JMenuItem(displayedTitle);
-            panel_1.add(mntmNewMenuItem, BorderLayout.CENTER);
-            mntmNewMenuItem.setBackground(Color.WHITE);
-            mntmNewMenuItem.setFont(new Font("Tahoma", Font.BOLD, 20));
-
-            panel.add(panel_1);
-        }
-
-
-        panel.revalidate();
-        panel.repaint();
+        searchWorker.execute();
     }
+
+    private boolean isInternetAvailable() {
+        try {
+            URL url = new URL("http://www.google.com");
+            InputStream inputStream = url.openStream();
+            inputStream.close();
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
 
     public String getSearchQuery() {
         return textField.getText().trim();
     }
+
+    private JDialog loadingDialog;
+    private SwingWorker<Void, Void> searchWorker;
+
+    private void showLoadingDialog() {
+        loadingDialog = new JDialog((JFrame) SwingUtilities.getWindowAncestor(this), "Loading...", true);
+        loadingDialog.setUndecorated(true);
+        loadingDialog.setSize(200, 100);
+        loadingDialog.setLocationRelativeTo(this);
+
+        JLabel label = new JLabel("Loading...", JLabel.CENTER);
+        label.setFont(new Font("Tahoma", Font.BOLD, 16));
+        loadingDialog.add(label);
+
+        loadingDialog.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent e) {
+                if (searchWorker != null) {
+                    searchWorker.cancel(true);
+                }
+            }
+        });
+
+        new Thread(() -> loadingDialog.setVisible(true)).start();
+    }
+
+    private void hideLoadingDialog() {
+        if (loadingDialog != null) {
+            loadingDialog.dispose();
+        }
+    }
+
 
 
 }

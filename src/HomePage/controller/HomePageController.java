@@ -15,10 +15,12 @@ import java.awt.event.*;
 
 public class HomePageController implements ActionListener, MouseListener {
     private final HomePageView homePageView;
+    private final LibraryModelManage libraryModelManage;
     private JMenu selectedMenu = null;
 
 
     public HomePageController(HomePageView homePageView) {
+        this.libraryModelManage = new LibraryModelManage();
         this.homePageView = homePageView;
         initializeListeners();
     }
@@ -81,7 +83,7 @@ public class HomePageController implements ActionListener, MouseListener {
                 if(menu==homePageView.getjMenuMGMTBooks())
                 {
                     System.out.println(("MenuMGMTBooks clicked"));
-                    LibraryModelManage libraryModelManage = new LibraryModelManage();
+                    //LibraryModelManage libraryModelManage = new LibraryModelManage();
                     ManagementBookView managementBookView = new ManagementBookView(libraryModelManage);
                     homePageView.toggleMenuBar();
                     managementBookView.setPreferredSize(new Dimension(homePageView.getMainHomePanel().getWidth(),homePageView.getMainHomePanel().getHeight()));
@@ -89,7 +91,7 @@ public class HomePageController implements ActionListener, MouseListener {
                 }
                 if(menu==homePageView.getjMenuMGMTSutudents())
                 {
-                    LibraryModelManage libraryModelManage = new LibraryModelManage();
+                    //LibraryModelManage libraryModelManage = new LibraryModelManage();
                     System.out.println(("MenuStudent clicked"));
                     ManagementStudentView managementStudentView = new ManagementStudentView(libraryModelManage);
                     homePageView.toggleMenuBar();
@@ -99,7 +101,7 @@ public class HomePageController implements ActionListener, MouseListener {
 
                 if(menu==homePageView.getjMenuIssueBook())
                 {
-                    LibraryModelManage libraryModelManage = new LibraryModelManage();
+                    //LibraryModelManage libraryModelManage = new LibraryModelManage();
                     System.out.println(("Issue Button clicked"));
                     IssueBookView issueBookView = new IssueBookView(libraryModelManage);
                     homePageView.toggleMenuBar();
@@ -108,7 +110,7 @@ public class HomePageController implements ActionListener, MouseListener {
                 }
                 if(menu==homePageView.getjMenuReturnBook())
                 {
-                    LibraryModelManage libraryModelManage = new LibraryModelManage();
+                    //LibraryModelManage libraryModelManage = new LibraryModelManage();
                     System.out.println(("Return Button clicked"));
                     ReturnBookView returnBookView = new ReturnBookView(libraryModelManage);
                     homePageView.toggleMenuBar();
@@ -125,7 +127,7 @@ public class HomePageController implements ActionListener, MouseListener {
                 }
                 if(menu==homePageView.getjMenuSearchApi())
                 {
-                    LibraryModelManage libraryModelManage = new LibraryModelManage();
+                    //LibraryModelManage libraryModelManage = new LibraryModelManage();
                     System.out.println(("search API Button clicked"));
                     ApiView apiView = new ApiView(libraryModelManage);
                     homePageView.toggleMenuBar();
