@@ -3,6 +3,7 @@ package MainApp.model;
 import dataBase.DatabaseConnection;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class IssueDAO {
@@ -20,11 +21,12 @@ public class IssueDAO {
                 String issueID = resultSet.getString("issueID");
                 String bookID = resultSet.getString("bookID");
                 String studentID = resultSet.getString("id");
-                String isueDate = resultSet.getString("isueDate");
+                String issueDate = resultSet.getString("isueDate");
                 String dueDate = resultSet.getString("dueDate");
+
                 String status = resultSet.getString("status");
 
-                Issue issue = new Issue(issueID, bookID, studentID, isueDate, dueDate, status);
+                Issue issue = new Issue(issueID, bookID, studentID, issueDate, dueDate, status);
                 issuesList.add(issue); // Thêm vào danh sách
             }
 
