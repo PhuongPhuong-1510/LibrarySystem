@@ -29,6 +29,8 @@ public class ViewRecordController implements ActionListener, MouseListener {
 
         viewRecordView.getAllRecordButton().addMouseListener(this);
         viewRecordView.getSearchButton().addMouseListener(this);
+        viewRecordView.getSearchButton().addActionListener(this);
+        viewRecordView.getAllRecordButton().addActionListener(this);
     }
 
     @Override
@@ -57,9 +59,24 @@ public class ViewRecordController implements ActionListener, MouseListener {
 
 
         }
+        if (e.getSource() == viewRecordView.getSearchButton()) {
+            // Lấy giá trị từ các trường tìm kiếm
+            String bookID = viewRecordView.getBookIDField().getText();
+            String nameID = viewRecordView.getNameIDField().getText();
+            String issueDate = viewRecordView.getIssueDateField().getText();
+            String dueDate = viewRecordView.getDueDateField().getText();
+
+            // Gọi phương thức fetchData với các tham số tìm kiếm
+            Object[][] filteredData = viewRecordView.fetchData(bookID, nameID, issueDate, dueDate);
+
+            // Cập nhật bảng dữ liệu với kết quả tìm kiếm
+            viewRecordView.updateTable(filteredData);
+        } else if (e.getSource() == viewRecordView.getAllRecordButton()) {
+            // Khi nhấn "All Record", hiển thị tất cả các bản ghi
+            Object[][] allData = viewRecordView.fetchData("", "", "", ""); // Truyền tham số rỗng để lấy tất cả dữ liệu
+            viewRecordView.updateTable(allData);
+        }
     }
-
-
 
 
 

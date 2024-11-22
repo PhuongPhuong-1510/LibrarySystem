@@ -1,14 +1,20 @@
 package MainApp.model;
 
+import java.sql.Date;
+
 public class Issue {
     private String issueID;
     private String issueBookID;
+    private String bookName;
+    private String bookImage;
     private String issueStudentID;
+    private String studentName;
+    private String studentImage;
     private String issueDate;
     private String dueDate;
     private String status;
 
-    public Issue() {
+    public Issue(int issueID, int bookID, int studentID, String bookName, String bookImage, String studentName, String studentImage, Date issueDate, Date dueDate, String status) {
 
     }
     public Issue(String issueID, String issueBook, String issueStudent, String issueDate, String dueDate, String status) {
