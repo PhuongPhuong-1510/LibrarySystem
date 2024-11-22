@@ -165,12 +165,70 @@ public class ApiView extends JPanel {
                             btnAdd.setBackground(new Color(75, 0, 130));
                             btnAdd.setForeground(Color.WHITE);
                             btnAdd.addActionListener(e -> {
-                                String bookID = libraryModelManage.creatBookID();
-                                Book bookk = new Book(bookID, title, "", author, category, language, 1, "Still", "B1");
-                                libraryModelManage.addBookToDatabase(bookk);
-                                JOptionPane.showMessageDialog(null, "Book \"" + title + "\" has been added successfully!",
-                                        "Book Added", JOptionPane.INFORMATION_MESSAGE);
+                                showLoadingDialog();
+
+                                SwingWorker<Void, Void> addBookWorker = new SwingWorker<>() {
+                                    @Override
+                                    protected Void doInBackground() throws Exception {
+                                        String bookID = libraryModelManage.creatBookID();
+                                        String bookName = title;
+                                        String bookAuthor = author;
+                                        String bookCategory = category;
+                                        String bookLanguage = language;
+                                        int total = 1;
+                                        String current = "Still";
+                                        String bookPosition = "B2";
+
+                                        String fileName = null;
+
+                                        try {
+                                            String directoryPath = "/ManageBook/icon/";
+                                            Files.createDirectories(Paths.get(directoryPath)); // Ensure directory exists
+
+                                            if (imageUrl == null || imageUrl.isEmpty()) {
+                                                JOptionPane.showMessageDialog(null, "No image URL provided for this book.", "Error", JOptionPane.ERROR_MESSAGE);
+                                                return null;
+                                            }
+
+                                            URL url = new URL(imageUrl);
+                                            String sanitizedBookName = bookName.replaceAll("[^a-zA-Z0-9]", "_");
+                                            fileName = directoryPath + sanitizedBookName + ".jpg";
+
+                                            InputStream in = url.openStream();
+                                            Files.copy(in, Paths.get(fileName), StandardCopyOption.REPLACE_EXISTING);
+                                            in.close();
+                                        } catch (IOException ex) {
+                                            System.err.println("Error downloading image from URL: " + imageUrl);
+                                            ex.printStackTrace();
+
+                                            SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(
+                                                    null, "Failed to download book image from: " + imageUrl + "\nError: " + ex.getMessage(),
+                                                    "Error", JOptionPane.ERROR_MESSAGE
+                                            ));
+
+                                            // Optional: Use default image as a fallback
+                                            fileName = "/ManageBook/icon/default.jpg";
+                                        }
+
+
+                                        // Tạo đối tượng Book và lưu vào database
+                                        Book bookk = new Book(bookID, bookName, fileName, bookAuthor, bookCategory, bookLanguage, total, current, bookPosition);
+                                        libraryModelManage.addBookToDatabase(bookk);
+                                        return null;
+                                    }
+
+                                    @Override
+                                    protected void done() {
+                                        hideLoadingDialog();
+                                        JOptionPane.showMessageDialog(null, "Book \"" + title + "\" has been added successfully!",
+                                                "Book Added", JOptionPane.INFORMATION_MESSAGE);
+                                    }
+                                };
+
+                                addBookWorker.execute();
                             });
+
+
                             panel_2.add(btnAdd);
 
                             JButton btnSee = new JButton("See");

@@ -191,11 +191,12 @@ public class ManagementBookView extends JPanel {
         JButton editButton = createActionButton("/ManageBook/icon/bookEdit.png", new Color(255, 240, 245));
         JButton deleteButton = createActionButton("/ManageBook/icon/bookDelete.png", new Color(255, 240, 245));
         JButton imageButton = createActionButton("/ManageBook/icon/uploadImage.png", new Color(255, 240, 245));
-
+        JButton QRcodeButton = createActionButton("/ManageBook/icon/icons8-qrCode.png", new Color(255, 240, 245));
 
         editButton.setToolTipText("Edit Book");
         deleteButton.setToolTipText("Delete Book");
         imageButton.setToolTipText("Upload Cover");
+        QRcodeButton.setToolTipText("QR Code");
 
         editButton.addActionListener(e -> {
             toggleEditButtonIcon(actionPanel,editButton,deleteButton,imageButton, row);
