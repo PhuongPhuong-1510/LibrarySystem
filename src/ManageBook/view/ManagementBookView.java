@@ -136,34 +136,19 @@ public class ManagementBookView extends JPanel {
     }
 
 
-
-//    private JLabel createImageLabel(String path) {
-//        String relativePath = getRelativeImagePath(path);
-//        ImageIcon icon;
-//        if (relativePath != null && getClass().getResource(relativePath) != null) {
-//            icon = new ImageIcon(getClass().getResource(relativePath));
-//            icon.setDescription(relativePath);
-//        } else {
-//            System.out.println("Image not found at path: " + path);
-//            icon = new ImageIcon(new BufferedImage(5, 5, BufferedImage.TYPE_INT_ARGB)); // Placeholder
-//        }
-//        return new JLabel(icon);
-//    }
-
     private JLabel createImageLabel(String path) {
-        String relativePath = getRelativeImagePath(path); // Lấy đường dẫn tương đối
+        String relativePath = getRelativeImagePath(path);
         ImageIcon icon;
 
-        // Kiểm tra xem đường dẫn có hợp lệ hay không
         if (relativePath != null && getClass().getResource(relativePath) != null) {
             icon = new ImageIcon(getClass().getResource(relativePath));
-            icon.setDescription(relativePath); // Đặt mô tả để sử dụng sau
+            icon.setDescription(relativePath);
         } else {
             System.out.println("Image not found at path: " + path);
             icon = new ImageIcon(new BufferedImage(5, 5, BufferedImage.TYPE_INT_ARGB)); // Placeholder ảnh trống
         }
 
-        return new JLabel(icon); // Trả về JLabel với ảnh
+        return new JLabel(icon);
     }
 
 
