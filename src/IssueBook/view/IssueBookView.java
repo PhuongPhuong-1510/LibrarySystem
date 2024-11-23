@@ -9,6 +9,7 @@ import MainApp.model.Student;
 
 import javax.swing.*;
 import java.awt.*;
+import java.sql.Date;
 import java.util.ArrayList;
 
 public class IssueBookView extends JPanel {
@@ -293,8 +294,8 @@ public class IssueBookView extends JPanel {
         //ArrayList<Issue> issueLisst = libraryModelManage.getIssuesList();
          String bookID = this.bookIdField.getText()+"";
          String studentID = this.studentIdField.getText()+"";
-         String issueDate = this.issueDateField.getText()+"";
-         String dueDate = this.dueDateField.getText()+"";
+         Date issueDate = Date.valueOf(this.issueDateField.getText()+"");
+         Date dueDate = Date.valueOf(this.dueDateField.getText()+"");
          String status = "issued";
 
          if(libraryModelManage.checkStudentAndBookEmpty(bookID, studentID)){

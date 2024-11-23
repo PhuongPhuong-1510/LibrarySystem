@@ -12,6 +12,7 @@ public class IssueDAO {
     public void loadIssuesFromDatabase() {
         issuesList.clear(); // Đảm bảo danh sách được làm trống trước khi tải mới dữ liệu
         try (Connection connection = DatabaseConnection.getConnection();
+
              Statement statement = connection.createStatement()) {
 
             String query = "SELECT * FROM issue";
@@ -21,8 +22,8 @@ public class IssueDAO {
                 String issueID = resultSet.getString("issueID");
                 String bookID = resultSet.getString("bookID");
                 String studentID = resultSet.getString("id");
-                String issueDate = resultSet.getString("isueDate");
-                String dueDate = resultSet.getString("dueDate");
+                Date issueDate = resultSet.getDate("isueDate");
+                Date dueDate = resultSet.getDate("dueDate");
 
                 String status = resultSet.getString("status");
 
@@ -47,8 +48,8 @@ public class IssueDAO {
             preparedStatement.setString(1, issue.getIssueID());
             preparedStatement.setString(2, issue.getIssueBookID());
             preparedStatement.setString(3, issue.getIssueStudentID());
-            preparedStatement.setString(4, issue.getIssueDate());
-            preparedStatement.setString(5, issue.getDueDate());
+            preparedStatement.setDate(4, issue.getIssueDate());
+            preparedStatement.setDate(5, issue.getDueDate());
             preparedStatement.setString(6, issue.getStatus());
 
             preparedStatement.executeUpdate();
@@ -67,8 +68,8 @@ public class IssueDAO {
 
             preparedStatement.setString(1, issue.getIssueBookID());
             preparedStatement.setString(2, issue.getIssueStudentID());
-            preparedStatement.setString(3, issue.getIssueDate());
-            preparedStatement.setString(4, issue.getDueDate());
+            preparedStatement.setDate(3, issue.getIssueDate());
+            preparedStatement.setDate(4, issue.getDueDate());
             preparedStatement.setString(5, issue.getStatus());
             preparedStatement.setString(6, issue.getIssueID());
 
