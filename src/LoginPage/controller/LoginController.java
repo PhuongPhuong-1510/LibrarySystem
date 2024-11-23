@@ -31,14 +31,23 @@ public class LoginController implements ActionListener, MouseListener {
         switch (e.getActionCommand()) {
             case "LOGIN":
                 String userType = (String) loginView.getCmbUserType().getSelectedItem();
-                if ("Admin".equals(userType) && loginView.checkAdmin()) {
-                    System.out.println("Login as Admin");
-                    loginView.getMainView().showCard("HomePage", null);
-                } else if ("User".equals(userType) && loginView.checkStudent()) {
-                    System.out.println("Login as User");
-                    Student student = loginView.getStudentFromLogin();
-                    System.out.println(student.getID());
-                    loginView.getMainView().showCard("UserView", student);
+
+                if ("Admin".equals(userType)) {
+                    if (loginView.checkAdmin()) {
+                        System.out.println("Login as Admin");
+                        loginView.getMainView().showCard("HomePage", null);
+                    } else {
+                        JOptionPane.showMessageDialog(loginView, "Account does not exist or incorrect password. Please check again.");
+                    }
+                } else if ("User".equals(userType)) {
+                    if (loginView.checkStudent()) {
+                        System.out.println("Login as User");
+                        Student student = loginView.getStudentFromLogin();
+                        System.out.println(student.getID());
+                        loginView.getMainView().showCard("UserView", student);
+                    } else {
+                        JOptionPane.showMessageDialog(loginView, "Account does not exist or incorrect password. Please check again.");
+                    }
                 } else {
                     JOptionPane.showMessageDialog(loginView, "Please select a user type!");
                 }
@@ -51,6 +60,7 @@ public class LoginController implements ActionListener, MouseListener {
                 break;
         }
     }
+
 
     @Override
     public void mouseEntered(MouseEvent e) {
