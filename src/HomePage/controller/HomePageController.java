@@ -71,7 +71,6 @@ public class HomePageController implements ActionListener, MouseListener {
                     menu.setBackground(new Color(185, 173, 173)); // Màu khi được chọn
                 }
 
-                // Hiển thị hộp thoại "Loading..." và thực thi tác vụ nền
                 showLoadingDialog();
                 new SwingWorker<Void, Void>() {
                     @Override
@@ -155,18 +154,32 @@ public class HomePageController implements ActionListener, MouseListener {
     }
 
     private JDialog loadingDialog;
+    private JProgressBar progressBar;
 
     private void showLoadingDialog() {
         loadingDialog = new JDialog((JFrame) SwingUtilities.getWindowAncestor(homePageView), "Loading...", true);
         loadingDialog.setUndecorated(true);
-        loadingDialog.setSize(200, 100);
+        loadingDialog.setSize(250, 60);
         loadingDialog.setLocationRelativeTo(homePageView);
+
+        JPanel panel = new JPanel(new GridLayout(2,1,10,10));
 
         JLabel label = new JLabel("Loading...", JLabel.CENTER);
         label.setFont(new Font("Tahoma", Font.BOLD, 16));
-        loadingDialog.add(label);
+        panel.add(label);
+        progressBar = new JProgressBar();
+        progressBar.setIndeterminate(true);
+
+        panel.add(progressBar);
+
+        loadingDialog.add(panel);
 
         new Thread(() -> loadingDialog.setVisible(true)).start();
+    }
+
+    // Use this helper method to update the progress bar
+    private void updateProgress(int progress) {
+        SwingUtilities.invokeLater(() -> progressBar.setValue(progress));
     }
 
     private void hideLoadingDialog() {
@@ -174,6 +187,7 @@ public class HomePageController implements ActionListener, MouseListener {
             loadingDialog.dispose();
         }
     }
+
 
 
     @Override

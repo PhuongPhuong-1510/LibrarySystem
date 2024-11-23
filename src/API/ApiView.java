@@ -4,12 +4,9 @@ import MainApp.model.Book;
 import MainApp.model.LibraryModelManage;
 
 import javax.swing.*;
-import java.awt.BorderLayout;
-import java.awt.GridLayout;
+import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import java.awt.Font;
-import java.awt.Color;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -238,16 +235,28 @@ public class ApiView extends JPanel {
 
     private JDialog loadingDialog;
     private SwingWorker<Void, Void> searchWorker;
+    private JProgressBar progressBar; // Thanh tiến trình
 
     private void showLoadingDialog() {
         loadingDialog = new JDialog((JFrame) SwingUtilities.getWindowAncestor(this), "Loading...", true);
         loadingDialog.setUndecorated(true);
-        loadingDialog.setSize(200, 100);
+        loadingDialog.setSize(250, 60);
+        loadingDialog.setBackground(new Color(255, 255, 255));
         loadingDialog.setLocationRelativeTo(this);
 
+        JPanel panel = new JPanel(new GridLayout(2, 1, 10, 10));
         JLabel label = new JLabel("Loading...", JLabel.CENTER);
+        label.setBackground(new Color(255, 255, 255));
         label.setFont(new Font("Tahoma", Font.BOLD, 16));
-        loadingDialog.add(label);
+        panel.add(label);
+
+        progressBar = new JProgressBar();
+        progressBar.setIndeterminate(true);
+        progressBar.setBackground(new Color(255, 255, 255));
+        progressBar.setPreferredSize(new Dimension(20, 20));
+        panel.add(progressBar);
+
+        loadingDialog.add(panel);
 
         loadingDialog.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
@@ -266,6 +275,7 @@ public class ApiView extends JPanel {
             loadingDialog.dispose();
         }
     }
+
 
 
 
