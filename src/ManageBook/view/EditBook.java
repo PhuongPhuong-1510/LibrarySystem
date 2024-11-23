@@ -236,8 +236,8 @@ public class EditBook extends JFrame {
         int total = Integer.valueOf(totalText.getText()+"");
         String current = this.currentText.getText()+"";
         String position = this.positionText.getText()+"";
-        Book book = new Book(id, title,imagePath, author,"Programing", language, total, current, position);
-        this.editingBook = book;
+        //Book book = new Book(id, title,imagePath, author,"Programing", language, total, current, position);
+        //this.editingBook = book;
         libraryModelManage.editBookInDatabase(editingBook);
         return editingBook;
     }

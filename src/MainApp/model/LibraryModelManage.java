@@ -63,6 +63,7 @@ public class LibraryModelManage {
                 book.setTotal(updatedBook.getTotal());
                 book.setCategory(updatedBook.getCategory());
                 book.setPosition(updatedBook.getPosition());
+                book.setURL(updatedBook.getURL());
                 break;
             }
         }

@@ -129,6 +129,7 @@ public class ApiView extends JPanel {
                                         String bookAuthor = author;
                                         String bookCategory = category;
                                         String bookLanguage = language;
+                                        String infolink = infoLink;
                                         int total = 1;
                                         String current = "Still";
                                         String bookPosition = "B2";
@@ -159,7 +160,7 @@ public class ApiView extends JPanel {
                                         }
 
                                         // Tạo đối tượng Book và lưu vào database
-                                        Book bookk = new Book(bookID, bookName, fileName, bookAuthor, bookCategory, bookLanguage, total, current, bookPosition);
+                                        Book bookk = new Book(bookID, bookName, fileName, bookAuthor, bookCategory, bookLanguage, total, current, bookPosition, infolink);
                                         libraryModelManage.addBookToDatabase(bookk);
                                         return null;
                                     }
@@ -187,7 +188,7 @@ public class ApiView extends JPanel {
                                 SwingWorker<Void, Void> seeBookWorker = new SwingWorker<>() {
                                     @Override
                                     protected Void doInBackground() throws Exception {
-                                        Thread.sleep(2000);
+                                        Thread.sleep(500);
                                         return null;
                                     }
 
