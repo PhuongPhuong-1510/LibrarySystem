@@ -1,6 +1,7 @@
 package ViewRecord.controller;
 
 import IssueBook.view.DatePickerDemo;
+import ViewRecord.view.ViewRecordView;
 
 import javax.swing.*;
 import java.awt.*;

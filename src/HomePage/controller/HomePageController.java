@@ -8,6 +8,7 @@ import MainApp.model.LibraryModelManage;
 import ManageBook.view.ManagementBookView;
 import ManageStudent.view.ManagementStudentView;
 import ReturnBook.view.ReturnBookView;
+import ViewRecord.view.ViewRecordView;
 
 import javax.swing.*;
 import java.awt.*;
