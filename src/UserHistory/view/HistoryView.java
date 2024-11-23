@@ -19,8 +19,13 @@ public class HistoryView extends JPanel {
 
     private Student student;
     private LibraryModelManage libraryModelManage;
+    private ArrayList<Issue> issueList ;
+    private ArrayList<Reserve> reserveList ;
+    //private BaseBookTableView table;
 
     public HistoryView(Student student, LibraryModelManage libraryModelManage) {
+        this.issueList = libraryModelManage.getIssuesList();
+        this.reserveList = libraryModelManage.getReserveList();
         this.student = student;
         this.libraryModelManage = libraryModelManage;
         this.setLayout(new BorderLayout());
@@ -30,7 +35,7 @@ public class HistoryView extends JPanel {
         JPanel reservePanel = createPanel(
                 "List of Reserved Books",
                 new String[]{"Book ID", "Book Name", "Reservation Date", "Due Date","Action"},
-                libraryModelManage.getReserveList()
+                reserveList
         );
         reservePanel.setBounds(15, 10, 550, 545);
         layeredPane.add(reservePanel, Integer.valueOf(1));
@@ -38,7 +43,7 @@ public class HistoryView extends JPanel {
         JPanel issuedPanel = createPanel(
                 "List of Issued Books",
                 new String[]{"Book ID", "Book Name", "Issued Date", "Due Date","Action"},
-                libraryModelManage.getIssuesList()
+                issueList
         );
         issuedPanel.setBounds(635, 10, 550, 545);
         layeredPane.add(issuedPanel, Integer.valueOf(1));
@@ -164,7 +169,7 @@ public class HistoryView extends JPanel {
                             getBookName(reserve.getBookID()),
                             reserve.getReservedDate(),
                             reserve.getDueDate(),
-                            createAction()
+                            createDeleteAction()
                     });
                 }
             } else if (record instanceof Issue) {
@@ -175,7 +180,7 @@ public class HistoryView extends JPanel {
                             getBookName(issue.getIssueBookID()),
                             issue.getIssueDate(),
                             issue.getDueDate(),
-                            createAction()
+                            createReturnAction()
                     });
                 }
             }
@@ -198,12 +203,152 @@ public class HistoryView extends JPanel {
 
         return button;
     }
-    public JPanel createAction() {
+    public JPanel createReturnAction() {
         JPanel actionPanel = new JPanel(new BorderLayout());
-        JButton cardButton = createActionButton("/UserHistory/view/icon/action.png", new Color(255, 240, 245));
+        JButton returnButton = createActionButton("/UserHistory/view/icon/return.png", new Color(255, 240, 245));
 
-        actionPanel.add(cardButton);
+        returnButton.addActionListener(e -> {
+            int rowIndex = getSelectedRowIndex(returnButton);
+            String bookID = getBookIDFromActionButton(returnButton);
+            String issueID = getIssueIdFromBookId(bookID);
+
+            Issue issue = libraryModelManage.searchIssueByID(issueID);
+            issue.setStatus("returned");
+            Book book = libraryModelManage.searchBookByID(bookID);
+            book.setCurent("Still");
+            libraryModelManage.editBookInDatabase(book);
+            libraryModelManage.editIssueInDatabase(issue);
+            issueList.remove(issue);
+            refreshTableData();
+
+            System.out.println("Return Book"+rowIndex+bookID+issueID);
+            if (rowIndex != -1) {
+
+                JOptionPane.showMessageDialog(this, "Book returned successfully!", "Return Book", JOptionPane.INFORMATION_MESSAGE);
+                refreshTableData();
+            }
+        });
+
+        actionPanel.add(returnButton);
         return actionPanel;
     }
+
+    public JPanel createDeleteAction() {
+        JPanel actionPanel = new JPanel(new BorderLayout());
+        JButton deleteButton = createActionButton("/UserHistory/view/icon/delete2.png", new Color(255, 240, 245));
+
+        deleteButton.addActionListener(e -> {
+            int rowIndex = getSelectedRowIndex(deleteButton);
+            String bookID = getBookIDFromActionButton(deleteButton);
+            String reserveId = getReserveIdFromBookId(bookID);
+
+            libraryModelManage.deleteReserveFromDatabase(reserveId);
+            Book book = libraryModelManage.searchBookByID(bookID);
+            book.setCurent("Still");
+            libraryModelManage.editBookInDatabase(book);
+            reserveList.remove(libraryModelManage.searchReserveByID(reserveId));
+            refreshTableData();
+
+            System.out.println("Delete Reservation"+rowIndex+bookID+reserveId);
+            if (rowIndex != -1) {
+                JOptionPane.showMessageDialog(this, "Reservation deleted successfully!", "Delete Reservation", JOptionPane.INFORMATION_MESSAGE);
+                refreshTableData();
+            }
+        });
+
+        actionPanel.add(deleteButton);
+        return actionPanel;
+    }
+
+    public String getReserveIdFromBookId(String bookID) {
+        if (reserveList != null) {
+            for (Reserve reserve : reserveList) {
+                if (reserve.getBookID().equals(bookID)) {
+                    return reserve.getReserveID();
+                }
+            }
+        }
+        return null;
+    }
+
+    public String getIssueIdFromBookId(String bookID) {
+        if (issueList != null) {
+            for(Issue issue : issueList) {
+                if (issue.getIssueBookID().equals(bookID) &&
+                        !issue.getStatus().equals("Reserved") &&
+                        !issue.getStatus().equals("Returned")) {
+                    return issue.getIssueID();
+                }
+            }
+        }
+        return null;
+    }
+
+    private String getBookIDFromActionButton(JButton button) {
+        Container parent = button.getParent();
+        while (parent != null && !(parent instanceof JTable)) {
+            parent = parent.getParent();
+        }
+
+        if (parent instanceof JTable) {
+            JTable table = (JTable) parent;
+            int rowIndex = table.getSelectedRow();
+            if (rowIndex != -1) {
+                return table.getValueAt(rowIndex, 0).toString();
+            }
+        }
+        return null;
+    }
+
+
+    private int getSelectedRowIndex(JButton button) {
+        Container parent = button.getParent();
+        while (parent != null && !(parent instanceof JTable)) {
+            parent = parent.getParent();
+        }
+
+        if (parent instanceof JTable) {
+            JTable table = (JTable) parent;
+            return table.getSelectedRow();
+        }
+
+        return -1;
+    }
+
+    private void refreshTableData() {
+        JPanel reservePanel = createPanel(
+                "List of Reserved Books",
+                new String[]{"Book ID", "Book Name", "Reservation Date", "Due Date", "Action"},
+                libraryModelManage.getReserveList()
+        );
+        reservePanel.setBounds(15, 10, 550, 545);
+
+        JPanel issuedPanel = createPanel(
+                "List of Issued Books",
+                new String[]{"Book ID", "Book Name", "Issued Date", "Due Date", "Action"},
+                libraryModelManage.getIssuesList()
+        );
+        issuedPanel.setBounds(635, 10, 550, 545);
+
+        this.removeAll();
+        JLayeredPane layeredPane = new JLayeredPane();
+        layeredPane.setLayout(null);
+
+        layeredPane.add(reservePanel, Integer.valueOf(1));
+        layeredPane.add(issuedPanel, Integer.valueOf(1));
+
+        JPanel backgroundPanel = createBackgroundPanel("/UserHistory/view/icon/background1.gif");
+        backgroundPanel.setBounds(0, 0, 1200, 600);
+        layeredPane.add(backgroundPanel, Integer.valueOf(0));
+
+        layeredPane.setPreferredSize(new Dimension(1200, 700));
+        this.add(layeredPane, BorderLayout.CENTER);
+
+        this.revalidate();
+        this.repaint();
+    }
+
+
+
 
 }

@@ -261,11 +261,12 @@ public class ApiView extends JPanel {
     private void showLoadingDialog() {
         loadingDialog = new JDialog((JFrame) SwingUtilities.getWindowAncestor(this), "Loading...", true);
         loadingDialog.setUndecorated(true);
-        loadingDialog.setSize(250, 60);
+        loadingDialog.setSize(250, 100);
         loadingDialog.setBackground(new Color(255, 255, 255));
         loadingDialog.setLocationRelativeTo(this);
 
-        JPanel panel = new JPanel(new GridLayout(2, 1, 10, 10));
+        JPanel panel = new JPanel(new GridLayout(3, 1, 10, 10)); // Changed to 3 rows to add Cancel button
+        panel.setBackground(new Color(255, 255, 255));
         JLabel label = new JLabel("Loading...", JLabel.CENTER);
         label.setBackground(new Color(255, 255, 255));
         label.setFont(new Font("Tahoma", Font.BOLD, 16));
@@ -274,8 +275,20 @@ public class ApiView extends JPanel {
         progressBar = new JProgressBar();
         progressBar.setIndeterminate(true);
         progressBar.setBackground(new Color(255, 255, 255));
-        progressBar.setPreferredSize(new Dimension(20, 20));
         panel.add(progressBar);
+
+        // Add Cancel button
+        JButton cancelButton = new JButton("Cancel");
+        cancelButton.setBackground(new Color(255, 69, 0));
+        cancelButton.setForeground(Color.WHITE);
+        cancelButton.setFont(new Font("Tahoma", Font.BOLD, 12));
+        cancelButton.addActionListener(e -> {
+            if (searchWorker != null) {
+                searchWorker.cancel(true); // Cancel the SwingWorker
+            }
+            hideLoadingDialog();
+        });
+        panel.add(cancelButton);
 
         loadingDialog.add(panel);
 
@@ -290,6 +303,7 @@ public class ApiView extends JPanel {
 
         new Thread(() -> loadingDialog.setVisible(true)).start();
     }
+
 
     private void hideLoadingDialog() {
         if (loadingDialog != null) {
