@@ -1,3 +1,4 @@
+
 package ViewRecord.view;
 
 
@@ -106,59 +107,20 @@ public class ViewRecordView extends JPanel {
             ArrayList<Issue> filteredIssues = new ArrayList<>();
 
             for (Issue issue : issues) {
-                // Điều kiện lọc từng trường hợp cụ thể
+                // Kiểm tra điều kiện lọc
                 boolean matchBookID = bookID.isEmpty() || issue.getIssueBookID().contains(bookID);
                 boolean matchNameID = nameID.isEmpty() || issue.getIssueStudentID().contains(nameID);
                 boolean matchIssueDate = issueDate.isEmpty() || issue.getIssueDate().toString().contains(issueDate);
                 boolean matchDueDate = dueDate.isEmpty() || issue.getDueDate().toString().contains(dueDate);
 
-                // 4 trường hợp nhập vào đều trống
-                if (bookID.isEmpty() && nameID.isEmpty() && issueDate.isEmpty() && dueDate.isEmpty()) {
-                    filteredIssues.add(issue);
-                }
-                // Chỉ nhập vào 1 trường
-                else if (!bookID.isEmpty() && nameID.isEmpty() && issueDate.isEmpty() && dueDate.isEmpty() && matchBookID) {
-                    filteredIssues.add(issue);
-                } else if (bookID.isEmpty() && !nameID.isEmpty() && issueDate.isEmpty() && dueDate.isEmpty() && matchNameID) {
-                    filteredIssues.add(issue);
-                } else if (bookID.isEmpty() && nameID.isEmpty() && !issueDate.isEmpty() && dueDate.isEmpty() && matchIssueDate) {
-                    filteredIssues.add(issue);
-                } else if (bookID.isEmpty() && nameID.isEmpty() && issueDate.isEmpty() && !dueDate.isEmpty() && matchDueDate) {
-                    filteredIssues.add(issue);
-                }
-                // Nhập vào 2 trường
-                else if (!bookID.isEmpty() && !nameID.isEmpty() && issueDate.isEmpty() && dueDate.isEmpty() && matchBookID && matchNameID) {
-                    filteredIssues.add(issue);
-                } else if (!bookID.isEmpty() && nameID.isEmpty() && !issueDate.isEmpty() && dueDate.isEmpty() && matchBookID && matchIssueDate) {
-                    filteredIssues.add(issue);
-                } else if (!bookID.isEmpty() && nameID.isEmpty() && issueDate.isEmpty() && !dueDate.isEmpty() && matchBookID && matchDueDate) {
-                    filteredIssues.add(issue);
-                } else if (bookID.isEmpty() && !nameID.isEmpty() && !issueDate.isEmpty() && dueDate.isEmpty() && matchNameID && matchIssueDate) {
-                    filteredIssues.add(issue);
-                } else if (bookID.isEmpty() && !nameID.isEmpty() && issueDate.isEmpty() && !dueDate.isEmpty() && matchNameID && matchDueDate) {
-                    filteredIssues.add(issue);
-                } else if (bookID.isEmpty() && nameID.isEmpty() && !issueDate.isEmpty() && !dueDate.isEmpty() && matchIssueDate && matchDueDate) {
-                    filteredIssues.add(issue);
-                }
-                // Nhập vào 3 trường
-                else if (!bookID.isEmpty() && !nameID.isEmpty() && !issueDate.isEmpty() && dueDate.isEmpty() && matchBookID && matchNameID && matchIssueDate) {
-                    filteredIssues.add(issue);
-                } else if (!bookID.isEmpty() && !nameID.isEmpty() && issueDate.isEmpty() && !dueDate.isEmpty() && matchBookID && matchNameID && matchDueDate) {
-                    filteredIssues.add(issue);
-                } else if (!bookID.isEmpty() && nameID.isEmpty() && !issueDate.isEmpty() && !dueDate.isEmpty() && matchBookID && matchIssueDate && matchDueDate) {
-                    filteredIssues.add(issue);
-                } else if (bookID.isEmpty() && !nameID.isEmpty() && !issueDate.isEmpty() && !dueDate.isEmpty() && matchNameID && matchIssueDate && matchDueDate) {
-                    filteredIssues.add(issue);
-                }
-                // Nhập vào cả 4 trường
-                else if (!bookID.isEmpty() && !nameID.isEmpty() && !issueDate.isEmpty() && !dueDate.isEmpty() && matchBookID && matchNameID && matchIssueDate && matchDueDate) {
+                // Nếu tất cả điều kiện đều khớp, thêm vào danh sách
+                if (matchBookID && matchNameID && matchIssueDate && matchDueDate) {
                     filteredIssues.add(issue);
                 }
             }
 
-            // Tạo mảng Object[][] chứa dữ liệu đã lọc
+            // Tạo mảng Object[][] từ dữ liệu đã lọc
             Object[][] rowData = new Object[filteredIssues.size()][10];
-
             for (int i = 0; i < filteredIssues.size(); i++) {
                 Issue issue = filteredIssues.get(i);
 
@@ -169,20 +131,27 @@ public class ViewRecordView extends JPanel {
                 Book book = libraryModelManage.searchBookByID(issue.getIssueBookID());
                 if (book != null) {
                     rowData[i][2] = book.getBookName();
-                    rowData[i][3] = loadImageIcon(book.getImage()); // Load ảnh từ đường dẫn
+                    String bookImagePath = book.getImage();
+                    rowData[i][3] = loadImageIcon(bookImagePath);
                 } else {
                     rowData[i][2] = "Unknown Book";
-                    rowData[i][3] = new ImageIcon(new BufferedImage(50, 50, BufferedImage.TYPE_INT_ARGB)); // Placeholder
+                    rowData[i][3] = new ImageIcon(new BufferedImage(50, 50, BufferedImage.TYPE_INT_ARGB));
                 }
 
                 // Lấy thông tin sinh viên
                 Student student = libraryModelManage.searchStudentByID(issue.getIssueStudentID());
                 if (student != null) {
                     rowData[i][5] = student.getName();
-                    rowData[i][6] = loadImageIcon(student.getCardPhoto()); // Load ảnh từ đường dẫn
+                    String studentImagePath;
+                    if (student.getGender() == true) {
+                        studentImagePath = "/ManageStudent/view/icon/boyicon.png";
+                    } else {
+                        studentImagePath = "/ManageStudent/view/icon/girlicon.png";
+                    }
+                    rowData[i][6] = loadImageIcon(studentImagePath);
                 } else {
                     rowData[i][5] = "Unknown Student";
-                    rowData[i][6] = new ImageIcon(new BufferedImage(50, 50, BufferedImage.TYPE_INT_ARGB)); // Placeholder
+                    rowData[i][6] = new ImageIcon(new BufferedImage(50, 50, BufferedImage.TYPE_INT_ARGB));
                 }
 
                 rowData[i][4] = issue.getIssueStudentID();
@@ -199,19 +168,43 @@ public class ViewRecordView extends JPanel {
     }
 
 
-    private ImageIcon loadImageIcon(String path) {
-        try {
-            if (path != null && !path.isEmpty()) {
-                ImageIcon icon = new ImageIcon(path); // Load ảnh từ đường dẫn
-                Image img = icon.getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH); // Resize ảnh
-                return new ImageIcon(img);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+//    private ImageIcon loadImageIcon(String path) {
+//        try {
+//            if (path != null && !path.isEmpty()) {
+//                ImageIcon icon = new ImageIcon(path); // Load ảnh từ đường dẫn
+//                Image img = icon.getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH); // Resize ảnh
+//                return new ImageIcon(img);
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        // Trả về ảnh mặc định nếu không load được
+//        return new ImageIcon(new BufferedImage(50, 50, BufferedImage.TYPE_INT_ARGB));
+//    }
+private ImageIcon loadImageIcon(String path) {
+    ImageIcon icon = null;
+    try {
+        // Kiểm tra xem đường dẫn có hợp lệ không
+        if (path != null && !path.isEmpty() && getClass().getResource(path) != null) {
+            // Tải ảnh từ đường dẫn hợp lệ
+            icon = new ImageIcon(getClass().getResource(path));
+
+            // Resize ảnh nếu cần thiết
+            Image img = icon.getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH);
+            icon = new ImageIcon(img); // Cập nhật icon với ảnh đã resize
+        } else {
+            // Nếu không tìm thấy ảnh, trả về ảnh mặc định
+            System.out.println("Image not found at path: " + path);
+            icon = new ImageIcon(new BufferedImage(50, 50, BufferedImage.TYPE_INT_ARGB)); // Placeholder ảnh
         }
-        // Trả về ảnh mặc định nếu không load được
-        return new ImageIcon(new BufferedImage(50, 50, BufferedImage.TYPE_INT_ARGB));
+    } catch (Exception e) {
+        // Xử lý ngoại lệ nếu có
+        e.printStackTrace();
     }
+
+    return icon; // Trả về ảnh đã load (hoặc ảnh mặc định nếu có lỗi)
+}
+
 
 
     public void updateTable(Object[][] data) {
@@ -282,14 +275,12 @@ public class ViewRecordView extends JPanel {
 
     }
 
-    protected JTextField createSearchField(String placeholder,int x,int y) {
+    protected JTextField createSearchField(String placeholder, int x, int y) {
         JTextField searchField = new JTextField(15);
-        searchField.setBounds(x,y,130,25);
+        searchField.setBounds(x, y, 130, 25);
         searchField.setBorder(BorderFactory.createEmptyBorder());
-
         searchField.setFont(new Font("Tahoma", Font.PLAIN, 12));
-        searchField.setPreferredSize(new Dimension(200, 30));
-        searchField.setBackground(new Color(255,245,238));
+        searchField.setBackground(new Color(255, 245, 238));
         searchField.setForeground(Color.GRAY);
         searchField.setOpaque(true);
         searchField.setHorizontalAlignment(JTextField.CENTER);
@@ -313,9 +304,43 @@ public class ViewRecordView extends JPanel {
             }
         });
 
-
         return searchField;
     }
+
+    //    protected JTextField createSearchField(String placeholder,int x,int y) {
+//        JTextField searchField = new JTextField(15);
+//        searchField.setBounds(x,y,130,25);
+//        searchField.setBorder(BorderFactory.createEmptyBorder());
+//
+//        searchField.setFont(new Font("Tahoma", Font.PLAIN, 12));
+//        searchField.setPreferredSize(new Dimension(200, 30));
+//        searchField.setBackground(new Color(255,245,238));
+//        searchField.setForeground(Color.GRAY);
+//        searchField.setOpaque(true);
+//        searchField.setHorizontalAlignment(JTextField.CENTER);
+//        searchField.setText(placeholder);
+//
+//        searchField.addFocusListener(new FocusAdapter() {
+//            @Override
+//            public void focusGained(FocusEvent e) {
+//                if (searchField.getText().equals(placeholder)) {
+//                    searchField.setText("");
+//                    searchField.setForeground(Color.BLACK);
+//                }
+//            }
+//
+//            @Override
+//            public void focusLost(FocusEvent e) {
+//                if (searchField.getText().isEmpty()) {
+//                    searchField.setForeground(Color.GRAY);
+//                    searchField.setText(placeholder);
+//                }
+//            }
+//        });
+//
+//
+//        return searchField;
+//    }
     private JButton createButton(String text, int x, int y) {
         JButton button = new OvalButton(text);
         button.setFont(new Font("Tahoma", Font.BOLD, 13));
