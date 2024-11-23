@@ -136,18 +136,35 @@ public class ManagementBookView extends JPanel {
 
 
 
+//    private JLabel createImageLabel(String path) {
+//        String relativePath = getRelativeImagePath(path);
+//        ImageIcon icon;
+//        if (relativePath != null && getClass().getResource(relativePath) != null) {
+//            icon = new ImageIcon(getClass().getResource(relativePath));
+//            icon.setDescription(relativePath);
+//        } else {
+//            System.out.println("Image not found at path: " + path);
+//            icon = new ImageIcon(new BufferedImage(5, 5, BufferedImage.TYPE_INT_ARGB)); // Placeholder
+//        }
+//        return new JLabel(icon);
+//    }
+
     private JLabel createImageLabel(String path) {
-        String relativePath = getRelativeImagePath(path);
+        String relativePath = getRelativeImagePath(path); // Lấy đường dẫn tương đối
         ImageIcon icon;
+
+        // Kiểm tra xem đường dẫn có hợp lệ hay không
         if (relativePath != null && getClass().getResource(relativePath) != null) {
             icon = new ImageIcon(getClass().getResource(relativePath));
-            icon.setDescription(relativePath);
+            icon.setDescription(relativePath); // Đặt mô tả để sử dụng sau
         } else {
             System.out.println("Image not found at path: " + path);
-            icon = new ImageIcon(new BufferedImage(5, 5, BufferedImage.TYPE_INT_ARGB)); // Placeholder
+            icon = new ImageIcon(new BufferedImage(5, 5, BufferedImage.TYPE_INT_ARGB)); // Placeholder ảnh trống
         }
-        return new JLabel(icon);
+
+        return new JLabel(icon); // Trả về JLabel với ảnh
     }
+
 
 
 
@@ -174,11 +191,12 @@ public class ManagementBookView extends JPanel {
         JButton editButton = createActionButton("/ManageBook/icon/bookEdit.png", new Color(255, 240, 245));
         JButton deleteButton = createActionButton("/ManageBook/icon/bookDelete.png", new Color(255, 240, 245));
         JButton imageButton = createActionButton("/ManageBook/icon/uploadImage.png", new Color(255, 240, 245));
-
+        JButton QRcodeButton = createActionButton("/ManageBook/icon/icons8-qrCode.png", new Color(255, 240, 245));
 
         editButton.setToolTipText("Edit Book");
         deleteButton.setToolTipText("Delete Book");
         imageButton.setToolTipText("Upload Cover");
+        QRcodeButton.setToolTipText("QR Code");
 
         editButton.addActionListener(e -> {
             toggleEditButtonIcon(actionPanel,editButton,deleteButton,imageButton, row);
@@ -283,8 +301,32 @@ public class ManagementBookView extends JPanel {
     }
 
     private void toggleImageButton(JButton deleteButton, JButton editButton, int row) {
-        chooseImage(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
+        FileDialog fileDialog = new FileDialog((Frame) SwingUtilities.getWindowAncestor(this), "Choose Image", FileDialog.LOAD);
+        fileDialog.setFile("*.jpg;*.jpeg;*.png;*.gif");
+        fileDialog.setVisible(true);
+
+        String filePath = fileDialog.getDirectory() + fileDialog.getFile();
+        if (filePath != null && !filePath.isEmpty()) {
+            // Lấy đường dẫn tương đối
+            String relativePath = getRelativeImagePath(filePath);
+
+            if (relativePath != null) {
+                System.out.println("Selected relative path: " + relativePath);
+                updateImageForRow(row, relativePath); // Cập nhật ảnh trong hàng
+            } else {
+                System.out.println("Invalid file path selected: " + filePath);
+            }
+        }
     }
+
+    private void updateImageForRow(int row, String relativePath) {
+        DefaultTableModel model = (DefaultTableModel) bookTableView.getTable().getModel();
+        JLabel newImageLabel = createImageLabel(relativePath); // Tạo JLabel từ ảnh mới
+        model.setValueAt(newImageLabel, row, 2); // Cập nhật giá trị cột ảnh
+        bookTableView.revalidate();
+        bookTableView.repaint();
+    }
+
 
 
 
@@ -313,13 +355,9 @@ public class ManagementBookView extends JPanel {
 
     public void addBook(Book book) {
         DefaultTableModel model = (DefaultTableModel) bookTableView.getTable().getModel();
-
-        // Lấy đường dẫn ảnh tương đối
         String imagePath = getRelativeImagePath(book.getImage());
-
-        // Nếu imagePath vẫn null, sử dụng một đường dẫn mặc định hoặc placeholder
         if (imagePath == null) {
-            imagePath = "/ManageBook/icon/default.png"; // Đảm bảo bạn có ảnh default.png trong thư mục icon
+            imagePath = "/ManageBook/icon/default.png";
         }
 
         Object[] rowData = new Object[]{
@@ -341,23 +379,21 @@ public class ManagementBookView extends JPanel {
         bookTableView.repaint();
     }
 
-
     private String getRelativeImagePath(String imagePath) {
-        if (imagePath == null) {
-            return null; // Trả về null nếu đường dẫn gốc không tồn tại
+        if (imagePath == null || imagePath.isEmpty()) {
+            return null;
         }
-
-        // Thay tất cả các dấu '\' thành '/' để đồng nhất
         String normalizedPath = imagePath.replace("\\", "/");
 
-        // Tìm vị trí chuỗi con "/ManageBook/icon/"
-        int relativePathIndex = normalizedPath.indexOf("/ManageBook/icon/");
+        String target = "/ManageBook/icon/";
+        int relativePathIndex = normalizedPath.indexOf(target);
         if (relativePathIndex != -1) {
             return normalizedPath.substring(relativePathIndex);
         }
 
-        return null; // Trả về null nếu chuỗi không chứa "/ManageBook/icon/"
+        return null;
     }
+
 
 
     private Book getUpdatedBookFromRow(int row) {

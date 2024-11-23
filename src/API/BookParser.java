@@ -20,7 +20,8 @@ public class BookParser {
         if (jsonObject.has("items")) {
             JSONArray itemsArray = jsonObject.getJSONArray("items");
             for (int i = 0; i < itemsArray.length(); i++) {
-                JSONObject volumeInfo = itemsArray.getJSONObject(i).getJSONObject("volumeInfo");
+                JSONObject item = itemsArray.getJSONObject(i);
+                JSONObject volumeInfo = item.getJSONObject("volumeInfo");
 
                 String title = volumeInfo.optString("title", "No Title Available");
                 String authors = volumeInfo.has("authors") ?
@@ -35,13 +36,13 @@ public class BookParser {
                                 .collect(Collectors.joining(", ")) :
                         "Unknown Genre";
 
-                // Extract thumbnail URL
                 String thumbnail = volumeInfo.has("imageLinks") ?
                         volumeInfo.getJSONObject("imageLinks").optString("thumbnail", "") :
                         "";
 
-                // Store book details as an array of strings
-                bookDetails.add(new String[]{title, authors, language, categories, thumbnail});
+                String infoLink = volumeInfo.optString("infoLink", ""); // Lấy liên kết trực tiếp
+
+                bookDetails.add(new String[]{title, authors, language, categories, thumbnail, infoLink});
             }
         }
 
