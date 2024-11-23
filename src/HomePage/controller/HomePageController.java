@@ -3,6 +3,7 @@ package HomePage.controller;
 import API.ApiView;
 import HomePage.view.HomePageView;
 import IssueBook.view.IssueBookView;
+import LMSNotification.view.NotificationView;
 import MainApp.model.LibraryModelManage;
 import ManageBook.view.ManagementBookView;
 import ManageStudent.view.ManagementStudentView;
@@ -130,11 +131,20 @@ public class HomePageController implements ActionListener, MouseListener {
                 if(menu==homePageView.getjMenuSearchApi())
                 {
                     //LibraryModelManage libraryModelManage = new LibraryModelManage();
-                    System.out.println(("search API Button clicked"));
+                    System.out.println(("Search API Button clicked"));
                     ApiView apiView = new ApiView(libraryModelManage);
                     homePageView.toggleMenuBar();
                     apiView.setPreferredSize(new Dimension(homePageView.getMainHomePanel().getWidth(),homePageView.getMainHomePanel().getHeight()));
                     homePageView.setMainHomePanel(apiView);
+                }
+                if(menu==homePageView.getjMenuLMSDashBoard())
+                {
+                    LibraryModelManage libraryModelManage = new LibraryModelManage();
+                    System.out.println(("LMS Notification Button clicked"));
+                    NotificationView notificationView = new NotificationView(libraryModelManage);
+                    homePageView.toggleMenuBar();
+                    notificationView.setPreferredSize(new Dimension(homePageView.getMainHomePanel().getWidth(),homePageView.getMainHomePanel().getHeight()));
+                    homePageView.setMainHomePanel(notificationView);
                 }
 
 

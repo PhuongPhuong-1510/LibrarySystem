@@ -1,10 +1,16 @@
 package UserHistory.view;
 
 import MainApp.model.*;
+import ManageBook.view.BaseBookTableView;
+import ManageBook.view.PanelEditor;
 import ViewRecord.view.TableViewRecord;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Objects;
@@ -23,7 +29,7 @@ public class HistoryView extends JPanel {
 
         JPanel reservePanel = createPanel(
                 "List of Reserved Books",
-                new String[]{"Book ID", "Book Name", "Reservation Date", "Due Date"},
+                new String[]{"Book ID", "Book Name", "Reservation Date", "Due Date","Action"},
                 libraryModelManage.getReserveList()
         );
         reservePanel.setBounds(15, 10, 550, 545);
@@ -31,7 +37,7 @@ public class HistoryView extends JPanel {
 
         JPanel issuedPanel = createPanel(
                 "List of Issued Books",
-                new String[]{"Book ID", "Book Name", "Issued Date", "Due Date"},
+                new String[]{"Book ID", "Book Name", "Issued Date", "Due Date","Action"},
                 libraryModelManage.getIssuesList()
         );
         issuedPanel.setBounds(635, 10, 550, 545);
@@ -71,8 +77,8 @@ public class HistoryView extends JPanel {
         // Lọc dữ liệu theo studentID
         Object[][] data = filterData(records);
 
-        TableViewRecord tableViewRecord = createTable(columns, data);
-        panel.add(tableViewRecord, BorderLayout.CENTER);
+        BaseBookTableView table = createTable(columns, data);
+        panel.add(table, BorderLayout.CENTER);
 
         return panel;
     }
@@ -84,17 +90,61 @@ public class HistoryView extends JPanel {
         return label;
     }
 
-    private TableViewRecord createTable(String[] columns, Object[][] data) {
-        return new TableViewRecord(columns, data, 100, 0, 0) {
+    private BaseBookTableView createTable(String[] columns, Object[][] data) {
+        return new BaseBookTableView(columns, data, 4, 150, -1) {
+            @Override
+            protected void centerTableCells(JTable table) {
+                DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+                centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+                for (int i = 0; i < table.getColumnCount(); i++) {
+                    if (i != 4) {
+                        table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+                    }
+                }
+            }
+
+            @Override
+            protected void configureColumnRenderers(JTable table) {
+                table.setDefaultRenderer(Object.class, createMultiLineRenderer());
+                table.getColumnModel().getColumn(1).setCellRenderer(createTooltipRenderer());
+                table.getColumnModel().getColumn(4).setCellRenderer(createPanelRenderer());
+                table.getColumnModel().getColumn(4).setCellEditor(new PanelEditor());
+            }
+
             @Override
             protected void setTableColumnWidths(JTable table) {
-                int[] columnWidths = {120, 130, 150, 115};
+                int[] columnWidths = {80, 100, 140, 105, 90};
                 for (int i = 0; i < table.getColumnCount(); i++) {
-                    table.getColumnModel().getColumn(i).setPreferredWidth(columnWidths[i]);
+                    TableColumn column = table.getColumnModel().getColumn(i);
+                    column.setPreferredWidth(columnWidths[i]);
                 }
+            }
+
+            @Override
+            protected JTable createTable(Object[][] data, String[] columnNames) {
+                DefaultTableModel model = new DefaultTableModel(data, columnNames) {
+                    @Override
+                    public boolean isCellEditable(int row, int column) {
+                        return column == editColumn;
+                    }
+                };
+
+                return new JTable(model) {
+                    @Override
+                    public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
+                        Component c = super.prepareRenderer(renderer, row, column);
+                        if (selectedRow == row) {
+                            c.setBackground(new Color(232, 232, 232));
+                        } else if (c instanceof JComponent && !(c instanceof JPanel)) {
+                            setupDefaultCellAppearance((JComponent) c);
+                        }
+                        return c;
+                    }
+                };
             }
         };
     }
+
 
     public String getBookName(String bookID) {
         Book book = libraryModelManage.searchBookByID(bookID);
@@ -113,7 +163,8 @@ public class HistoryView extends JPanel {
                             reserve.getBookID(),
                             getBookName(reserve.getBookID()),
                             reserve.getReservedDate(),
-                            reserve.getDueDate()
+                            reserve.getDueDate(),
+                            createAction()
                     });
                 }
             } else if (record instanceof Issue) {
@@ -123,7 +174,8 @@ public class HistoryView extends JPanel {
                             issue.getIssueBookID(),
                             getBookName(issue.getIssueBookID()),
                             issue.getIssueDate(),
-                            issue.getDueDate()
+                            issue.getDueDate(),
+                            createAction()
                     });
                 }
             }
@@ -131,6 +183,27 @@ public class HistoryView extends JPanel {
 
         return filteredList.toArray(new Object[0][0]);
     }
+    public JButton createActionButton(String iconPath, Color bgColor) {
+        JButton button = new JButton(new ImageIcon(getClass().getResource(iconPath)));
 
+        button.setBackground(null);
+        button.setFocusPainted(false);
+        button.setBorderPainted(false);
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        button.setContentAreaFilled(false);
+        button.setOpaque(false);
+        button.setBorder(null);
+        button.setPreferredSize(new Dimension(30, 30));
+
+
+        return button;
+    }
+    public JPanel createAction() {
+        JPanel actionPanel = new JPanel(new BorderLayout());
+        JButton cardButton = createActionButton("/UserHistory/view/icon/action.png", new Color(255, 240, 245));
+
+        actionPanel.add(cardButton);
+        return actionPanel;
+    }
 
 }
