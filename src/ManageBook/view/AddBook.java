@@ -24,7 +24,6 @@ public class AddBook extends JFrame {
     private JTextField authorText;
     private JTextField languageText;
     private JTextField totalText;
-    //private JTextField currentText;
     private JTextField positionText;
 
     public AddBook(LibraryModelManage libraryModelManage) {
@@ -96,10 +95,10 @@ public class AddBook extends JFrame {
         quantityPanel.setBackground(new Color(247,223,237));
 
         totalText = setCustomTextField();
-        JPanel totalPanel = createLabeledTextFieldPanel(new JLabel("Tatal: "), totalText);
+        totalText.setText("1");
+        totalText.setEditable(false);
+        JPanel totalPanel = createLabeledTextFieldPanel(new JLabel("Total: "), totalText);
 
-        //currentText = setCustomTextField();
-        //JPanel currentPanel = createLabeledTextFieldPanel(new JLabel("Current: "), currentText);
 
         positionText = setCustomTextField();
         JPanel positionPanel = createLabeledTextFieldPanel(new JLabel("Position: "), positionText);
