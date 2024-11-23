@@ -8,6 +8,7 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
+import java.sql.Date;
 import java.util.ArrayList;
 
 public class IssueBookView extends JPanel {
@@ -141,7 +142,7 @@ public class IssueBookView extends JPanel {
         studentPanel.add(contactPhoneField);
 
         studentPanel.add(createLabelAtPosition("Contact Email: ", 25, 330, 200, 30, labelColor));
-         contactEmailField = createTextField(150, 330, 100, 30,false);
+         contactEmailField = createTextField(155, 320, 100, 50,false);
         studentPanel.add(contactEmailField);
 
         studentPanel.add(createLabelAtPosition("Major: ", 25, 370, 200, 30, labelColor));
@@ -349,14 +350,18 @@ public class IssueBookView extends JPanel {
         // Lấy thông tin từ các trường
         String bookID = this.bookIdField.getText() + "";
         String studentID = this.studentIdField.getText() + "";
-        String issueDate = this.issueDateField.getText() + "";
-        String dueDate = this.dueDateField.getText() + "";
+        String issueDateString = this.issueDateField.getText();
+        String dueDateString = this.dueDateField.getText();
         String status = "issued";
 
-        if (issueDate.isEmpty() || dueDate.isEmpty()) {
+        if (issueDateString.isEmpty() || dueDateString.isEmpty()) {
             JOptionPane.showMessageDialog(null, "Issue Date and Due Date cannot be empty.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
+
+        Date issueDate = Date.valueOf(issueDateString); // Chuyển đổi chuỗi thành Date
+        Date dueDate = Date.valueOf(dueDateString); // Chuyển đổi chuỗi thành Date
+
 
         if (libraryModelManage.checkStudentAndBookEmpty(bookID, studentID)) {
             String issueId = this.libraryModelManage.creatIssueID();
