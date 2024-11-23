@@ -168,7 +168,7 @@ public class ViewRecordView extends JPanel {
     }
 
 
-//    private ImageIcon loadImageIcon(String path) {
+    //    private ImageIcon loadImageIcon(String path) {
 //        try {
 //            if (path != null && !path.isEmpty()) {
 //                ImageIcon icon = new ImageIcon(path); // Load ảnh từ đường dẫn
@@ -181,29 +181,29 @@ public class ViewRecordView extends JPanel {
 //        // Trả về ảnh mặc định nếu không load được
 //        return new ImageIcon(new BufferedImage(50, 50, BufferedImage.TYPE_INT_ARGB));
 //    }
-private ImageIcon loadImageIcon(String path) {
-    ImageIcon icon = null;
-    try {
-        // Kiểm tra xem đường dẫn có hợp lệ không
-        if (path != null && !path.isEmpty() && getClass().getResource(path) != null) {
-            // Tải ảnh từ đường dẫn hợp lệ
-            icon = new ImageIcon(getClass().getResource(path));
+    private ImageIcon loadImageIcon(String path) {
+        ImageIcon icon = null;
+        try {
+            // Kiểm tra xem đường dẫn có hợp lệ không
+            if (path != null && !path.isEmpty() && getClass().getResource(path) != null) {
+                // Tải ảnh từ đường dẫn hợp lệ
+                icon = new ImageIcon(getClass().getResource(path));
 
-            // Resize ảnh nếu cần thiết
-            Image img = icon.getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH);
-            icon = new ImageIcon(img); // Cập nhật icon với ảnh đã resize
-        } else {
-            // Nếu không tìm thấy ảnh, trả về ảnh mặc định
-            System.out.println("Image not found at path: " + path);
-            icon = new ImageIcon(new BufferedImage(50, 50, BufferedImage.TYPE_INT_ARGB)); // Placeholder ảnh
+                // Resize ảnh nếu cần thiết
+                Image img = icon.getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH);
+                icon = new ImageIcon(img); // Cập nhật icon với ảnh đã resize
+            } else {
+                // Nếu không tìm thấy ảnh, trả về ảnh mặc định
+                System.out.println("Image not found at path: " + path);
+                icon = new ImageIcon(new BufferedImage(50, 50, BufferedImage.TYPE_INT_ARGB)); // Placeholder ảnh
+            }
+        } catch (Exception e) {
+            // Xử lý ngoại lệ nếu có
+            e.printStackTrace();
         }
-    } catch (Exception e) {
-        // Xử lý ngoại lệ nếu có
-        e.printStackTrace();
-    }
 
-    return icon; // Trả về ảnh đã load (hoặc ảnh mặc định nếu có lỗi)
-}
+        return icon; // Trả về ảnh đã load (hoặc ảnh mặc định nếu có lỗi)
+    }
 
 
 

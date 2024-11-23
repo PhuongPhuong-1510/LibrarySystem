@@ -3,6 +3,11 @@ package ManageBook.view;
 import MainApp.model.Book;
 import MainApp.model.LibraryModelManage;
 import ManageBook.controller.ManagementBookController;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
 
 
 import javax.swing.*;
@@ -178,7 +183,7 @@ public class ManagementBookView extends JPanel {
         JButton editButton = createActionButton("/ManageBook/icon/bookEdit.png", new Color(255, 240, 245));
         JButton deleteButton = createActionButton("/ManageBook/icon/bookDelete.png", new Color(255, 240, 245));
         JButton imageButton = createActionButton("/ManageBook/icon/uploadImage.png", new Color(255, 240, 245));
-        JButton QRcodeButton = createActionButton("/ManageBook/icon/icons8-qrCode.png", new Color(255, 240, 245));
+        JButton QRcodeButton = createActionButton("/ManageBook/icon/qrcode.png", new Color(255, 240, 245));
 
         editButton.setToolTipText("Edit Book");
         deleteButton.setToolTipText("Delete Book");
@@ -186,7 +191,7 @@ public class ManagementBookView extends JPanel {
         QRcodeButton.setToolTipText("QR Code");
 
         editButton.addActionListener(e -> {
-            toggleEditButtonIcon(actionPanel,editButton,deleteButton,imageButton, row);
+            toggleEditButtonIcon(actionPanel, editButton, deleteButton, imageButton, row);
         });
 
         deleteButton.addActionListener(e -> {
@@ -219,7 +224,35 @@ public class ManagementBookView extends JPanel {
             toggleImageButton(deleteButton, editButton, row);
         });
 
-        // Thêm các nút vào bảng điều khiển (actionPanel)
+        QRcodeButton.addActionListener(e -> {
+            JTable table = bookTableView.getTable();
+            String bookID = table.getValueAt(row, 0).toString();  // Assuming bookID is in the first column
+            Book book = libraryModelManage.searchBookByID(bookID);
+            String URL = book.getURL();
+
+            JFrame qrCodeFrame = new JFrame("Book ID");
+            qrCodeFrame.setSize(400, 300);
+            qrCodeFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            qrCodeFrame.setLocationRelativeTo(null);
+
+            JPanel qrCodePanel = new JPanel();
+            qrCodePanel.setSize( 200, 200);
+
+            try {
+                String bookLink = URL;
+                System.out.println(bookLink);
+                BufferedImage qrCodeImage = generateQRCodeImage(bookLink, 200, 200);
+                JLabel lblQRCode = new JLabel(new ImageIcon(qrCodeImage));
+                qrCodePanel.add(lblQRCode);
+            } catch (Exception k) {
+                JLabel lblQRCode = new JLabel("QR Code Error");
+                qrCodePanel.add(lblQRCode);
+                k.printStackTrace();
+            }
+            qrCodeFrame.add(qrCodePanel);
+            qrCodeFrame.setVisible(true);
+        });
+
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -227,11 +260,20 @@ public class ManagementBookView extends JPanel {
         gbc.anchor = GridBagConstraints.CENTER;
 
         actionPanel.add(editButton, gbc);
+        gbc.gridx = 1;
+        actionPanel.add(QRcodeButton, gbc);
         gbc.gridx = 2;
         actionPanel.add(deleteButton, gbc);
 
         return actionPanel;
     }
+
+    private BufferedImage generateQRCodeImage(String text, int width, int height) throws WriterException {
+        QRCodeWriter qrCodeWriter = new QRCodeWriter();
+        BitMatrix bitMatrix = qrCodeWriter.encode(text, BarcodeFormat.QR_CODE, width, height);
+        return MatrixToImageWriter.toBufferedImage(bitMatrix);
+    }
+
 
 
 
@@ -267,7 +309,7 @@ public class ManagementBookView extends JPanel {
             actionPanel.add(imageButton, gbc);
             editButton.addActionListener(e -> {
                 System.out.println("Saved");
-                Book bookToEdit = getUpdatedBookFromRow(row) ; // Get the selected book
+                Book bookToEdit = getUpdatedBookFromRow(row) ;
                 libraryModelManage.editBookInDatabase(bookToEdit);
 
             });
@@ -299,7 +341,7 @@ public class ManagementBookView extends JPanel {
 
             if (relativePath != null) {
                 System.out.println("Selected relative path: " + relativePath);
-                updateImageForRow(row, relativePath); // Cập nhật ảnh trong hàng
+                updateImageForRow(row, relativePath);
             } else {
                 System.out.println("Invalid file path selected: " + filePath);
             }
@@ -308,8 +350,8 @@ public class ManagementBookView extends JPanel {
 
     private void updateImageForRow(int row, String relativePath) {
         DefaultTableModel model = (DefaultTableModel) bookTableView.getTable().getModel();
-        JLabel newImageLabel = createImageLabel(relativePath); // Tạo JLabel từ ảnh mới
-        model.setValueAt(newImageLabel, row, 2); // Cập nhật giá trị cột ảnh
+        JLabel newImageLabel = createImageLabel(relativePath);
+        model.setValueAt(newImageLabel, row, 2);
         bookTableView.revalidate();
         bookTableView.repaint();
     }
@@ -410,7 +452,10 @@ public class ManagementBookView extends JPanel {
         String curent = model.getValueAt(row, 7).toString();
         String position = model.getValueAt(row, 8).toString();
 
-        return new Book(bookID, bookName, image, author, category, language, total, curent, position);
+        Book book = libraryModelManage.searchBookByID(bookID);
+        String URL = book.getURL();
+
+        return new Book(bookID, bookName, image, author, category, language, total, curent, position, URL);
     }
 
 

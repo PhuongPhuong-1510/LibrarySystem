@@ -6,7 +6,7 @@ public class Main {
         LibraryModelManage libraryModel = new LibraryModelManage();
 
         // Tạo sách mới
-        Book newBook = new Book("B004", "Effective Java", "/ManageBook/icon/1.jpg", "Joshua Bloch", "Programming", "English", 20, "Available", "B1");
+        Book newBook = new Book("B004", "Effective Java", "/ManageBook/icon/1.jpg", "Joshua Bloch", "Programming", "English", 20, "Available", "B1","");
         libraryModel.addBookToDatabase(newBook);
 
         // Lấy danh sách sách từ LibraryModelManage

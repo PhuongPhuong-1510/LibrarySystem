@@ -63,6 +63,7 @@ public class LibraryModelManage {
                 book.setTotal(updatedBook.getTotal());
                 book.setCategory(updatedBook.getCategory());
                 book.setPosition(updatedBook.getPosition());
+                book.setURL(updatedBook.getURL());
                 break;
             }
         }
@@ -264,7 +265,26 @@ public class LibraryModelManage {
     public void editIssueInDatabase(Issue issue) {
         IssueDAO issueDAO = new IssueDAO();
         issueDAO.editIssue(issue);
+        editIssue(issue);
     }
+    public void editIssue(Issue updatedIssue) {
+        if (updatedIssue == null || updatedIssue.getIssueID() == null) {
+            System.out.println("Invalid issue data.");
+            return;
+        }
+        for (Issue issue : issuesList) {
+            if (issue.getIssueID().equals(updatedIssue.getIssueID())) {
+                issue.setIssueBookID(updatedIssue.getIssueBookID());
+                issue.setIssueStudentID(updatedIssue.getIssueStudentID());
+                issue.setIssueDate(updatedIssue.getIssueDate());
+                issue.setDueDate(updatedIssue.getDueDate());
+                issue.setStatus(updatedIssue.getStatus());
+                break;
+            }
+        }
+
+    }
+
 
 
     public String creatIssueID() {
@@ -284,6 +304,16 @@ public class LibraryModelManage {
         }
         return newIssueID;
     }
+
+    public Issue searchIssueByID(String issueID) {
+        for (Issue issue : getIssuesList()) {
+            if (issue.getIssueID().equals(issueID)) {
+                return issue;
+            }
+        }
+        return null;
+    }
+
 
     public boolean checkStudentAndBookEmpty(String bookID, String studentID) {
         ArrayList<Book> bookslist = getBooksList();
@@ -405,7 +435,6 @@ public class LibraryModelManage {
                 return reserve;
             }
         }
-        JOptionPane.showMessageDialog(null, "Reserve not found.");
         return null;
     }
 

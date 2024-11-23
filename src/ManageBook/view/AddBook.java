@@ -215,7 +215,7 @@ public class AddBook extends JFrame {
         int total = Integer.valueOf(totalText.getText()+"");
         String current = "Still";
         String position = this.positionText.getText()+"";
-        Book book = new Book(id, title,imagePath, author,"Programing", language, total, current, position);
+        Book book = new Book(id, title,imagePath, author,"Programing", language, total, current, position, "");
         libraryModelManage.addBookToDatabase(book);
         return book;
     }

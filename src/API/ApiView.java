@@ -129,6 +129,7 @@ public class ApiView extends JPanel {
                                         String bookAuthor = author;
                                         String bookCategory = category;
                                         String bookLanguage = language;
+                                        String infolink = infoLink;
                                         int total = 1;
                                         String current = "Still";
                                         String bookPosition = "B2";
@@ -159,7 +160,7 @@ public class ApiView extends JPanel {
                                         }
 
                                         // Tạo đối tượng Book và lưu vào database
-                                        Book bookk = new Book(bookID, bookName, fileName, bookAuthor, bookCategory, bookLanguage, total, current, bookPosition);
+                                        Book bookk = new Book(bookID, bookName, fileName, bookAuthor, bookCategory, bookLanguage, total, current, bookPosition, infolink);
                                         libraryModelManage.addBookToDatabase(bookk);
                                         return null;
                                     }
@@ -182,14 +183,32 @@ public class ApiView extends JPanel {
                             btnSee.setBackground(new Color(0, 0, 128));
                             btnSee.setForeground(Color.WHITE);
                             btnSee.addActionListener(e -> {
-                                JFrame chiTietFrame = new JFrame("Chi Tiết");
-                                chiTietFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-                                chiTietFrame.setSize(1000, 600);
-                                chiTietFrame.setLocationRelativeTo(null);
-                                ChiTiet chiTietPanel = new ChiTiet(title, author, language, category, imageUrl, infoLink);
-                                chiTietFrame.getContentPane().add(chiTietPanel);
-                                chiTietFrame.setVisible(true);
+                                showLoadingDialog();
+
+                                SwingWorker<Void, Void> seeBookWorker = new SwingWorker<>() {
+                                    @Override
+                                    protected Void doInBackground() throws Exception {
+                                        Thread.sleep(500);
+                                        return null;
+                                    }
+
+                                    @Override
+                                    protected void done() {
+                                        hideLoadingDialog();
+                                        JFrame chiTietFrame = new JFrame("Chi Tiết");
+                                        chiTietFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                                        chiTietFrame.setSize(1000, 600);
+                                        chiTietFrame.setLocationRelativeTo(null);
+
+                                        ChiTiet chiTietPanel = new ChiTiet(title, author, language, category, imageUrl, infoLink);
+                                        chiTietFrame.getContentPane().add(chiTietPanel);
+                                        chiTietFrame.setVisible(true);
+                                    }
+                                };
+
+                                seeBookWorker.execute();
                             });
+
                             panel_2.add(btnSee);
 
                             JMenuItem mntmNewMenuItem = new JMenuItem(displayedTitle);
@@ -243,11 +262,12 @@ public class ApiView extends JPanel {
     private void showLoadingDialog() {
         loadingDialog = new JDialog((JFrame) SwingUtilities.getWindowAncestor(this), "Loading...", true);
         loadingDialog.setUndecorated(true);
-        loadingDialog.setSize(250, 60);
+        loadingDialog.setSize(250, 100);
         loadingDialog.setBackground(new Color(255, 255, 255));
         loadingDialog.setLocationRelativeTo(this);
 
-        JPanel panel = new JPanel(new GridLayout(2, 1, 10, 10));
+        JPanel panel = new JPanel(new GridLayout(3, 1, 10, 10)); // Changed to 3 rows to add Cancel button
+        panel.setBackground(new Color(255, 255, 255));
         JLabel label = new JLabel("Loading...", JLabel.CENTER);
         label.setBackground(new Color(255, 255, 255));
         label.setFont(new Font("Tahoma", Font.BOLD, 16));
@@ -256,8 +276,20 @@ public class ApiView extends JPanel {
         progressBar = new JProgressBar();
         progressBar.setIndeterminate(true);
         progressBar.setBackground(new Color(255, 255, 255));
-        progressBar.setPreferredSize(new Dimension(20, 20));
         panel.add(progressBar);
+
+        // Add Cancel button
+        JButton cancelButton = new JButton("Cancel");
+        cancelButton.setBackground(new Color(255, 69, 0));
+        cancelButton.setForeground(Color.WHITE);
+        cancelButton.setFont(new Font("Tahoma", Font.BOLD, 12));
+        cancelButton.addActionListener(e -> {
+            if (searchWorker != null) {
+                searchWorker.cancel(true); // Cancel the SwingWorker
+            }
+            hideLoadingDialog();
+        });
+        panel.add(cancelButton);
 
         loadingDialog.add(panel);
 
@@ -272,6 +304,7 @@ public class ApiView extends JPanel {
 
         new Thread(() -> loadingDialog.setVisible(true)).start();
     }
+
 
     private void hideLoadingDialog() {
         if (loadingDialog != null) {
