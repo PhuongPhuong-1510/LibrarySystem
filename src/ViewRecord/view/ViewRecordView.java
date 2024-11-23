@@ -2,14 +2,20 @@ package ViewRecord.view;
 
 
 import LoginPage.view.OvalButton;
+import MainApp.model.Book;
+import MainApp.model.Issue;
+import MainApp.model.Student;
 import ViewRecord.controller.ViewRecordController;
+import MainApp.model.LibraryModelManage;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 public class ViewRecordView extends JPanel {
     private JPanel mainView;
@@ -24,7 +30,10 @@ public class ViewRecordView extends JPanel {
     private JButton issueDateButton;
     private JButton dueDateButton;
 
-    public ViewRecordView() {
+    public LibraryModelManage libraryModelManage;
+
+    public ViewRecordView(LibraryModelManage libraryModelManage) {
+        this.libraryModelManage = libraryModelManage;
         this.setLayout(new BorderLayout());
         init();
         new ViewRecordController(this);
@@ -46,7 +55,9 @@ public class ViewRecordView extends JPanel {
 
     private TableViewRecord createTableView() {
         String[] columnNames = createColumnNames();
-        Object[][] data = fetchData();
+        // Giả sử bạn gọi fetchData với 4 tham số rỗng
+        Object[][] data = fetchData("", "", "", "");
+
 
         return new TableViewRecord(columnNames, data, 150, 3, 6) {
             @Override
@@ -89,20 +100,140 @@ public class ViewRecordView extends JPanel {
         };
     }
 
-    private Object[][] fetchData() {
-        return new Object[][] {
-                {"ISS001", "BK001", "Java Programming", createImageLabel("/ViewRecord/view/icon/1.jpg"), "ST001", "John Doe", createImageLabel("/ViewRecord/view/icon/1.jpg"), "2024-10-01", "2024-10-15", "Issued"},
-                {"ISS002", "BK002", "Python Programming", createImageLabel("/ViewRecord/view/icon/1.jpg"), "ST002", "Jane Smith", createImageLabel("/ViewRecord/view/icon/1.jpg"), "2024-10-03", "2024-10-17", "Returned"},
-                {"ISS003", "BK003", "C++ Fundamentals", createImageLabel("/ViewRecord/view/icon/1.jpg"), "ST003", "Alice Brown", createImageLabel("/ViewRecord/view/icon/1.jpg"), "2024-10-05", "2024-10-19", "Overdue"},
-                {"ISS004", "BK004", "Data Structures", createImageLabel("/ViewRecord/view/icon/1.jpg"), "ST004", "Michael Johnson", createImageLabel("/ViewRecord/view/icon/1.jpg"), "2024-10-07", "2024-10-21", "Issued"},
-                {"ISS005", "BK005", "Operating Systems", createImageLabel("/ViewRecord/view/icon/1.jpg"), "ST005", "Emily Davis", createImageLabel("/ViewRecord/view/icon/1.jpg"), "2024-10-09", "2024-10-23", "Returned"},
-                {"ISS006", "BK006", "Machine Learning", createImageLabel("/ViewRecord/view/icon/1.jpg"), "ST006", "Robert Wilson", createImageLabel("/ViewRecord/view/icon/1.jpg"), "2024-10-11", "2024-10-25", "Overdue"},
-                {"ISS007", "BK007", "Network Security", createImageLabel("/ViewRecord/view/icon/1.jpg"), "ST007", "Linda Clark", createImageLabel("/ViewRecord/view/icon/1.jpg"), "2024-10-13", "2024-10-27", "Issued"},
-                {"ISS008", "BK008", "Artificial Intelligence", createImageLabel("/ViewRecord/view/icon/1.jpg"), "ST008", "David Martinez", createImageLabel("/ViewRecord/view/icon/1.jpg"), "2024-10-15", "2024-10-29", "Returned"},
-                {"ISS009", "BK009", "Web Development", createImageLabel("/ViewRecord/view/icon/1.jpg"), "ST009", "Jennifer Lee", createImageLabel("/ViewRecord/view/icon/1.jpg"), "2024-10-17", "2024-10-31", "Issued"},
-                {"ISS010", "BK010", "Database Systems", createImageLabel("/ViewRecord/view/icon/1.jpg"), "ST010", "James Anderson", createImageLabel("/ViewRecord/view/icon/1.jpg"), "2024-10-19", "2024-11-02", "Overdue"}
-        };
+    public Object[][] fetchData(String bookID, String nameID, String issueDate, String dueDate) {
+        try {
+            ArrayList<Issue> issues = libraryModelManage.getIssuesList();
+            ArrayList<Issue> filteredIssues = new ArrayList<>();
+
+            for (Issue issue : issues) {
+                // Điều kiện lọc từng trường hợp cụ thể
+                boolean matchBookID = bookID.isEmpty() || issue.getIssueBookID().contains(bookID);
+                boolean matchNameID = nameID.isEmpty() || issue.getIssueStudentID().contains(nameID);
+                boolean matchIssueDate = issueDate.isEmpty() || issue.getIssueDate().toString().contains(issueDate);
+                boolean matchDueDate = dueDate.isEmpty() || issue.getDueDate().toString().contains(dueDate);
+
+                // 4 trường hợp nhập vào đều trống
+                if (bookID.isEmpty() && nameID.isEmpty() && issueDate.isEmpty() && dueDate.isEmpty()) {
+                    filteredIssues.add(issue);
+                }
+                // Chỉ nhập vào 1 trường
+                else if (!bookID.isEmpty() && nameID.isEmpty() && issueDate.isEmpty() && dueDate.isEmpty() && matchBookID) {
+                    filteredIssues.add(issue);
+                } else if (bookID.isEmpty() && !nameID.isEmpty() && issueDate.isEmpty() && dueDate.isEmpty() && matchNameID) {
+                    filteredIssues.add(issue);
+                } else if (bookID.isEmpty() && nameID.isEmpty() && !issueDate.isEmpty() && dueDate.isEmpty() && matchIssueDate) {
+                    filteredIssues.add(issue);
+                } else if (bookID.isEmpty() && nameID.isEmpty() && issueDate.isEmpty() && !dueDate.isEmpty() && matchDueDate) {
+                    filteredIssues.add(issue);
+                }
+                // Nhập vào 2 trường
+                else if (!bookID.isEmpty() && !nameID.isEmpty() && issueDate.isEmpty() && dueDate.isEmpty() && matchBookID && matchNameID) {
+                    filteredIssues.add(issue);
+                } else if (!bookID.isEmpty() && nameID.isEmpty() && !issueDate.isEmpty() && dueDate.isEmpty() && matchBookID && matchIssueDate) {
+                    filteredIssues.add(issue);
+                } else if (!bookID.isEmpty() && nameID.isEmpty() && issueDate.isEmpty() && !dueDate.isEmpty() && matchBookID && matchDueDate) {
+                    filteredIssues.add(issue);
+                } else if (bookID.isEmpty() && !nameID.isEmpty() && !issueDate.isEmpty() && dueDate.isEmpty() && matchNameID && matchIssueDate) {
+                    filteredIssues.add(issue);
+                } else if (bookID.isEmpty() && !nameID.isEmpty() && issueDate.isEmpty() && !dueDate.isEmpty() && matchNameID && matchDueDate) {
+                    filteredIssues.add(issue);
+                } else if (bookID.isEmpty() && nameID.isEmpty() && !issueDate.isEmpty() && !dueDate.isEmpty() && matchIssueDate && matchDueDate) {
+                    filteredIssues.add(issue);
+                }
+                // Nhập vào 3 trường
+                else if (!bookID.isEmpty() && !nameID.isEmpty() && !issueDate.isEmpty() && dueDate.isEmpty() && matchBookID && matchNameID && matchIssueDate) {
+                    filteredIssues.add(issue);
+                } else if (!bookID.isEmpty() && !nameID.isEmpty() && issueDate.isEmpty() && !dueDate.isEmpty() && matchBookID && matchNameID && matchDueDate) {
+                    filteredIssues.add(issue);
+                } else if (!bookID.isEmpty() && nameID.isEmpty() && !issueDate.isEmpty() && !dueDate.isEmpty() && matchBookID && matchIssueDate && matchDueDate) {
+                    filteredIssues.add(issue);
+                } else if (bookID.isEmpty() && !nameID.isEmpty() && !issueDate.isEmpty() && !dueDate.isEmpty() && matchNameID && matchIssueDate && matchDueDate) {
+                    filteredIssues.add(issue);
+                }
+                // Nhập vào cả 4 trường
+                else if (!bookID.isEmpty() && !nameID.isEmpty() && !issueDate.isEmpty() && !dueDate.isEmpty() && matchBookID && matchNameID && matchIssueDate && matchDueDate) {
+                    filteredIssues.add(issue);
+                }
+            }
+
+            // Tạo mảng Object[][] chứa dữ liệu đã lọc
+            Object[][] rowData = new Object[filteredIssues.size()][10];
+
+            for (int i = 0; i < filteredIssues.size(); i++) {
+                Issue issue = filteredIssues.get(i);
+
+                rowData[i][0] = issue.getIssueID();
+                rowData[i][1] = issue.getIssueBookID();
+
+                // Lấy thông tin sách
+                Book book = libraryModelManage.searchBookByID(issue.getIssueBookID());
+                if (book != null) {
+                    rowData[i][2] = book.getBookName();
+                    rowData[i][3] = loadImageIcon(book.getImage()); // Load ảnh từ đường dẫn
+                } else {
+                    rowData[i][2] = "Unknown Book";
+                    rowData[i][3] = new ImageIcon(new BufferedImage(50, 50, BufferedImage.TYPE_INT_ARGB)); // Placeholder
+                }
+
+                // Lấy thông tin sinh viên
+                Student student = libraryModelManage.searchStudentByID(issue.getIssueStudentID());
+                if (student != null) {
+                    rowData[i][5] = student.getName();
+                    rowData[i][6] = loadImageIcon(student.getCardPhoto()); // Load ảnh từ đường dẫn
+                } else {
+                    rowData[i][5] = "Unknown Student";
+                    rowData[i][6] = new ImageIcon(new BufferedImage(50, 50, BufferedImage.TYPE_INT_ARGB)); // Placeholder
+                }
+
+                rowData[i][4] = issue.getIssueStudentID();
+                rowData[i][7] = issue.getIssueDate();
+                rowData[i][8] = issue.getDueDate();
+                rowData[i][9] = issue.getStatus();
+            }
+
+            return rowData;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return new Object[0][0];
+        }
     }
+
+
+    private ImageIcon loadImageIcon(String path) {
+        try {
+            if (path != null && !path.isEmpty()) {
+                ImageIcon icon = new ImageIcon(path); // Load ảnh từ đường dẫn
+                Image img = icon.getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH); // Resize ảnh
+                return new ImageIcon(img);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        // Trả về ảnh mặc định nếu không load được
+        return new ImageIcon(new BufferedImage(50, 50, BufferedImage.TYPE_INT_ARGB));
+    }
+
+
+    public void updateTable(Object[][] data) {
+        // Lấy tableModel cũ từ table hiện tại
+        DefaultTableModel tableModel = (DefaultTableModel) tableView.getTable().getModel();
+
+        // Clear old data
+        tableModel.setRowCount(0);
+
+        // Add new data
+        for (Object[] row : data) {
+            tableModel.addRow(row);
+        }
+
+        // Không cần thiết phải set lại columnIdentifiers, vì nó đã được thiết lập từ trước
+        // Nếu cần thiết, có thể chỉ làm lại phần vẽ lại bảng
+        tableView.revalidate();
+        tableView.repaint();
+    }
+
+
+
 
     private JLabel createImageLabel(String path) {
         ImageIcon icon;
@@ -200,6 +331,8 @@ public class ViewRecordView extends JPanel {
         button.setBackground(new Color(51, 153, 253));
         return button;
     }
+
+
 
     public JPanel getMainView() {
         return mainView;

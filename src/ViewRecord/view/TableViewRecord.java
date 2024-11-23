@@ -46,6 +46,7 @@ public class TableViewRecord extends BaseBookTableView {
         return table;
     }
 
+
     private boolean isImageColumn(int column) {
         return column == imageColumn1 || column == imageColumn2;
     }
