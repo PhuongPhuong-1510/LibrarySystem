@@ -2,6 +2,7 @@ package HomePage.controller;
 
 import API.ApiView;
 import HomePage.view.HomePageView;
+import IssueBook.view.AppContext;
 import IssueBook.view.IssueBookView;
 import LMSNotification.view.NotificationView;
 import MainApp.model.LibraryModelManage;
@@ -23,6 +24,7 @@ public class HomePageController implements ActionListener, MouseListener {
     public HomePageController(HomePageView homePageView) {
         this.libraryModelManage = new LibraryModelManage();
         this.homePageView = homePageView;
+        AppContext.getInstance().setHomePageView(homePageView);
         initializeListeners();
     }
 

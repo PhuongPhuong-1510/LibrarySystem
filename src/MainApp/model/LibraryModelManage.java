@@ -328,7 +328,7 @@ public class LibraryModelManage {
                 return book;
             }
         }
-        return null; // Return null if the book is not found
+        return null;
     }
 
     public Student searchStudentByID(String studentID) {
@@ -426,6 +426,9 @@ public class LibraryModelManage {
             newID++;
         }
         return newReserveID;
+    }
+    public void reloadReserveList() {
+        loadReservesFromDatabase(); // Tải lại dữ liệu từ cơ sở dữ liệu
     }
 
 
