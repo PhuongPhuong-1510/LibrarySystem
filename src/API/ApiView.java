@@ -1,5 +1,7 @@
 package API;
 
+import HomePage.view.CustomScrollBarUI;
+import LoginPage.view.OvalButton;
 import MainApp.model.Book;
 import MainApp.model.LibraryModelManage;
 
@@ -19,7 +21,7 @@ public class ApiView extends JPanel {
 
     private static final long serialVersionUID = 1L;
     private final JPanel panel;
-    private JTextField textField;
+    private OvalTextField textField;
     private LibraryModelManage libraryModelManage;
 
     /**
@@ -33,13 +35,14 @@ public class ApiView extends JPanel {
         this.libraryModelManage = libraryModelManage;
         libraryModelManage.getBooksList();
 
-        textField = new JTextField();
+        textField = new OvalTextField(30);
+        textField.setPlaceholder("Tìm kiếm sách trên Google API");
         textField.setFont(new Font("Tahoma", Font.BOLD, 20));
         textField.setBounds(109, 46, 766, 67);
         add(textField);
         textField.setColumns(10);
 
-        JButton btnNewButton = new JButton("Search");
+        JButton btnNewButton = new OvalButton("Search");
         btnNewButton.setForeground(new Color(255, 255, 255));
         btnNewButton.setBackground(new Color(0, 128, 64));
         btnNewButton.setFont(new Font("Tahoma", Font.BOLD, 15));
@@ -51,7 +54,7 @@ public class ApiView extends JPanel {
         panel = new JPanel();
         panel.setLayout(new GridLayout(50, 1, 10, 10));
 
-        JScrollPane scrollPane = new JScrollPane(panel);
+        JScrollPane scrollPane = createScrollPane(panel);
         scrollPane.setBounds(29, 152, 1149, 362);
         add(scrollPane);
 
@@ -112,7 +115,7 @@ public class ApiView extends JPanel {
                             JPanel panel_2 = new JPanel(new GridLayout(1, 2, 10, 10));
                             panel_1.add(panel_2, BorderLayout.EAST);
 
-                            JButton btnAdd = new JButton("Add");
+                            JButton btnAdd = new OvalButton("Add");
                             btnAdd.setBackground(new Color(75, 0, 130));
                             btnAdd.setForeground(Color.WHITE);
                             btnAdd.addActionListener(e -> {
@@ -175,7 +178,7 @@ public class ApiView extends JPanel {
 
                             panel_2.add(btnAdd);
 
-                            JButton btnSee = new JButton("See");
+                            JButton btnSee = new OvalButton("See");
                             btnSee.setBackground(new Color(0, 0, 128));
                             btnSee.setForeground(Color.WHITE);
                             btnSee.addActionListener(e -> {
@@ -274,6 +277,26 @@ public class ApiView extends JPanel {
         if (loadingDialog != null) {
             loadingDialog.dispose();
         }
+    }
+
+    protected JScrollPane createScrollPane(JPanel table) {
+        JScrollPane scrollPane = new JScrollPane(table);
+        scrollPane.getViewport().setBackground(new Color(238, 210, 238)); // Màu nền cho vùng hiển thị của JScrollPane
+
+
+        CustomScrollBarUI verticalScrollBarUI = new CustomScrollBarUI();
+        verticalScrollBarUI.setColors(new Color(205, 201, 201), new Color(232, 232, 232));
+        scrollPane.getVerticalScrollBar().setUI(verticalScrollBarUI); // Ghi đè UI cho thanh cuộn dọc
+
+        CustomScrollBarUI horizontalScrollBarUI = new CustomScrollBarUI();
+        horizontalScrollBarUI.setColors(new Color(205, 201, 201), new Color(232, 232, 232));
+        scrollPane.getHorizontalScrollBar().setUI(horizontalScrollBarUI); // Ghi đè UI cho thanh cuộn ngang
+
+        scrollPane.setPreferredSize(new Dimension(1200, getHeight()));
+        scrollPane.setBorder(null);
+        scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        return scrollPane;
     }
 
 
