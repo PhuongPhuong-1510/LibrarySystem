@@ -1,13 +1,14 @@
 package API;
 
+import HomePage.view.CustomScrollBarUI;
+import LoginPage.view.OvalButton;
 import MainApp.model.Book;
 import MainApp.model.LibraryModelManage;
 
 import javax.swing.*;
-import java.awt.BorderLayout;
-import java.awt.GridLayout;
-import java.awt.Font;
-import java.awt.Color;
+import java.awt.*;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -18,8 +19,9 @@ import java.util.List;
 
 public class ApiView extends JPanel {
 
+    private static final long serialVersionUID = 1L;
     private final JPanel panel;
-    private JTextField textField;
+    private OvalTextField textField;
     private LibraryModelManage libraryModelManage;
 
     /**
@@ -33,13 +35,14 @@ public class ApiView extends JPanel {
         this.libraryModelManage = libraryModelManage;
         libraryModelManage.getBooksList();
 
-        textField = new JTextField();
+        textField = new OvalTextField(30);
+        textField.setPlaceholder("Tìm kiếm sách trên Google API");
         textField.setFont(new Font("Tahoma", Font.BOLD, 20));
         textField.setBounds(109, 46, 766, 67);
         add(textField);
         textField.setColumns(10);
 
-        JButton btnNewButton = new JButton("Search");
+        JButton btnNewButton = new OvalButton("Search");
         btnNewButton.setForeground(new Color(255, 255, 255));
         btnNewButton.setBackground(new Color(0, 128, 64));
         btnNewButton.setFont(new Font("Tahoma", Font.BOLD, 15));
@@ -51,7 +54,7 @@ public class ApiView extends JPanel {
         panel = new JPanel();
         panel.setLayout(new GridLayout(50, 1, 10, 10));
 
-        JScrollPane scrollPane = new JScrollPane(panel);
+        JScrollPane scrollPane = createScrollPane(panel);
         scrollPane.setBounds(29, 152, 1149, 362);
         add(scrollPane);
 
@@ -85,7 +88,7 @@ public class ApiView extends JPanel {
         }
         showLoadingDialog();
 
-        searchWorker = new SwingWorker<>() {
+        searchWorker = new SwingWorker<Void, Void>() {
             @Override
             protected Void doInBackground() {
                 try {
@@ -112,7 +115,7 @@ public class ApiView extends JPanel {
                             JPanel panel_2 = new JPanel(new GridLayout(1, 2, 10, 10));
                             panel_1.add(panel_2, BorderLayout.EAST);
 
-                            JButton btnAdd = new JButton("Add");
+                            JButton btnAdd = new OvalButton("Add");
                             btnAdd.setBackground(new Color(75, 0, 130));
                             btnAdd.setForeground(Color.WHITE);
                             btnAdd.addActionListener(e -> {
@@ -133,34 +136,27 @@ public class ApiView extends JPanel {
                                         String fileName = null;
 
                                         try {
-                                            String directoryPath = "/ManageBook/icon/";
-                                            Files.createDirectories(Paths.get(directoryPath)); // Ensure directory exists
+                                            String directoryPath = "src/ManageBook/icon/"; // Thư mục lưu ảnh
+                                            Files.createDirectories(Paths.get(directoryPath)); // Tạo thư mục nếu chưa tồn tại
 
                                             if (imageUrl == null || imageUrl.isEmpty()) {
                                                 JOptionPane.showMessageDialog(null, "No image URL provided for this book.", "Error", JOptionPane.ERROR_MESSAGE);
                                                 return null;
                                             }
 
-                                            URL url = new URL(imageUrl);
-                                            String sanitizedBookName = bookName.replaceAll("[^a-zA-Z0-9]", "_");
+                                            URL url = new URL(imageUrl); // URL ảnh bìa
+                                            String sanitizedBookName = bookName.replaceAll("[^a-zA-Z0-9]", "_"); // Tạo tên file hợp lệ
                                             fileName = directoryPath + sanitizedBookName + ".jpg";
 
                                             InputStream in = url.openStream();
                                             Files.copy(in, Paths.get(fileName), StandardCopyOption.REPLACE_EXISTING);
                                             in.close();
+                                            fileName = fileName.replace("src", "");
                                         } catch (IOException ex) {
-                                            System.err.println("Error downloading image from URL: " + imageUrl);
                                             ex.printStackTrace();
-
-                                            SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(
-                                                    null, "Failed to download book image from: " + imageUrl + "\nError: " + ex.getMessage(),
-                                                    "Error", JOptionPane.ERROR_MESSAGE
-                                            ));
-
-                                            // Optional: Use default image as a fallback
-                                            fileName = "/ManageBook/icon/default.jpg";
+                                            SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(null, "Failed to download book image.", "Error", JOptionPane.ERROR_MESSAGE));
+                                            return null;
                                         }
-
 
                                         // Tạo đối tượng Book và lưu vào database
                                         Book bookk = new Book(bookID, bookName, fileName, bookAuthor, bookCategory, bookLanguage, total, current, bookPosition);
@@ -182,7 +178,7 @@ public class ApiView extends JPanel {
 
                             panel_2.add(btnAdd);
 
-                            JButton btnSee = new JButton("See");
+                            JButton btnSee = new OvalButton("See");
                             btnSee.setBackground(new Color(0, 0, 128));
                             btnSee.setForeground(Color.WHITE);
                             btnSee.addActionListener(e -> {
@@ -242,16 +238,28 @@ public class ApiView extends JPanel {
 
     private JDialog loadingDialog;
     private SwingWorker<Void, Void> searchWorker;
+    private JProgressBar progressBar; // Thanh tiến trình
 
     private void showLoadingDialog() {
         loadingDialog = new JDialog((JFrame) SwingUtilities.getWindowAncestor(this), "Loading...", true);
         loadingDialog.setUndecorated(true);
-        loadingDialog.setSize(200, 100);
+        loadingDialog.setSize(250, 60);
+        loadingDialog.setBackground(new Color(255, 255, 255));
         loadingDialog.setLocationRelativeTo(this);
 
+        JPanel panel = new JPanel(new GridLayout(2, 1, 10, 10));
         JLabel label = new JLabel("Loading...", JLabel.CENTER);
+        label.setBackground(new Color(255, 255, 255));
         label.setFont(new Font("Tahoma", Font.BOLD, 16));
-        loadingDialog.add(label);
+        panel.add(label);
+
+        progressBar = new JProgressBar();
+        progressBar.setIndeterminate(true);
+        progressBar.setBackground(new Color(255, 255, 255));
+        progressBar.setPreferredSize(new Dimension(20, 20));
+        panel.add(progressBar);
+
+        loadingDialog.add(panel);
 
         loadingDialog.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
@@ -270,6 +278,27 @@ public class ApiView extends JPanel {
             loadingDialog.dispose();
         }
     }
+
+    protected JScrollPane createScrollPane(JPanel table) {
+        JScrollPane scrollPane = new JScrollPane(table);
+        scrollPane.getViewport().setBackground(new Color(238, 210, 238)); // Màu nền cho vùng hiển thị của JScrollPane
+
+
+        CustomScrollBarUI verticalScrollBarUI = new CustomScrollBarUI();
+        verticalScrollBarUI.setColors(new Color(205, 201, 201), new Color(232, 232, 232));
+        scrollPane.getVerticalScrollBar().setUI(verticalScrollBarUI); // Ghi đè UI cho thanh cuộn dọc
+
+        CustomScrollBarUI horizontalScrollBarUI = new CustomScrollBarUI();
+        horizontalScrollBarUI.setColors(new Color(205, 201, 201), new Color(232, 232, 232));
+        scrollPane.getHorizontalScrollBar().setUI(horizontalScrollBarUI); // Ghi đè UI cho thanh cuộn ngang
+
+        scrollPane.setPreferredSize(new Dimension(1200, getHeight()));
+        scrollPane.setBorder(null);
+        scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        return scrollPane;
+    }
+
 
 
 
