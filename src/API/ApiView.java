@@ -182,14 +182,32 @@ public class ApiView extends JPanel {
                             btnSee.setBackground(new Color(0, 0, 128));
                             btnSee.setForeground(Color.WHITE);
                             btnSee.addActionListener(e -> {
-                                JFrame chiTietFrame = new JFrame("Chi Tiết");
-                                chiTietFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-                                chiTietFrame.setSize(1000, 600);
-                                chiTietFrame.setLocationRelativeTo(null);
-                                ChiTiet chiTietPanel = new ChiTiet(title, author, language, category, imageUrl, infoLink);
-                                chiTietFrame.getContentPane().add(chiTietPanel);
-                                chiTietFrame.setVisible(true);
+                                showLoadingDialog();
+
+                                SwingWorker<Void, Void> seeBookWorker = new SwingWorker<>() {
+                                    @Override
+                                    protected Void doInBackground() throws Exception {
+                                        Thread.sleep(2000);
+                                        return null;
+                                    }
+
+                                    @Override
+                                    protected void done() {
+                                        hideLoadingDialog();
+                                        JFrame chiTietFrame = new JFrame("Chi Tiết");
+                                        chiTietFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                                        chiTietFrame.setSize(1000, 600);
+                                        chiTietFrame.setLocationRelativeTo(null);
+
+                                        ChiTiet chiTietPanel = new ChiTiet(title, author, language, category, imageUrl, infoLink);
+                                        chiTietFrame.getContentPane().add(chiTietPanel);
+                                        chiTietFrame.setVisible(true);
+                                    }
+                                };
+
+                                seeBookWorker.execute();
                             });
+
                             panel_2.add(btnSee);
 
                             JMenuItem mntmNewMenuItem = new JMenuItem(displayedTitle);
