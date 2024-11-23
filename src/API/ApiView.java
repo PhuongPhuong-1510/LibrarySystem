@@ -79,52 +79,6 @@ public class ApiView extends JPanel {
 
     }
 
-    public void refresh() {
-
-        String jsonResponse = GoogleBooksAPI.searchBooks("a"); // Tìm kiếm ngẫu nhiên với từ khóa "a"
-        List<String[]> books = BookParser.getBookDetails(jsonResponse);
-
-        panel.removeAll();
-
-        for (int i = 0; i < books.size() && i < 50; i++) {
-            String[] book = books.get(i);
-            String title = book[0]; // Tên sách
-
-            // Giới hạn tên sách tối đa 50 ký tự
-            if (title.length() > 50) {
-                title = title.substring(0, 50) + "...";
-            }
-
-            JPanel panel_1 = new JPanel();
-            panel_1.setLayout(new BorderLayout(0, 0));
-            panel_1.setBackground(new Color(255, 255, 255));
-
-            JPanel panel_2 = new JPanel();
-            panel_1.add(panel_2, BorderLayout.EAST);
-            panel_2.setLayout(new GridLayout(1, 2, 10, 10));
-
-            JButton btnNewButton_2 = new JButton("Add");
-            btnNewButton_2.setBackground(new Color(75, 0, 130));
-            btnNewButton_2.setForeground(new Color(255, 255, 255));
-            panel_2.add(btnNewButton_2);
-
-            JButton btnNewButton_3 = new JButton("See");
-            btnNewButton_3.setBackground(new Color(0, 0, 128));
-            btnNewButton_3.setForeground(new Color(255, 255, 255));
-            panel_2.add(btnNewButton_3);
-
-            JMenuItem mntmNewMenuItem = new JMenuItem(title);
-            panel_1.add(mntmNewMenuItem, BorderLayout.CENTER);
-            mntmNewMenuItem.setBackground(new Color(255, 255, 255));
-            mntmNewMenuItem.setFont(new Font("Tahoma", Font.BOLD, 20));
-
-            panel.add(panel_1);
-        }
-
-        // Cập nhật giao diện
-        panel.revalidate();
-        panel.repaint();
-    }
 
     public void searchBooks(String query) {
         if (!isInternetAvailable()) {
