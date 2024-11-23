@@ -182,34 +182,27 @@ public class ApiView extends JPanel {
                                         String fileName = null;
 
                                         try {
-                                            String directoryPath = "/ManageBook/icon/";
-                                            Files.createDirectories(Paths.get(directoryPath)); // Ensure directory exists
+                                            String directoryPath = "src/ManageBook/icon/"; // Thư mục lưu ảnh
+                                            Files.createDirectories(Paths.get(directoryPath)); // Tạo thư mục nếu chưa tồn tại
 
                                             if (imageUrl == null || imageUrl.isEmpty()) {
                                                 JOptionPane.showMessageDialog(null, "No image URL provided for this book.", "Error", JOptionPane.ERROR_MESSAGE);
                                                 return null;
                                             }
 
-                                            URL url = new URL(imageUrl);
-                                            String sanitizedBookName = bookName.replaceAll("[^a-zA-Z0-9]", "_");
+                                            URL url = new URL(imageUrl); // URL ảnh bìa
+                                            String sanitizedBookName = bookName.replaceAll("[^a-zA-Z0-9]", "_"); // Tạo tên file hợp lệ
                                             fileName = directoryPath + sanitizedBookName + ".jpg";
 
                                             InputStream in = url.openStream();
                                             Files.copy(in, Paths.get(fileName), StandardCopyOption.REPLACE_EXISTING);
                                             in.close();
+                                            fileName = fileName.replace("src", "");
                                         } catch (IOException ex) {
-                                            System.err.println("Error downloading image from URL: " + imageUrl);
                                             ex.printStackTrace();
-
-                                            SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(
-                                                    null, "Failed to download book image from: " + imageUrl + "\nError: " + ex.getMessage(),
-                                                    "Error", JOptionPane.ERROR_MESSAGE
-                                            ));
-
-                                            // Optional: Use default image as a fallback
-                                            fileName = "/ManageBook/icon/default.jpg";
+                                            SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(null, "Failed to download book image.", "Error", JOptionPane.ERROR_MESSAGE));
+                                            return null;
                                         }
-
 
                                         // Tạo đối tượng Book và lưu vào database
                                         Book bookk = new Book(bookID, bookName, fileName, bookAuthor, bookCategory, bookLanguage, total, current, bookPosition);

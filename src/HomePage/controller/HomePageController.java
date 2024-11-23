@@ -122,7 +122,7 @@ public class HomePageController implements ActionListener, MouseListener {
                 {
                     LibraryModelManage libraryModelManage = new LibraryModelManage();
                     System.out.println(("View Recrd Button clicked"));
-                    ViewRecordView viewRecordView = new ViewRecordView(libraryModelManage);
+                    ViewRecordView viewRecordView = new ViewRecordView();
                     homePageView.toggleMenuBar();
                     viewRecordView.setPreferredSize(new Dimension(homePageView.getMainHomePanel().getWidth(),homePageView.getMainHomePanel().getHeight()));
                     homePageView.setMainHomePanel(viewRecordView);

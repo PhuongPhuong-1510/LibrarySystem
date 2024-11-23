@@ -31,6 +31,7 @@ public class ManagementBookView extends JPanel {
         this.libraryModelManage = libraryModelManage;
         this.setLayout(new BorderLayout());
         this.init();
+        this.updateTable(libraryModelManage.getBooksList());
         new ManagementBookController(this);
     }
 
@@ -164,6 +165,7 @@ public class ManagementBookView extends JPanel {
 
         return new JLabel(icon); // Trả về JLabel với ảnh
     }
+
 
 
 
