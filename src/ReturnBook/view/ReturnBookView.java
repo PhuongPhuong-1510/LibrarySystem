@@ -82,8 +82,8 @@ public class ReturnBookView extends JPanel {
 
         Color labelColor = new Color(54, 54, 139);
         int labelX = 25;  // X position for labels
-        int fieldX = 150; // X position for text fields (to align with labels)
-        int labelWidth = 100;
+        int fieldX = 170; // X position for text fields (to align with labels)
+        int labelWidth = 140;
         int fieldWidth = 200;
         int fieldHeight = 30;
         int yOffset = 250;  // Starting y-position for the first label and text field
