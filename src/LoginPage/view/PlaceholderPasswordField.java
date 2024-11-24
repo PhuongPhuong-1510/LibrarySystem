@@ -14,7 +14,10 @@ public class PlaceholderPasswordField extends JPasswordField implements FocusLis
         this.placeholder = placeholder;
         this.check = check;
         this.addFocusListener(this);
-        setEchoChar(check == 1 ? '•' : (char) 0); // Đặt ký tự echo nếu là password
+        setEchoChar(check == 1 ? '•' : (char) 0);
+    }
+
+    public PlaceholderPasswordField(String placeholder) {
     }
 
     // Vẽ placeholder nếu password field rỗng và không có focus

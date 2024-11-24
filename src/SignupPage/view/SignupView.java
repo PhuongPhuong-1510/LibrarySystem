@@ -2,19 +2,12 @@ package SignupPage.view;
 
 import LoginPage.view.OvalButton;
 import LoginPage.view.PlaceholderPasswordField;
-import MainApp.model.Signup;
-import MainApp.model.SignupDAO;
 import MainApp.model.Student;
 import MainApp.view.MainView;
 import SignupPage.model.SignupModel;
 
 import javax.swing.*;
 import java.awt.*;
-import java.sql.Date;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
 
 public class SignupView extends JPanel {
     private SignupModel signupModel;
@@ -241,20 +234,18 @@ public class SignupView extends JPanel {
         }
     }
 
-    public Signup getSignupFromPanel() {
+    public Student getStudentFromPanel() {
+        String id = mainView.libraryModelManage.createStudentID();
         String fullName = txtFullName.getText().trim();
         String userName = txtUserName.getText().trim();
         String password = txtPassWord.getText().trim();
         String contactNumber = txtContactNumber.getText().trim();
-        String dateStr = txtDateOfBirth.getText().trim();
+        String date = txtDateOfBirth.getText().trim();
         String gender = (String) cmbUserType.getSelectedItem();
 
         boolean isMale = gender != null && gender.equalsIgnoreCase("Male");
 
-        // Chuyển từ chuỗi "2024-11-07" sang kiểu Date
-        Date dateOfBirth = Date.valueOf(dateStr); // Chuyển đổi trực tiếp từ chuỗi sang java.sql.Date
-
-        return new Signup(fullName, userName, password, contactNumber, isMale, "", dateOfBirth, "", "");
+        return new Student(id, fullName, userName, password, contactNumber, isMale, "", date, "", "");
     }
 
     public JButton getLoginButton() {
