@@ -1,3 +1,4 @@
+
 package ViewRecord.view;
 
 
@@ -100,223 +101,110 @@ public class ViewRecordView extends JPanel {
         };
     }
 
-//public Object[][] fetchData(String bookID, String nameID, String issueDate, String dueDate) {
-//    try {
-//        ArrayList<Issue> issues = libraryModelManage.getIssuesList();
-//        ArrayList<Issue> filteredIssues = new ArrayList<>();
-//
-//        for (Issue issue : issues) {
-//            // Kiểm tra xem trường nào có dữ liệu người dùng nhập vào và trường nào là rỗng
-//            boolean matchBookID = bookID.isEmpty() || issue.getIssueBookID().contains(bookID);
-//            boolean matchNameID = nameID.isEmpty() || issue.getIssueStudentID().contains(nameID);
-//            boolean matchIssueDate = issueDate.isEmpty() || issue.getIssueDate().toString().contains(issueDate);
-//            boolean matchDueDate = dueDate.isEmpty() || issue.getDueDate().toString().contains(dueDate);
-//
-//            // Điều kiện khi không có dữ liệu nhập vào (4 trường đều empty)
-//            if (bookID.isEmpty() && nameID.isEmpty() && issueDate.isEmpty() && dueDate.isEmpty()) {
-//                filteredIssues.add(issue); // Giữ nguyên tất cả dữ liệu
-//            }
-//            // Điều kiện khi chỉ có 1 trường nhập vào
-//            else if (!bookID.isEmpty() && nameID.isEmpty() && issueDate.isEmpty() && dueDate.isEmpty() && matchBookID) {
-//                filteredIssues.add(issue); // Thêm nếu chỉ thỏa mãn BookID
-//            }
-//            else if (bookID.isEmpty() && !nameID.isEmpty() && issueDate.isEmpty() && dueDate.isEmpty() && matchNameID) {
-//                filteredIssues.add(issue); // Thêm nếu chỉ thỏa mãn NameID
-//            }
-//            else if (bookID.isEmpty() && nameID.isEmpty() && !issueDate.isEmpty() && dueDate.isEmpty() && matchIssueDate) {
-//                filteredIssues.add(issue); // Thêm nếu chỉ thỏa mãn IssueDate
-//            }
-//            else if (bookID.isEmpty() && nameID.isEmpty() && dueDate.isEmpty() && !issueDate.isEmpty() && matchDueDate) {
-//                filteredIssues.add(issue); // Thêm nếu chỉ thỏa mãn DueDate
-//            }
-//            // Điều kiện khi có 2 trường nhập vào
-//            else if (!bookID.isEmpty() && !nameID.isEmpty() && issueDate.isEmpty() && dueDate.isEmpty() && matchBookID && matchNameID) {
-//                filteredIssues.add(issue); // Thêm nếu thỏa mãn BookID và NameID
-//            }
-//            else if (!bookID.isEmpty() && nameID.isEmpty() && !issueDate.isEmpty() && dueDate.isEmpty() && matchBookID && matchIssueDate) {
-//                filteredIssues.add(issue); // Thêm nếu thỏa mãn BookID và IssueDate
-//            }
-//            else if (!bookID.isEmpty() && nameID.isEmpty() && dueDate.isEmpty() && !issueDate.isEmpty() && matchBookID && matchDueDate) {
-//                filteredIssues.add(issue); // Thêm nếu thỏa mãn BookID và DueDate
-//            }
-//            else if (bookID.isEmpty() && !nameID.isEmpty() && !issueDate.isEmpty() && dueDate.isEmpty() && matchNameID && matchIssueDate) {
-//                filteredIssues.add(issue); // Thêm nếu thỏa mãn NameID và IssueDate
-//            }
-//            else if (bookID.isEmpty() && !nameID.isEmpty() && dueDate.isEmpty() && !issueDate.isEmpty() && matchNameID && matchDueDate) {
-//                filteredIssues.add(issue); // Thêm nếu thỏa mãn NameID và DueDate
-//            }
-//            else if (bookID.isEmpty() && nameID.isEmpty() && !issueDate.isEmpty() && !dueDate.isEmpty() && matchIssueDate && matchDueDate) {
-//                filteredIssues.add(issue); // Thêm nếu thỏa mãn IssueDate và DueDate
-//            }
-//            // Điều kiện khi có 3 trường nhập vào
-//            else if (!bookID.isEmpty() && !nameID.isEmpty() && !issueDate.isEmpty() && dueDate.isEmpty() && matchBookID && matchNameID && matchIssueDate) {
-//                filteredIssues.add(issue); // Thêm nếu thỏa mãn BookID, NameID và IssueDate
-//            }
-//            else if (!bookID.isEmpty() && !nameID.isEmpty() && dueDate.isEmpty() && !issueDate.isEmpty() && matchBookID && matchNameID && matchDueDate) {
-//                filteredIssues.add(issue); // Thêm nếu thỏa mãn BookID, NameID và DueDate
-//            }
-//            else if (!bookID.isEmpty() && nameID.isEmpty() && !issueDate.isEmpty() && !dueDate.isEmpty() && matchBookID && matchIssueDate && matchDueDate) {
-//                filteredIssues.add(issue); // Thêm nếu thỏa mãn BookID, IssueDate và DueDate
-//            }
-//            else if (bookID.isEmpty() && !nameID.isEmpty() && !issueDate.isEmpty() && !dueDate.isEmpty() && matchNameID && matchIssueDate && matchDueDate) {
-//                filteredIssues.add(issue); // Thêm nếu thỏa mãn NameID, IssueDate và DueDate
-//            }
-//            // Điều kiện khi có 4 trường nhập vào
-//            else if (!bookID.isEmpty() && !nameID.isEmpty() && !issueDate.isEmpty() && !dueDate.isEmpty() && matchBookID && matchNameID && matchIssueDate && matchDueDate) {
-//                filteredIssues.add(issue); // Thêm nếu thỏa mãn tất cả các trường
-//            }
-//        }
-//
-//        // Tạo mảng Object[][] chứa dữ liệu đã lọc
-//        Object[][] rowData = new Object[filteredIssues.size()][10];
-//
-//        for (int i = 0; i < filteredIssues.size(); i++) {
-//            Issue issue = filteredIssues.get(i); // Truy xuất vấn đề tại vị trí i
-//            rowData[i][0] = issue.getIssueID(); // IssueID
-//            rowData[i][1] = issue.getIssueBookID(); // IssueBookID
-//
-//            Book book = libraryModelManage.searchBookByID(issue.getIssueBookID());
-//            if (book != null) {
-//                rowData[i][2] = book.getBookName();  // Tên sách
-//                rowData[i][3] = book.getImage();     // Hình ảnh sách (nếu có)
-//            } else {
-//                rowData[i][2] = "Unknown Book";  // Trường hợp không tìm thấy sách
-//                rowData[i][3] = "N/A";           // Trường hợp không có ảnh sách
-//            }
-//
-//            Student student = libraryModelManage.searchStudentByID(issue.getIssueStudentID());
-//            if (student != null) {
-//                rowData[i][5] = student.getName();        // Tên sinh viên
-//                rowData[i][6] = student.getCardPhoto();   // Ảnh thẻ sinh viên (nếu có)
-//            } else {
-//                rowData[i][5] = "Unknown Student";    // Trường hợp không tìm thấy sinh viên
-//                rowData[i][6] = "N/A";                 // Trường hợp không có ảnh thẻ
-//            }
-//
-//            rowData[i][4] = issue.getIssueStudentID(); // StudentID
-//            rowData[i][7] = issue.getIssueDate();      // Ngày mượn
-//            rowData[i][8] = issue.getDueDate();        // Ngày trả
-//            rowData[i][9] = issue.getStatus();         // Trạng thái
-//        }
-//
-//        return rowData;
-//    } catch (Exception ex) {
-//        ex.printStackTrace();
-//        return new Object[0][0];
-//    }
-//}
-public Object[][] fetchData(String bookID, String nameID, String issueDate, String dueDate) {
-    try {
-        ArrayList<Issue> issues = libraryModelManage.getIssuesList();
-        ArrayList<Issue> filteredIssues = new ArrayList<>();
-
-        for (Issue issue : issues) {
-            // Điều kiện lọc từng trường hợp cụ thể
-            boolean matchBookID = bookID.isEmpty() || issue.getIssueBookID().contains(bookID);
-            boolean matchNameID = nameID.isEmpty() || issue.getIssueStudentID().contains(nameID);
-            boolean matchIssueDate = issueDate.isEmpty() || issue.getIssueDate().toString().contains(issueDate);
-            boolean matchDueDate = dueDate.isEmpty() || issue.getDueDate().toString().contains(dueDate);
-
-            // 4 trường hợp nhập vào đều trống
-            if (bookID.isEmpty() && nameID.isEmpty() && issueDate.isEmpty() && dueDate.isEmpty()) {
-                filteredIssues.add(issue);
-            }
-            // Chỉ nhập vào 1 trường
-            else if (!bookID.isEmpty() && nameID.isEmpty() && issueDate.isEmpty() && dueDate.isEmpty() && matchBookID) {
-                filteredIssues.add(issue);
-            } else if (bookID.isEmpty() && !nameID.isEmpty() && issueDate.isEmpty() && dueDate.isEmpty() && matchNameID) {
-                filteredIssues.add(issue);
-            } else if (bookID.isEmpty() && nameID.isEmpty() && !issueDate.isEmpty() && dueDate.isEmpty() && matchIssueDate) {
-                filteredIssues.add(issue);
-            } else if (bookID.isEmpty() && nameID.isEmpty() && issueDate.isEmpty() && !dueDate.isEmpty() && matchDueDate) {
-                filteredIssues.add(issue);
-            }
-            // Nhập vào 2 trường
-            else if (!bookID.isEmpty() && !nameID.isEmpty() && issueDate.isEmpty() && dueDate.isEmpty() && matchBookID && matchNameID) {
-                filteredIssues.add(issue);
-            } else if (!bookID.isEmpty() && nameID.isEmpty() && !issueDate.isEmpty() && dueDate.isEmpty() && matchBookID && matchIssueDate) {
-                filteredIssues.add(issue);
-            } else if (!bookID.isEmpty() && nameID.isEmpty() && issueDate.isEmpty() && !dueDate.isEmpty() && matchBookID && matchDueDate) {
-                filteredIssues.add(issue);
-            } else if (bookID.isEmpty() && !nameID.isEmpty() && !issueDate.isEmpty() && dueDate.isEmpty() && matchNameID && matchIssueDate) {
-                filteredIssues.add(issue);
-            } else if (bookID.isEmpty() && !nameID.isEmpty() && issueDate.isEmpty() && !dueDate.isEmpty() && matchNameID && matchDueDate) {
-                filteredIssues.add(issue);
-            } else if (bookID.isEmpty() && nameID.isEmpty() && !issueDate.isEmpty() && !dueDate.isEmpty() && matchIssueDate && matchDueDate) {
-                filteredIssues.add(issue);
-            }
-            // Nhập vào 3 trường
-            else if (!bookID.isEmpty() && !nameID.isEmpty() && !issueDate.isEmpty() && dueDate.isEmpty() && matchBookID && matchNameID && matchIssueDate) {
-                filteredIssues.add(issue);
-            } else if (!bookID.isEmpty() && !nameID.isEmpty() && issueDate.isEmpty() && !dueDate.isEmpty() && matchBookID && matchNameID && matchDueDate) {
-                filteredIssues.add(issue);
-            } else if (!bookID.isEmpty() && nameID.isEmpty() && !issueDate.isEmpty() && !dueDate.isEmpty() && matchBookID && matchIssueDate && matchDueDate) {
-                filteredIssues.add(issue);
-            } else if (bookID.isEmpty() && !nameID.isEmpty() && !issueDate.isEmpty() && !dueDate.isEmpty() && matchNameID && matchIssueDate && matchDueDate) {
-                filteredIssues.add(issue);
-            }
-            // Nhập vào cả 4 trường
-            else if (!bookID.isEmpty() && !nameID.isEmpty() && !issueDate.isEmpty() && !dueDate.isEmpty() && matchBookID && matchNameID && matchIssueDate && matchDueDate) {
-                filteredIssues.add(issue);
-            }
-        }
-
-        // Tạo mảng Object[][] chứa dữ liệu đã lọc
-        Object[][] rowData = new Object[filteredIssues.size()][10];
-
-        for (int i = 0; i < filteredIssues.size(); i++) {
-            Issue issue = filteredIssues.get(i);
-
-            rowData[i][0] = issue.getIssueID();
-            rowData[i][1] = issue.getIssueBookID();
-
-            // Lấy thông tin sách
-            Book book = libraryModelManage.searchBookByID(issue.getIssueBookID());
-            if (book != null) {
-                rowData[i][2] = book.getBookName();
-                rowData[i][3] = loadImageIcon(book.getImage()); // Load ảnh từ đường dẫn
-            } else {
-                rowData[i][2] = "Unknown Book";
-                rowData[i][3] = new ImageIcon(new BufferedImage(50, 50, BufferedImage.TYPE_INT_ARGB)); // Placeholder
-            }
-
-            // Lấy thông tin sinh viên
-            Student student = libraryModelManage.searchStudentByID(issue.getIssueStudentID());
-            if (student != null) {
-                rowData[i][5] = student.getName();
-                rowData[i][6] = loadImageIcon(student.getCardPhoto()); // Load ảnh từ đường dẫn
-            } else {
-                rowData[i][5] = "Unknown Student";
-                rowData[i][6] = new ImageIcon(new BufferedImage(50, 50, BufferedImage.TYPE_INT_ARGB)); // Placeholder
-            }
-
-            rowData[i][4] = issue.getIssueStudentID();
-            rowData[i][7] = issue.getIssueDate();
-            rowData[i][8] = issue.getDueDate();
-            rowData[i][9] = issue.getStatus();
-        }
-
-        return rowData;
-    } catch (Exception ex) {
-        ex.printStackTrace();
-        return new Object[0][0];
-    }
-}
-
-
-    private ImageIcon loadImageIcon(String path) {
+    public Object[][] fetchData(String bookID, String nameID, String issueDate, String dueDate) {
         try {
-            if (path != null && !path.isEmpty()) {
-                ImageIcon icon = new ImageIcon(path); // Load ảnh từ đường dẫn
-                Image img = icon.getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH); // Resize ảnh
-                return new ImageIcon(img);
+            ArrayList<Issue> issues = libraryModelManage.getIssuesList();
+            ArrayList<Issue> filteredIssues = new ArrayList<>();
+
+            for (Issue issue : issues) {
+                // Kiểm tra điều kiện lọc
+                boolean matchBookID = bookID.isEmpty() || issue.getIssueBookID().contains(bookID);
+                boolean matchNameID = nameID.isEmpty() || issue.getIssueStudentID().contains(nameID);
+                boolean matchIssueDate = issueDate.isEmpty() || issue.getIssueDate().toString().contains(issueDate);
+                boolean matchDueDate = dueDate.isEmpty() || issue.getDueDate().toString().contains(dueDate);
+
+                // Nếu tất cả điều kiện đều khớp, thêm vào danh sách
+                if (matchBookID && matchNameID && matchIssueDate && matchDueDate) {
+                    filteredIssues.add(issue);
+                }
+            }
+
+            // Tạo mảng Object[][] từ dữ liệu đã lọc
+            Object[][] rowData = new Object[filteredIssues.size()][10];
+            for (int i = 0; i < filteredIssues.size(); i++) {
+                Issue issue = filteredIssues.get(i);
+
+                rowData[i][0] = issue.getIssueID();
+                rowData[i][1] = issue.getIssueBookID();
+
+                // Lấy thông tin sách
+                Book book = libraryModelManage.searchBookByID(issue.getIssueBookID());
+                if (book != null) {
+                    rowData[i][2] = book.getBookName();
+                    String bookImagePath = book.getImage();
+                    rowData[i][3] = loadImageIcon(bookImagePath);
+                } else {
+                    rowData[i][2] = "Unknown Book";
+                    rowData[i][3] = new ImageIcon(new BufferedImage(50, 50, BufferedImage.TYPE_INT_ARGB));
+                }
+
+                // Lấy thông tin sinh viên
+                Student student = libraryModelManage.searchStudentByID(issue.getIssueStudentID());
+                if (student != null) {
+                    rowData[i][5] = student.getName();
+                    String studentImagePath;
+                    if (student.getGender() == true) {
+                        studentImagePath = "/ManageStudent/view/icon/boyicon.png";
+                    } else {
+                        studentImagePath = "/ManageStudent/view/icon/girlicon.png";
+                    }
+                    rowData[i][6] = loadImageIcon(studentImagePath);
+                } else {
+                    rowData[i][5] = "Unknown Student";
+                    rowData[i][6] = new ImageIcon(new BufferedImage(50, 50, BufferedImage.TYPE_INT_ARGB));
+                }
+
+                rowData[i][4] = issue.getIssueStudentID();
+                rowData[i][7] = issue.getIssueDate();
+                rowData[i][8] = issue.getDueDate();
+                rowData[i][9] = issue.getStatus();
+            }
+
+            return rowData;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return new Object[0][0];
+        }
+    }
+
+
+    //    private ImageIcon loadImageIcon(String path) {
+//        try {
+//            if (path != null && !path.isEmpty()) {
+//                ImageIcon icon = new ImageIcon(path); // Load ảnh từ đường dẫn
+//                Image img = icon.getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH); // Resize ảnh
+//                return new ImageIcon(img);
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        // Trả về ảnh mặc định nếu không load được
+//        return new ImageIcon(new BufferedImage(50, 50, BufferedImage.TYPE_INT_ARGB));
+//    }
+    private ImageIcon loadImageIcon(String path) {
+        ImageIcon icon = null;
+        try {
+            // Kiểm tra xem đường dẫn có hợp lệ không
+            if (path != null && !path.isEmpty() && getClass().getResource(path) != null) {
+                // Tải ảnh từ đường dẫn hợp lệ
+                icon = new ImageIcon(getClass().getResource(path));
+
+                // Resize ảnh nếu cần thiết
+                Image img = icon.getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH);
+                icon = new ImageIcon(img); // Cập nhật icon với ảnh đã resize
+            } else {
+                // Nếu không tìm thấy ảnh, trả về ảnh mặc định
+                System.out.println("Image not found at path: " + path);
+                icon = new ImageIcon(new BufferedImage(50, 50, BufferedImage.TYPE_INT_ARGB)); // Placeholder ảnh
             }
         } catch (Exception e) {
+            // Xử lý ngoại lệ nếu có
             e.printStackTrace();
         }
-        // Trả về ảnh mặc định nếu không load được
-        return new ImageIcon(new BufferedImage(50, 50, BufferedImage.TYPE_INT_ARGB));
+
+        return icon; // Trả về ảnh đã load (hoặc ảnh mặc định nếu có lỗi)
     }
+
 
 
     public void updateTable(Object[][] data) {
@@ -356,17 +244,17 @@ public Object[][] fetchData(String bookID, String nameID, String issueDate, Stri
         searchPane.setBackground(new Color(150, 180, 255));
         searchPane.setLayout(null);
 
-         bookIDField = createSearchField("Search Book ID", 700, 10);
-         nameIDField = createSearchField("Search Name ID", 700, 50);
-         issueDateField = createSearchField("Search Issue Date", 870, 10);
-         dueDateField = createSearchField("Search Due Date", 870, 50);
+        bookIDField = createSearchField("Search Book ID", 700, 10);
+        nameIDField = createSearchField("Search Name ID", 700, 50);
+        issueDateField = createSearchField("Search Issue Date", 870, 10);
+        dueDateField = createSearchField("Search Due Date", 870, 50);
 
-         searchButton = createButton("SEARCH", 1050, 10);
-         allRecordButton = createButton("ALL RECORD", 1050, 50);
+        searchButton = createButton("SEARCH", 1050, 10);
+        allRecordButton = createButton("ALL RECORD", 1050, 50);
 
 
-         issueDateButton=createDatePickerButton(1005,10);
-         dueDateButton=createDatePickerButton(1005,50);
+        issueDateButton=createDatePickerButton(1005,10);
+        dueDateButton=createDatePickerButton(1005,50);
 
 
         searchPane.add(bookIDField);
@@ -387,14 +275,12 @@ public Object[][] fetchData(String bookID, String nameID, String issueDate, Stri
 
     }
 
-    protected JTextField createSearchField(String placeholder,int x,int y) {
+    protected JTextField createSearchField(String placeholder, int x, int y) {
         JTextField searchField = new JTextField(15);
-        searchField.setBounds(x,y,130,25);
+        searchField.setBounds(x, y, 130, 25);
         searchField.setBorder(BorderFactory.createEmptyBorder());
-
         searchField.setFont(new Font("Tahoma", Font.PLAIN, 12));
-        searchField.setPreferredSize(new Dimension(200, 30));
-        searchField.setBackground(new Color(255,245,238));
+        searchField.setBackground(new Color(255, 245, 238));
         searchField.setForeground(Color.GRAY);
         searchField.setOpaque(true);
         searchField.setHorizontalAlignment(JTextField.CENTER);
@@ -418,9 +304,43 @@ public Object[][] fetchData(String bookID, String nameID, String issueDate, Stri
             }
         });
 
-
         return searchField;
     }
+
+    //    protected JTextField createSearchField(String placeholder,int x,int y) {
+//        JTextField searchField = new JTextField(15);
+//        searchField.setBounds(x,y,130,25);
+//        searchField.setBorder(BorderFactory.createEmptyBorder());
+//
+//        searchField.setFont(new Font("Tahoma", Font.PLAIN, 12));
+//        searchField.setPreferredSize(new Dimension(200, 30));
+//        searchField.setBackground(new Color(255,245,238));
+//        searchField.setForeground(Color.GRAY);
+//        searchField.setOpaque(true);
+//        searchField.setHorizontalAlignment(JTextField.CENTER);
+//        searchField.setText(placeholder);
+//
+//        searchField.addFocusListener(new FocusAdapter() {
+//            @Override
+//            public void focusGained(FocusEvent e) {
+//                if (searchField.getText().equals(placeholder)) {
+//                    searchField.setText("");
+//                    searchField.setForeground(Color.BLACK);
+//                }
+//            }
+//
+//            @Override
+//            public void focusLost(FocusEvent e) {
+//                if (searchField.getText().isEmpty()) {
+//                    searchField.setForeground(Color.GRAY);
+//                    searchField.setText(placeholder);
+//                }
+//            }
+//        });
+//
+//
+//        return searchField;
+//    }
     private JButton createButton(String text, int x, int y) {
         JButton button = new OvalButton(text);
         button.setFont(new Font("Tahoma", Font.BOLD, 13));
