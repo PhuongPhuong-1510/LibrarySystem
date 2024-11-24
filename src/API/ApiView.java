@@ -4,11 +4,14 @@ import HomePage.view.CustomScrollBarUI;
 import LoginPage.view.OvalButton;
 import MainApp.model.Book;
 import MainApp.model.LibraryModelManage;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -22,6 +25,7 @@ public class ApiView extends JPanel {
 
     private static final long serialVersionUID = 1L;
     private final JPanel panel;
+    private final JScrollPane scrollPane;
     private OvalTextField textField;
     private LibraryModelManage libraryModelManage;
 
@@ -36,47 +40,88 @@ public class ApiView extends JPanel {
         this.libraryModelManage = libraryModelManage;
         libraryModelManage.getBooksList();
 
-        textField = new OvalTextField(30);
-        textField.setPlaceholder("Tìm kiếm sách trên Google API");
-        textField.setFont(new Font("Tahoma", Font.BOLD, 20));
-        textField.setBounds(109, 46, 766, 67);
+        this.setBackground(new Color(251,228,244,255));
+
+
+        JLabel  imageLabel = new JLabel();
+        imageLabel.setHorizontalAlignment(JLabel.CENTER); // Căn giữa ảnh
+        ImageIcon icon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/API/icon/bird (1).gif"))); // Đường dẫn ảnh
+        imageLabel.setIcon(icon);
+        imageLabel.setBackground(new Color( 0,0,0,0));
+        imageLabel.setBounds(0, 200, 204, 204); // Đặt vị trí và kích thước ảnh
+        this.add(imageLabel);
+
+        JLabel backLabel = new JLabel();
+        backLabel.setHorizontalAlignment(JLabel.CENTER);
+        ImageIcon icon1 = new ImageIcon(Objects.requireNonNull(getClass().getResource("/API/icon/google.png"))); // Đường dẫn ảnh
+        backLabel.setIcon(icon1);
+        backLabel.setBackground(new Color( 0,0,0,0));
+        backLabel.setBounds(320, 10, 500, 250);
+        this.add(backLabel);
+
+
+
+
+
+
+
+
+        textField = new OvalTextField(50);
+        textField.setPlaceholder("SEARCH BOOK ONLINE");
+        textField.setFont(new Font("Arial", Font.PLAIN, 16));
+        textField.setBounds(250, 200, 750, 50);
+        textField.addActionListener(apiController);
+        textField.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                handleSearch();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                handleSearch();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                handleSearch();
+            }
+
+            private void handleSearch() {
+                String query = textField.getText().trim();
+
+                if (query.isEmpty()) {
+                    scrollPane.setVisible(false);
+                    panel.removeAll(); // Xóa các thành phần trong panel
+                    panel.revalidate(); // Cập nhật lại giao diện
+                    panel.repaint();
+                }
+                else
+                {
+                    scrollPane.setVisible(true);
+
+                }
+            }
+        });
+
         add(textField);
         textField.setColumns(10);
 
-        JButton btnNewButton = new OvalButton("Search");
-        btnNewButton.setForeground(new Color(255, 255, 255));
-        btnNewButton.setBackground(new Color(0, 128, 64));
-        btnNewButton.setFont(new Font("Tahoma", Font.BOLD, 15));
-        btnNewButton.addActionListener(apiController);
-        btnNewButton.setBounds(904, 48, 102, 67);
-        add(btnNewButton);
+
 
 
         panel = new JPanel();
+        panel.setBackground(new Color(0,0,0,0));
         panel.setLayout(new GridLayout(50, 1, 10, 10));
 
-        JScrollPane scrollPane = createScrollPane(panel);
-        scrollPane.setBounds(29, 152, 1149, 362);
+        scrollPane = createScrollPane(panel);
+        scrollPane.setBounds(250, 280, 750, 200);
+        scrollPane.setBackground(new Color(251,228,244,255));
+
+        scrollPane.setVisible(false);
         add(scrollPane);
 
-        for (int i = 0; i < 50; i++) {
-            JPanel panel_1 = new JPanel();
-            panel_1.setLayout(new BorderLayout(0, 0));
-            panel_1.setBackground(new Color(255, 255, 255));
 
-            JPanel panel_2 = new JPanel();
-            panel_1.add(panel_2, BorderLayout.EAST);
-            panel_2.setLayout(new GridLayout(1, 2, 10, 10));
-
-
-            JMenuItem mntmNewMenuItem = new JMenuItem("...");
-            mntmNewMenuItem.setFont(new Font("Tahoma", Font.BOLD, 20));
-            panel_1.add(mntmNewMenuItem, BorderLayout.CENTER);
-            mntmNewMenuItem.setBackground(new Color(255, 255, 255));
-            mntmNewMenuItem.setFont(new Font("Tahoma", Font.BOLD, 20));
-
-            panel.add(panel_1);
-        }
 
     }
 
@@ -108,16 +153,23 @@ public class ApiView extends JPanel {
                             final String imageUrl = book[4];
                             final String infoLink = book[5];
 
-                            String displayedTitle = title.length() > 50 ? title.substring(0, 50) + "..." : title;
+                            final String description = getBookDescription(jsonResponse);
+
+
+                            String displayedTitle = title.length() > 50 ? title.substring(0, 50) + "()" : title;
 
                             JPanel panel_1 = new JPanel(new BorderLayout(0, 0));
-                            panel_1.setBackground(Color.WHITE);
+                            panel_1.setBackground(new Color(252,162,188,255));
+                            panel_1.setPreferredSize(new Dimension(730, 40)); // Thiết lập kích thước ưu tiên
+
 
                             JPanel panel_2 = new JPanel(new GridLayout(1, 2, 10, 10));
+                            panel_2.setBackground(Color.WHITE);
                             panel_1.add(panel_2, BorderLayout.EAST);
 
-                            JButton btnAdd = new OvalButton("Add");
-                            btnAdd.setBackground(new Color(75, 0, 130));
+                            JButton btnAdd = new OvalButton("ADD");
+                            btnAdd.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                            btnAdd.setBackground(new Color(169,206,251,255));
                             btnAdd.setForeground(Color.WHITE);
                             btnAdd.addActionListener(e -> {
                                 showLoadingDialog();
@@ -180,8 +232,9 @@ public class ApiView extends JPanel {
 
                             panel_2.add(btnAdd);
 
-                            JButton btnSee = new OvalButton("See");
-                            btnSee.setBackground(new Color(0, 0, 128));
+                            JButton btnSee = new OvalButton("SEE");
+                            btnSee.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                            btnSee.setBackground(new Color(230,181,200,255));
                             btnSee.setForeground(Color.WHITE);
                             btnSee.addActionListener(e -> {
                                 showLoadingDialog();
@@ -196,14 +249,18 @@ public class ApiView extends JPanel {
                                     @Override
                                     protected void done() {
                                         hideLoadingDialog();
-                                        JFrame chiTietFrame = new JFrame("Chi Tiết");
+
+                                        JFrame chiTietFrame = new JFrame();
+                                        chiTietFrame.setUndecorated(true);
                                         chiTietFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-                                        chiTietFrame.setSize(1000, 600);
+                                        chiTietFrame.setSize(600, 500);
                                         chiTietFrame.setLocationRelativeTo(null);
 
-                                        ChiTiet chiTietPanel = new ChiTiet(title, author, language, category, imageUrl, infoLink);
+                                        ChiTiet chiTietPanel = new ChiTiet(chiTietFrame, title, author, language, category, imageUrl, infoLink, description);
                                         chiTietFrame.getContentPane().add(chiTietPanel);
+
                                         chiTietFrame.setVisible(true);
+
                                     }
                                 };
 
@@ -214,11 +271,13 @@ public class ApiView extends JPanel {
 
                             JMenuItem mntmNewMenuItem = new JMenuItem(displayedTitle);
                             panel_1.add(mntmNewMenuItem, BorderLayout.CENTER);
-                            mntmNewMenuItem.setBackground(Color.WHITE);
-                            mntmNewMenuItem.setFont(new Font("Tahoma", Font.BOLD, 20));
+                            mntmNewMenuItem.setBackground(new Color(255,255,255));
+                            mntmNewMenuItem.setForeground(new Color(05));
+                            mntmNewMenuItem.setFont(new Font("Tahoma", Font.PLAIN, 18));
 
                             panel.add(panel_1);
                         }
+
 
                         panel.revalidate();
                         panel.repaint();
@@ -250,6 +309,22 @@ public class ApiView extends JPanel {
             return false;
         }
     }
+    public static String getBookDescription(String jsonResponse) {
+        try {
+            JSONObject jsonObject = new JSONObject(jsonResponse);
+            JSONArray items = jsonObject.getJSONArray("items");
+            if (items.length() > 0) {
+                JSONObject volumeInfo = items.getJSONObject(0).getJSONObject("volumeInfo");
+                if (volumeInfo.has("description")) {
+                    return volumeInfo.getString("description");
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return "No description available.";
+    }
+
 
 
     public String getSearchQuery() {
@@ -334,7 +409,7 @@ public class ApiView extends JPanel {
         return button;
     }
 
-    protected JScrollPane createScrollPane(JPanel table) {
+    public JScrollPane createScrollPane(JPanel table) {
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.getViewport().setBackground(new Color(238, 210, 238)); // Màu nền cho vùng hiển thị của JScrollPane
 
@@ -353,8 +428,5 @@ public class ApiView extends JPanel {
         scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         return scrollPane;
     }
-
-
-
 
 }
