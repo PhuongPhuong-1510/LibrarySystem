@@ -16,6 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.Objects;
 
 public class ApiView extends JPanel {
 
@@ -261,31 +262,39 @@ public class ApiView extends JPanel {
 
     private void showLoadingDialog() {
         loadingDialog = new JDialog((JFrame) SwingUtilities.getWindowAncestor(this), "Loading...", true);
-        loadingDialog.setUndecorated(true);
-        loadingDialog.setSize(250, 100);
-        loadingDialog.setBackground(new Color(255, 255, 255));
+        loadingDialog.setUndecorated(true); // Loại bỏ khung cửa sổ
+        loadingDialog.setSize(250, 300); // Kích thước dialog
         loadingDialog.setLocationRelativeTo(this);
+        loadingDialog.setBackground(new Color(0, 0, 0, 0)); // ARGB: alpha = 0 (trong suốt)
 
-        JPanel panel = new JPanel(new GridLayout(3, 1, 10, 10)); // Changed to 3 rows to add Cancel button
-        panel.setBackground(new Color(255, 255, 255));
-        JLabel label = new JLabel("Loading...", JLabel.CENTER);
-        label.setBackground(new Color(255, 255, 255));
-        label.setFont(new Font("Tahoma", Font.BOLD, 16));
-        panel.add(label);
+        JPanel panel = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+
+            }
+        };
+        panel.setOpaque(false);
+        panel.setLayout(null);
+
+        JLabel imageLabel = new JLabel();
+        imageLabel.setHorizontalAlignment(JLabel.CENTER); // Căn giữa ảnh
+        ImageIcon icon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/LMSNotification/view/icon/1.gif"))); // Đường dẫn ảnh
+        imageLabel.setIcon(icon);
+        imageLabel.setBounds(0, 0, 240, 240); // Đặt vị trí và kích thước ảnh
+        panel.add(imageLabel); // Thêm ảnh vào panel
 
         progressBar = new JProgressBar();
         progressBar.setIndeterminate(true);
         progressBar.setBackground(new Color(255, 255, 255));
+        progressBar.setBounds(0,230,240,25);
         panel.add(progressBar);
 
-        // Add Cancel button
-        JButton cancelButton = new JButton("Cancel");
-        cancelButton.setBackground(new Color(255, 69, 0));
-        cancelButton.setForeground(Color.WHITE);
-        cancelButton.setFont(new Font("Tahoma", Font.BOLD, 12));
+        JButton cancelButton = createButton("X",200,0);
         cancelButton.addActionListener(e -> {
             if (searchWorker != null) {
-                searchWorker.cancel(true); // Cancel the SwingWorker
+                cancelButton.setBackground(Color.RED);
+                searchWorker.cancel(true);
             }
             hideLoadingDialog();
         });
@@ -310,6 +319,19 @@ public class ApiView extends JPanel {
         if (loadingDialog != null) {
             loadingDialog.dispose();
         }
+    }
+    private JButton createButton(String text, int x, int y) {
+        JButton button = new JButton(text);
+        button.setFont(new Font("Tahoma", Font.BOLD, 18));
+        button.setForeground(Color.WHITE);
+        button.setBackground(new Color(150, 180, 255));
+        button.setOpaque(true);
+        button.setBorderPainted(false);
+        button.setFocusPainted(false);
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        button.setToolTipText("STOP");
+        button.setBounds(x, y, 50, 50); // Size and position of the button
+        return button;
     }
 
     protected JScrollPane createScrollPane(JPanel table) {
