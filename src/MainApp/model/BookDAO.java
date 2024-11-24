@@ -25,8 +25,9 @@ public class BookDAO {
                 int total = resultSet.getInt("total");
                 String curent = resultSet.getString("curent");
                 String position = resultSet.getString("Position");
+                String URL = resultSet.getString("URL");
 
-                Book book = new Book(bookID, bookName, image, author, category, language, total, curent, position);
+                Book book = new Book(bookID, bookName, image, author, category, language, total, curent, position, URL);
                 booksList.add(book);
             }
 
@@ -38,7 +39,7 @@ public class BookDAO {
     }
 
     public void addBook(Book book) {
-        String query = "INSERT INTO book (bookID, bookName, image, author, category, language, total, curent, Position) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO book (bookID, bookName, image, author, category, language, total, curent, Position, URL) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -52,6 +53,7 @@ public class BookDAO {
             preparedStatement.setInt(7, book.getTotal());
             preparedStatement.setString(8, book.getCurent());
             preparedStatement.setString(9, book.getPosition());
+            preparedStatement.setString(10, book.getURL());
 
             preparedStatement.executeUpdate();
             System.out.println("Đã thêm sách vào cơ sở dữ liệu.");
@@ -62,7 +64,7 @@ public class BookDAO {
     }
 
     public void editBook(Book book) {
-        String query = "UPDATE book SET bookName = ?, image = ?, author = ?, category = ?, language = ?, total = ?, curent = ?, Position = ? WHERE bookID = ?";
+        String query = "UPDATE book SET bookName = ?, image = ?, author = ?, category = ?, language = ?, total = ?, curent = ?, Position = ?, URL = ? WHERE bookID = ?";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -76,6 +78,7 @@ public class BookDAO {
             preparedStatement.setString(7, book.getCurent());
             preparedStatement.setString(8, book.getPosition());
             preparedStatement.setString(9, book.getBookID());
+            preparedStatement.setString(10, book.getURL());
 
             int rowsUpdated = preparedStatement.executeUpdate();
             if (rowsUpdated > 0) {
