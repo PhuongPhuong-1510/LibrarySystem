@@ -100,23 +100,23 @@ public class IssueBookView extends JPanel {
 
 
         bookPanel.add(createLabelAtPosition("Book Title: ", 25, 250, 200, 30, labelColor));
-         bookTitleField = createTextField(150, 250, 200, 30,false);
+        bookTitleField = createTextField(150, 250, 200, 30,false);
         bookPanel.add(bookTitleField);
 
         bookPanel.add(createLabelAtPosition("Author: ", 25, 290, 200, 30, labelColor));
-         authorField = createTextField(150, 290, 200, 30,false);
+        authorField = createTextField(150, 290, 200, 30,false);
         bookPanel.add(authorField);
 
         bookPanel.add(createLabelAtPosition("Category: ", 25, 330, 200, 30, labelColor));
-         categoryField = createTextField(150, 330, 200, 30,false);
+        categoryField = createTextField(150, 330, 200, 30,false);
         bookPanel.add(categoryField);
 
         bookPanel.add(createLabelAtPosition("Language: ", 25, 370, 200, 30, labelColor));
-         languageField = createTextField(150, 370, 200, 30,false);
+        languageField = createTextField(150, 370, 200, 30,false);
         bookPanel.add(languageField);
 
         bookPanel.add(createLabelAtPosition("Total: ", 25, 410, 200, 30, labelColor));
-         totalField = createTextField(150, 410, 200, 30,false);
+        totalField = createTextField(150, 410, 200, 30,false);
         bookPanel.add(totalField);
 
         return bookPanel;
@@ -135,23 +135,23 @@ public class IssueBookView extends JPanel {
 
 
         studentPanel.add(createLabelAtPosition("Student Name: ", 25, 250, 200, 30, labelColor));
-         studentNameField = createTextField(150, 250, 100, 30,false);
+        studentNameField = createTextField(150, 250, 100, 30,false);
         studentPanel.add(studentNameField);
 
         studentPanel.add(createLabelAtPosition("Contact Phone: ", 25, 290, 200, 30, labelColor));
-         contactPhoneField = createTextField(150, 290, 100, 30,false);
+        contactPhoneField = createTextField(150, 290, 100, 30,false);
         studentPanel.add(contactPhoneField);
 
         studentPanel.add(createLabelAtPosition("Contact Email: ", 25, 330, 200, 30, labelColor));
-         contactEmailField = createTextField(155, 320, 100, 50,false);
+        contactEmailField = createTextField(155, 320, 100, 50,false);
         studentPanel.add(contactEmailField);
 
         studentPanel.add(createLabelAtPosition("Major: ", 25, 370, 200, 30, labelColor));
-         majorField = createTextField(150, 370, 100, 30,false);
+        majorField = createTextField(150, 370, 100, 30,false);
         studentPanel.add(majorField);
 
         studentPanel.add(createLabelAtPosition("Branch: ", 25, 410, 200, 30, labelColor));
-         branchField = createTextField(150, 410, 100, 30,false);
+        branchField = createTextField(150, 410, 100, 30,false);
         studentPanel.add(branchField);
 
         return studentPanel;
@@ -363,15 +363,10 @@ public class IssueBookView extends JPanel {
         Date issueDate = Date.valueOf(issueDateString);  // Chuyển đổi chuỗi thành java.sql.Date
         Date dueDate = Date.valueOf(dueDateString);      // Chuyển đổi chuỗi thành java.sql.Date
 
-// Chuyển đổi java.sql.Date thành java.time.LocalDate
-        LocalDate localIssueDate = issueDate.toLocalDate();
-        LocalDate localDueDate = dueDate.toLocalDate();
 
-// Kiểm tra xem sinh viên và sách có hợp lệ không
         if (libraryModelManage.checkStudentAndBookEmpty(bookID, studentID)) {
             String issueId = this.libraryModelManage.creatIssueID();
-            // Tạo đối tượng Issue với LocalDate
-            Issue issue = new Issue(issueId, bookID, studentID, localIssueDate, localDueDate, status);
+            Issue issue = new Issue(issueId, bookID, studentID, issueDate, dueDate, status);
             this.libraryModelManage.addIssueToDatabase(issue);
 
             updateBookStatus(bookID);

@@ -73,7 +73,7 @@ public class ManagementBookView extends JPanel {
             protected void setTableColumnWidths(JTable table) {
                 TableColumn column;
 
-                int[] columnWidths = {85, 250, 120, 110, 110, 100, 95, 95, 90, 115};
+                int[] columnWidths = {85, 250, 120, 110, 110, 100, 95, 95, 90, 130};
 
                 for (int i = 0; i < table.getColumnCount(); i++) {
                     column = table.getColumnModel().getColumn(i);
