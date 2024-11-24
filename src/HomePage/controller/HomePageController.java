@@ -2,6 +2,7 @@ package HomePage.controller;
 
 import API.ApiView;
 import HomePage.view.HomePageView;
+import IssueBook.view.AppContext;
 import IssueBook.view.IssueBookView;
 import LMSNotification.view.NotificationView;
 import MainApp.model.LibraryModelManage;
@@ -13,6 +14,7 @@ import ViewRecord.view.ViewRecordView;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Objects;
 
 public class HomePageController implements ActionListener, MouseListener {
     private final HomePageView homePageView;
@@ -23,6 +25,7 @@ public class HomePageController implements ActionListener, MouseListener {
     public HomePageController(HomePageView homePageView) {
         this.libraryModelManage = new LibraryModelManage();
         this.homePageView = homePageView;
+        AppContext.getInstance().setHomePageView(homePageView);
         initializeListeners();
     }
 
@@ -143,7 +146,6 @@ public class HomePageController implements ActionListener, MouseListener {
 
                     @Override
                     protected void done() {
-                        // Ẩn Loading dialog sau khi hoàn tất
                         hideLoadingDialog();
                     }
                 }.execute();
@@ -151,7 +153,7 @@ public class HomePageController implements ActionListener, MouseListener {
 
             @Override
             public void mouseEntered(MouseEvent e) {
-                if (selectedMenu != menu) { // Chỉ thay đổi màu nếu menu chưa được chọn
+                if (selectedMenu != menu) {
                     menu.setOpaque(true);
                     menu.setBackground(new Color(173, 216, 230)); // Màu xanh dương nhạt khi di chuột vào
                 }
@@ -172,48 +174,102 @@ public class HomePageController implements ActionListener, MouseListener {
 
     }
     private JDialog loadingDialog;
-    private SwingWorker<Void, Void> searchWorker;
-    private JProgressBar progressBar; // Progress bar for loading dialog
+    private JProgressBar progressBar;
+    private JPanel panel;
+    private int dotCount = 0;
+    private final int maxDots = 3;
+    private final int dotSize = 20;
+    private SwingWorker<Void, Integer> searchWorker;
 
-    private void showLoadingDialog() {
-        // Create a modal dialog
+    public void showLoadingDialog() {
+        // Tạo dialog
         loadingDialog = new JDialog((JFrame) SwingUtilities.getWindowAncestor(homePageView), "Loading...", true);
-        loadingDialog.setUndecorated(true);
-        loadingDialog.setSize(250, 60);
-        loadingDialog.setBackground(new Color(255, 255, 255));
+        loadingDialog.setUndecorated(true); // Loại bỏ khung cửa sổ
+        loadingDialog.setSize(250, 300); // Kích thước dialog
         loadingDialog.setLocationRelativeTo(homePageView);
+        loadingDialog.setBackground(new Color(0, 0, 0, 0)); // ARGB: alpha = 0 (trong suốt)
 
-
-        JPanel panel = new JPanel(new GridLayout(2, 1, 10, 10));
-        panel.setBackground(Color.WHITE);
-
-        JLabel label = new JLabel("Loading, please wait...", JLabel.CENTER);
-        label.setFont(new Font("Tahoma", Font.BOLD, 14));
-        panel.add(label);
-
-        progressBar = new JProgressBar();
-        progressBar.setIndeterminate(true);
-        progressBar.setBackground(Color.WHITE);
-        panel.add(progressBar);
-
-        loadingDialog.add(panel);
-        loadingDialog.addWindowListener(new java.awt.event.WindowAdapter() {
+        panel = new JPanel() {
             @Override
-            public void windowClosing(java.awt.event.WindowEvent e) {
-                if (searchWorker != null) {
-                    searchWorker.cancel(true);
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                // Vẽ các dấu chấm tròn theo tiến trình
+                Graphics2D g2d = (Graphics2D) g;
+                g2d.setColor(Color.BLUE);
+
+                // Vẽ các dấu chấm tròn
+                for (int i = 0; i < dotCount; i++) {
+                    int x = 40 + i * (dotSize + 10);
+                    int y = getHeight() / 2 - dotSize / 2;
+                    g2d.fillOval(x, y, dotSize, dotSize);
                 }
             }
-        });
+        };
+        panel.setOpaque(false);
+        panel.setLayout(null);
 
+        JLabel imageLabel = new JLabel();
+        imageLabel.setHorizontalAlignment(JLabel.CENTER); // Căn giữa ảnh
+        ImageIcon icon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/LMSNotification/view/icon/1.gif"))); // Đường dẫn ảnh
+        imageLabel.setIcon(icon);
+        imageLabel.setBounds(0, 0, 240, 240); // Đặt vị trí và kích thước ảnh
+        panel.add(imageLabel); // Thêm ảnh vào panel
+
+        // Thêm JProgressBar
+        progressBar = new JProgressBar();
+        progressBar.setIndeterminate(false); // Không phải trạng thái không xác định
+        progressBar.setMaximum(100); // Giới hạn tiến trình (tối đa 100%)
+        progressBar.setValue(0); // Giá trị ban đầu
+        progressBar.setBounds(0, 230, 240, 25); // Đặt vị trí và kích thước thanh tiến trình
+        panel.add(progressBar);
+
+        // Gắn panel vào dialog
+        loadingDialog.add(panel);
+
+        // Hiển thị dialog trong luồng riêng biệt
         new Thread(() -> loadingDialog.setVisible(true)).start();
+
+        // Khởi tạo SwingWorker
+        searchWorker = new SwingWorker<Void, Integer>() {
+            @Override
+            protected Void doInBackground() throws Exception {
+                // Thực hiện công việc trong nền (không có delay)
+                for (int i = 0; i <= 100; i += 5) {
+                    publish(i);
+                    Thread.sleep(100); // Giới thiệu một thời gian nghỉ giữa các bước
+                }
+                return null;
+            }
+
+            @Override
+            protected void process(java.util.List<Integer> chunks) {
+                int progress = chunks.get(chunks.size() - 1);
+                progressBar.setValue(progress);
+
+                dotCount = (dotCount + 1) % (maxDots + 1);
+                panel.repaint(); // Vẽ lại panel để cập nhật dấu chấm
+
+                // Kiểm tra nếu tiến trình đã đạt 100%
+                if (progress == 100) {
+                    hideLoadingDialog(); // Đóng dialog khi tiến trình hoàn tất
+                }
+            }
+
+            @Override
+            protected void done() {
+                hideLoadingDialog();
+            }
+        };
+
+        searchWorker.execute();
     }
 
     private void hideLoadingDialog() {
         if (loadingDialog != null) {
-            loadingDialog.dispose();
+            loadingDialog.dispose(); // Đóng dialog
         }
     }
+
 
 
 

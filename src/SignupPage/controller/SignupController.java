@@ -1,6 +1,5 @@
 package SignupPage.controller;
 
-import IssueBook.view.DatePickerDemo;
 import MainApp.model.LibraryModelManage;
 import MainApp.model.Student;
 import SignupPage.view.SignupView;
@@ -9,13 +8,11 @@ import SignupPage.model.SignupModel;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.time.LocalDate;
 
 public class SignupController implements ActionListener, MouseListener {
 
     private final SignupView signupView;
     private final SignupModel signupModel;
-    private LocalDate birthDate;
 
     public SignupController(SignupView signupView) {
         this.signupView = signupView;
@@ -25,30 +22,20 @@ public class SignupController implements ActionListener, MouseListener {
         signupView.getSignupButton().addMouseListener(this);
         signupView.getLoginButton().addActionListener(this);
         signupView.getSignupButton().addActionListener(this);
-        signupView.getBtnDate().addActionListener(this);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        String command = e.getActionCommand();
 
-        if (e.getSource() == signupView.getBtnDate()) {
-            System.out.println("Date Of Birth clicked");
-            DatePickerDemo jDialogIssue = new DatePickerDemo();
-            jDialogIssue.setBounds(965, 380, 400, 200);
-            jDialogIssue.setModal(true);
-            jDialogIssue.setVisible(true);
-
-            birthDate = jDialogIssue.getSelectedDate();
-            signupView.getTxtDateOfBirth().setText(birthDate.toString());
+        switch (command) {
+            case "LOGIN":
+                handleLogin();
+                break;
+            case "SIGNUP":
+                handleSignup();
+                break;
         }
-        if (e.getActionCommand().equals("LOGIN")) {
-            handleLogin();
-        }
-        if (e.getActionCommand().equals("SIGNUP")) {
-            handleSignup();
-        }
-
-
     }
 
     private void handleLogin() {
@@ -63,25 +50,16 @@ public class SignupController implements ActionListener, MouseListener {
         gatherInputData();
         String[] errors = signupModel.validateInput();
 
-        signupView.updateErrorMessages(errors[0], errors[1], errors[2], errors[3], errors[4], errors[5], errors[6]);
+        signupView.updateErrorMessages(errors[0], errors[1], errors[2], errors[3]);
 
         if (hasErrors(errors)) {
             showErrorMessages(errors);
         } else {
-            // Kiểm tra email đã tồn tại
-            if (isEmailAlreadyRegistered(signupView.getUserName())) {
-                JOptionPane.showMessageDialog(signupView,
-                        "Email already exists. Please use a different email.",
-                        "Error",
-                        JOptionPane.ERROR_MESSAGE);
-                return;
-            }
 
-            // Kiểm tra số điện thoại đã tồn tại
-            if (isPhoneNumberAlreadyRegistered(signupView.getContactNumber())) {
+            if (isEmailAlreadyRegistered(signupModel.getEmail())) {
                 JOptionPane.showMessageDialog(signupView,
-                        "Phone number already exists. Please use a different phone number.",
-                        "Error",
+                        "Email đã tồn tại. Vui lòng sử dụng email khác.",
+                        "Lỗi",
                         JOptionPane.ERROR_MESSAGE);
                 return;
             }
@@ -89,6 +67,7 @@ public class SignupController implements ActionListener, MouseListener {
             signupView.mainView.libraryModelManage.addSignupToDatabase(signupView.getSignupFromPanel());
             showSuccessMessage();
             signupView.getMainView().showCard("Login", null);
+
         }
     }
 
@@ -101,19 +80,8 @@ public class SignupController implements ActionListener, MouseListener {
         return false;
     }
 
-    private boolean isPhoneNumberAlreadyRegistered(String phoneNumber) {
-        for (Student student : signupView.mainView.libraryModelManage.getStudentsList()) {
-            if (student.getPhone().equals(phoneNumber)) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     private void gatherInputData() {
-        signupModel.setFullName(signupView.getFullName());
-        signupModel.setDateOfBirth(signupView.getDateOfBirth());
-        signupModel.setGender(signupView.getGender());
         signupModel.setEmail(signupView.getUserName());
         signupModel.setPassword(signupView.getPassword());
         signupModel.setContact(signupView.getContactNumber());
@@ -143,7 +111,6 @@ public class SignupController implements ActionListener, MouseListener {
         JOptionPane.showMessageDialog(signupView, "Registration Successful!", "Notification", JOptionPane.INFORMATION_MESSAGE);
     }
 
-
     @Override
     public void mouseEntered(MouseEvent e) {
         JButton sourceButton = (JButton) e.getSource();
@@ -159,12 +126,13 @@ public class SignupController implements ActionListener, MouseListener {
     private void setButtonHoverProperties(JButton button, boolean isHovered) {
         Color hoverColor;
 
+        // Đặt màu nền cho nút Login và Signup
         if (button == signupView.getLoginButton()) {
             hoverColor = isHovered ? new Color(192, 192, 192) : new Color(211, 211, 211); // Màu trắng khi di chuột, xám nhạt khi không
         } else if (button == signupView.getSignupButton()) {
             hoverColor = isHovered ? new Color(255, 50, 0) : new Color(255, 0, 0); // Màu đỏ khi di chuột và khi không di chuột
         } else {
-            hoverColor = button.getBackground();
+            hoverColor = button.getBackground(); // Màu nền mặc định nếu không phải nút Login hoặc Signup
         }
 
         Dimension size = isHovered ? new Dimension(120, 40) : new Dimension(100, 30);
@@ -180,13 +148,16 @@ public class SignupController implements ActionListener, MouseListener {
 
     @Override
     public void mousePressed(MouseEvent e) {
+        // Optional: Có thể xử lý logic khi nút được nhấn
     }
 
     @Override
     public void mouseClicked(MouseEvent e) {
+        // Optional: Có thể xử lý logic khi nút được nhấp vào
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
+        // Optional: Xử lý khi nhả nút
     }
 }

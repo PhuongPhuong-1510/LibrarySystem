@@ -6,7 +6,6 @@ import MainApp.model.Admin;
 import MainApp.model.LibraryModelManage;
 import MainApp.model.Student;
 import MainApp.view.MainView;
-import SignupPage.view.PlaceholderPassword;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,7 +16,7 @@ public class LoginView extends JPanel {
 
     private  MainView mainView;
     private JTextField txtUserName;
-    private JPasswordField txtPassWord;
+    private JTextField txtPassWord;
     private JComboBox<String> cmbUserType;
     private JButton btnLogin;
     private JButton btnSignUp;
@@ -75,7 +74,7 @@ public class LoginView extends JPanel {
         JLabel lblPassword = createIconLabel("Password :", "/LoginPage/view/icon/passWord.png", 50, 240, 150, 45);
 
         txtUserName = createPlaceholderField("Enter your email", 200, 185);
-        txtPassWord = createPasswordField("Enter your password", 200, 235);
+        txtPassWord = createPlaceholderField("Enter your password", 200, 235);
 
 
         JLabel lblUserType = createIconLabel("Login as:","/LoginPage/view/icon/select.png",40,305,150,50 );
@@ -122,24 +121,12 @@ public class LoginView extends JPanel {
     }
 
     private JTextField createPlaceholderField(String placeholderText, int x, int y) {
-        JTextField textField = new PlaceholderPasswordField(placeholderText);
+        JTextField textField = new PlaceholderPasswordField(placeholderText, 0);
         textField.setBounds(x, y, 200, 30);
         textField.setOpaque(false);
         textField.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, Color.WHITE));
         return textField;
     }
-    private JPasswordField createPasswordField(String placeholder, int x, int y) {
-        JTextField textField = new PlaceholderPassword(placeholder, 1);
-
-        JPasswordField passwordField = (JPasswordField) textField;
-
-        passwordField.setBounds(x, y, 200, 30);
-        passwordField.setOpaque(false);
-        passwordField.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, Color.WHITE));
-
-        return passwordField;
-    }
-
 
     private JButton createButton(String text, Color background, int x, int y) {
         JButton button = new OvalButton(text);
@@ -191,7 +178,7 @@ public class LoginView extends JPanel {
 
     public boolean checkAdmin() {
         String username = txtUserName.getText();
-        String password = new String(txtPassWord.getPassword());
+        String password = txtPassWord.getText();
         ArrayList<Admin> admins = mainView.libraryModelManage.getAdminsList();
         for (Admin admin : admins) {
             if (admin.getEmail().equals(username) && admin.getPassword().equals(password)) {
@@ -203,7 +190,7 @@ public class LoginView extends JPanel {
 
     public boolean checkStudent() {
         String username = txtUserName.getText();
-        String password = new String(txtPassWord.getPassword());
+        String password = txtPassWord.getText();
         ArrayList<Student> students = mainView.libraryModelManage.getStudentsList();
         for (Student student : students) {
             if (student.getEmail().equals(username) && student.getPassword().equals(password)) {
@@ -215,24 +202,8 @@ public class LoginView extends JPanel {
 
     public Student getStudentFromLogin() {
         String username = txtUserName.getText();
-        String password = new String(txtPassWord.getPassword());
+        String password = txtPassWord.getText();
         System.out.println(username);
         return mainView.libraryModelManage.searchStudentByEmailPassword(username, password);
-    }
-
-    public JTextField getTxtUserName() {
-        return txtUserName;
-    }
-
-    public void setTxtUserName(JTextField txtUserName) {
-        this.txtUserName = txtUserName;
-    }
-
-    public JPasswordField getTxtPassWord() {
-        return txtPassWord;
-    }
-
-    public void setTxtPassWord(JPasswordField txtPassWord) {
-        this.txtPassWord = txtPassWord;
     }
 }
