@@ -470,13 +470,13 @@ public class LibraryModelManage {
 
 
 
-//    danh sách đăng kí
-public ArrayList<Signup> getSignupList() {
-    if (signupList.isEmpty()) {
-        loadSignupsFromDatabase();
+    //    danh sách đăng kí
+    public ArrayList<Signup> getSignupList() {
+        if (signupList.isEmpty()) {
+            loadSignupsFromDatabase();
+        }
+        return signupList;
     }
-    return signupList;
-}
 
     private void loadSignupsFromDatabase() {
         SignupDAO signupDAO = new SignupDAO();
