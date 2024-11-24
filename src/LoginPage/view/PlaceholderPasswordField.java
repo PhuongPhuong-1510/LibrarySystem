@@ -5,48 +5,40 @@ import java.awt.*;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
-public class PlaceholderPasswordField extends JTextField implements FocusListener {
-    private String placeholder;
-    private Color placeholderColor = new Color(100, 100, 100);
+public class PlaceholderPasswordField extends JPasswordField implements FocusListener {
+    private String placeholder; // Placeholder text
+    private Color placeholderColor = new Color(100, 100, 100); // Màu đen nhạt cho placeholder
+    private int check;
 
-    public PlaceholderPasswordField(String placeholder) {
+    public PlaceholderPasswordField(String placeholder, int check) {
         this.placeholder = placeholder;
+        this.check = check;
         this.addFocusListener(this);
+        setEchoChar(check == 1 ? '•' : (char) 0); // Đặt ký tự echo nếu là password
     }
 
+    // Vẽ placeholder nếu password field rỗng và không có focus
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-
-        String text = getText();
-        if (text.isEmpty() && !isFocusOwner()) {
-            // Vẽ placeholder nếu trống và không được focus
+        if (getPassword().length == 0 && !isFocusOwner()) {
             Graphics2D g2 = (Graphics2D) g.create();
-            g2.setColor(placeholderColor);
+            g2.setColor(placeholderColor); // Đặt màu cho placeholder
             g2.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 12)); // Font to tròn, cỡ chữ 12
-            g2.drawString(placeholder, getInsets().left + 5, getHeight() / 2 + g.getFontMetrics().getAscent() / 2 - 2);
+            g2.drawString(placeholder, getInsets().left + 5, getHeight() / 2 + getFont().getSize() / 2 - 2);
             g2.dispose();
         }
     }
 
     @Override
     public void focusGained(FocusEvent e) {
-        repaint(); // Vẽ lại khi focus
-    }
-
-    @Override
-    public void focusLost(FocusEvent e) {
-        repaint(); // Vẽ lại khi mất focus
-    }
-
-    @Override
-    public void setText(String text) {
-        super.setText(text);
+        // Vẽ lại khi được focus
         repaint();
     }
 
     @Override
-    public String getText() {
-        return super.getText();
+    public void focusLost(FocusEvent e) {
+        // Vẽ lại khi mất focus
+        repaint();
     }
 }
