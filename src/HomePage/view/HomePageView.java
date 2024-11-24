@@ -15,9 +15,6 @@ import java.util.Date;
 import java.text.SimpleDateFormat;
 import java.util.Objects;
 import javax.swing.table.DefaultTableModel;
-import java.sql.*;
-import java.util.Vector;
-import MainApp.model.StudentDAO;
 
 public class HomePageView extends JPanel {
     private HomePageModel homePageModel;

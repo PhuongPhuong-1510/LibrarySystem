@@ -64,7 +64,7 @@ public class SignupController implements ActionListener, MouseListener {
                 return;
             }
 
-            signupView.mainView.libraryModelManage.addStudentToDatabase(signupView.getStudentFromPanel());
+            signupView.mainView.libraryModelManage.addSignupToDatabase(signupView.getSignupFromPanel());
             showSuccessMessage();
             signupView.getMainView().showCard("Login", null);
 
