@@ -10,6 +10,9 @@ import MainApp.model.Student;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 public class IssueBookView extends JPanel {
     private JTextField bookTitleField;
@@ -289,41 +292,88 @@ public class IssueBookView extends JPanel {
         return imagePanel;
     }
 
-    public void updatePanel(){
-        //ArrayList<Issue> issueLisst = libraryModelManage.getIssuesList();
-         String bookID = this.bookIdField.getText()+"";
-         String studentID = this.studentIdField.getText()+"";
-         String issueDate = this.issueDateField.getText()+"";
-         String dueDate = this.dueDateField.getText()+"";
-         String status = "issued";
+//    public void updatePanel(){
+//        //ArrayList<Issue> issueLisst = libraryModelManage.getIssuesList();
+//         String bookID = this.bookIdField.getText()+"";
+//         String studentID = this.studentIdField.getText()+"";
+//         String issueDate = this.issueDateField.getText()+"";
+//         String dueDate = this.dueDateField.getText()+"";
+//         String status = "issued";
+//
+//         if(libraryModelManage.checkStudentAndBookEmpty(bookID, studentID)){
+//             String issueId = this.libraryModelManage.creatIssueID();
+//             Issue issue = new Issue(issueId, bookID, studentID, issueDate, dueDate, status);
+//             this.libraryModelManage.addIssueToDatabase(issue);
+//
+//             Book book = libraryModelManage.searchBookByID(bookID);
+//             Student student = libraryModelManage.searchStudentByID(studentID);
+//
+//             if (book != null) {
+//                 // Populate book fields
+//                 bookTitleField.setText(book.getBookName());
+//                 authorField.setText(book.getAuthor());
+//                 languageField.setText(book.getLanguage());
+//                 totalField.setText(book.getTotal()+"");
+//             }
+//
+//             if (student != null) {
+//                 // Populate student fields
+//                 studentNameField.setText(student.getName());
+//                 contactPhoneField.setText(student.getPhone());
+//                 contactEmailField.setText(student.getEmail());
+//                 majorField.setText("Student");
+//                 branchField.setText("Student");
+//             }
+//
+//         }
+//    }
+public void updatePanel() {
+    String bookID = this.bookIdField.getText().trim();
+    String studentID = this.studentIdField.getText().trim();
+    String issueDateString = this.issueDateField.getText().trim();
+    String dueDateString = this.dueDateField.getText().trim();
+    String status = "issued";
 
-         if(libraryModelManage.checkStudentAndBookEmpty(bookID, studentID)){
-             String issueId = this.libraryModelManage.creatIssueID();
-             Issue issue = new Issue(issueId, bookID, studentID, issueDate, dueDate, status);
-             this.libraryModelManage.addIssueToDatabase(issue);
+    if (libraryModelManage.checkStudentAndBookEmpty(bookID, studentID)) {
+        String issueId = this.libraryModelManage.creatIssueID();
 
-             Book book = libraryModelManage.searchBookByID(bookID);
-             Student student = libraryModelManage.searchStudentByID(studentID);
+        // Chuyển đổi String sang LocalDate
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate issueDate = null;
+        LocalDate dueDate = null;
 
-             if (book != null) {
-                 // Populate book fields
-                 bookTitleField.setText(book.getBookName());
-                 authorField.setText(book.getAuthor());
-                 languageField.setText(book.getLanguage());
-                 totalField.setText(book.getTotal()+"");
-             }
+        try {
+            issueDate = LocalDate.parse(issueDateString, formatter);
+            dueDate = LocalDate.parse(dueDateString, formatter);
+        } catch (DateTimeParseException e) {
+            System.err.println("Ngày nhập vào không đúng định dạng (yyyy-MM-dd): " + e.getMessage());
+            return; // Thoát nếu ngày không hợp lệ
+        }
 
-             if (student != null) {
-                 // Populate student fields
-                 studentNameField.setText(student.getName());
-                 contactPhoneField.setText(student.getPhone());
-                 contactEmailField.setText(student.getEmail());
-                 majorField.setText("Student");
-                 branchField.setText("Student");
-             }
+        Issue issue = new Issue(issueId, bookID, studentID, issueDate, dueDate, status);
+        this.libraryModelManage.addIssueToDatabase(issue);
 
-         }
+        Book book = libraryModelManage.searchBookByID(bookID);
+        Student student = libraryModelManage.searchStudentByID(studentID);
+
+        if (book != null) {
+            // Populate book fields
+            bookTitleField.setText(book.getBookName());
+            authorField.setText(book.getAuthor());
+            languageField.setText(book.getLanguage());
+            totalField.setText(String.valueOf(book.getTotal()));
+        }
+
+        if (student != null) {
+            // Populate student fields
+            studentNameField.setText(student.getName());
+            contactPhoneField.setText(student.getPhone());
+            contactEmailField.setText(student.getEmail());
+            majorField.setText("Student");
+            branchField.setText("Student");
+        }
     }
+}
 
     public void removeData() {
         // Xóa thông tin sách

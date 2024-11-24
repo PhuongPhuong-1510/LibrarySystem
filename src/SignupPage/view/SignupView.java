@@ -2,6 +2,7 @@ package SignupPage.view;
 
 import LoginPage.view.OvalButton;
 import LoginPage.view.PlaceholderPasswordField;
+import MainApp.model.LibraryModelManage;
 import MainApp.model.Student;
 import MainApp.view.MainView;
 import SignupPage.model.SignupModel;
@@ -17,16 +18,10 @@ public class SignupView extends JPanel {
     private JPasswordField txtPassWord;
     private JPasswordField txtConfirmPass;
     private JTextField txtContactNumber;
-    private JComboBox<String> cmbUserType;
     private JButton btnLogin;
     private JButton btnSignUp;
-    private JTextField txtDateOfBirth;
-    private JButton btnDate;
     public MainView mainView;
 
-    private JLabel lblFullNameError;
-    private JLabel lblDateOfBirthError;
-    private JLabel lblGenderError;
     private JLabel lblEmailError;
     private JLabel lblPasswordError;
     private JLabel lblConfirmPasswordError;
@@ -75,58 +70,33 @@ public class SignupView extends JPanel {
         lblPasswordError = createErrorLabel();
         lblConfirmPasswordError = createErrorLabel();
         lblContactError = createErrorLabel();
-        lblDateOfBirthError=createErrorLabel();
-        lblGenderError=createErrorLabel();
-        lblFullNameError=createErrorLabel();
 
-        txtFullName=createTextField("Enter your fullname",200,125);
-        txtDateOfBirth=createTextField("Select your date of birth",200,240);
-        txtUserName = createTextField("abc@gmail.com", 200, 290);
-        txtPassWord = createPasswordField("Enter your new password", 200, 345);
-        txtConfirmPass = createPasswordField("Enter confirm password", 200, 390);
-        txtContactNumber = createTextField("0***", 200, 445);
+        txtFullName=createTextField("Enter your fullname",200,185);
+        txtUserName = createTextField("abc@gmail.com", 200, 235);
+        txtPassWord = createPasswordField("Enter your new password", 200, 290);
+        txtConfirmPass = createPasswordField("Enter confirm password", 200, 335);
+        txtContactNumber = createTextField("0***", 205, 390);
 
-
-        loginPanel.add( createLabel("Gender: ",new Font("Tahoma",Font.PLAIN,16),Color.WHITE,50,175));
-        cmbUserType = new JComboBox<>(new String[]{"Select","Male", "Female"});
-        cmbUserType.setBackground(new Color(202,225,255));
-        cmbUserType.setBounds(200, 185, 195, 30);
-        loginPanel.add(cmbUserType);
-
-
-
-        loginPanel.add(createLabel("Full Name: ",new Font("Tahoma",Font.PLAIN,16),Color.WHITE,50,120));
+        loginPanel.add(createLabel("Full Name: ",new Font("Tahoma",Font.PLAIN,16),Color.WHITE,50,170));
         loginPanel.add(txtFullName);
-        loginPanel.add(createLabel( "Date Of Birth:",new Font("Tahoma",Font.PLAIN,16),Color.WHITE,50,235));
-        loginPanel.add(txtDateOfBirth);
-        loginPanel.add(createLabel("Email:", new Font("Tahoma", Font.PLAIN, 16), Color.WHITE, 50, 295));
+        loginPanel.add(createLabel("Email:", new Font("Tahoma", Font.PLAIN, 16), Color.WHITE, 50, 240));
         loginPanel.add(txtUserName);
-        loginPanel.add(createLabel("Password:", new Font("Tahoma", Font.PLAIN, 15), Color.WHITE, 50, 335));
+        loginPanel.add(createLabel("Password:", new Font("Tahoma", Font.PLAIN, 15), Color.WHITE, 50, 280));
         loginPanel.add(txtPassWord);
-        loginPanel.add(createLabel("Confirm Password:", new Font("Tahoma", Font.PLAIN, 15), Color.WHITE, 50, 390));
+        loginPanel.add(createLabel("Confirm Password:", new Font("Tahoma", Font.PLAIN, 15), Color.WHITE, 50, 335));
         loginPanel.add(txtConfirmPass);
-        loginPanel.add(createLabel("Contact Number:", new Font("Tahoma", Font.PLAIN, 15), Color.WHITE, 50, 445));
+        loginPanel.add(createLabel("Contact Number:", new Font("Tahoma", Font.PLAIN, 15), Color.WHITE, 55, 390));
         loginPanel.add(txtContactNumber);
         loginPanel.add(createSignUpButton());
         loginPanel.add(createLoginButton());
 
-
-
-        btnDate= createDatePickerButton(405,248);
-        loginPanel.add(btnDate);
-        btnDate.setToolTipText("Select Date");
-        setErrorLabelPositions();
-
-
+        // Adding error labels
         loginPanel.add(lblEmailError);
         loginPanel.add(lblPasswordError);
         loginPanel.add(lblConfirmPasswordError);
         loginPanel.add(lblContactError);
-        loginPanel.add(lblFullNameError);
-        loginPanel.add(lblGenderError);
-        loginPanel.add(lblDateOfBirthError);
 
-
+        setErrorLabelPositions();
 
         loginPanel.setFocusable(true);
         loginPanel.requestFocus();
@@ -143,7 +113,7 @@ public class SignupView extends JPanel {
     }
 
     private JTextField createTextField(String placeholder, int x, int y) {
-        JTextField textField = new PlaceholderPasswordField(placeholder);
+        JTextField textField = new PlaceholderPasswordField(placeholder, 0);
         textField.setBounds(x, y, 200, 30);
         textField.setOpaque(false);
         textField.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, Color.WHITE));
@@ -151,17 +121,12 @@ public class SignupView extends JPanel {
     }
 
     private JPasswordField createPasswordField(String placeholder, int x, int y) {
-        JTextField textField = new PlaceholderPassword(placeholder, 1);
-
-        JPasswordField passwordField = (JPasswordField) textField;
-
+        JPasswordField passwordField = new PlaceholderPasswordField(placeholder, 1);
         passwordField.setBounds(x, y, 200, 30);
         passwordField.setOpaque(false);
         passwordField.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, Color.WHITE));
-
         return passwordField;
     }
-
 
     private JLabel createErrorLabel() {
         JLabel errorLabel = new JLabel("!");
@@ -175,7 +140,7 @@ public class SignupView extends JPanel {
         btnSignUp = new OvalButton("SIGNUP");
         btnSignUp.setBackground(new Color(255, 94, 77));
         btnSignUp.setForeground(Color.WHITE);
-        btnSignUp.setBounds(110, 535, 100, 30);
+        btnSignUp.setBounds(120, 480, 100, 30);
         btnSignUp.setCursor(new Cursor(Cursor.HAND_CURSOR));
         return btnSignUp;
     }
@@ -183,69 +148,17 @@ public class SignupView extends JPanel {
     private JButton createLoginButton() {
         btnLogin = new OvalButton("LOGIN");
         btnLogin.setBackground(new Color(192, 192, 192));
-        btnLogin.setBounds(250, 535, 100, 30);
+        btnLogin.setBounds(240, 480, 100, 30);
         btnLogin.setToolTipText("Do you already have an account?");
         btnLogin.setCursor(new Cursor(Cursor.HAND_CURSOR));
         return btnLogin;
     }
 
     private void setErrorLabelPositions() {
-        lblFullNameError.setBounds(410, 125, 30, 30);
-        lblGenderError.setBounds(410, 180, 30, 30);
-        lblDateOfBirthError.setBounds(410, 240, 30, 30);
-        lblEmailError.setBounds(410, 290, 30, 30);
-        lblPasswordError.setBounds(410, 345, 30, 30);
-        lblConfirmPasswordError.setBounds(410, 390, 30, 30);
-        lblContactError.setBounds(410, 445, 30, 30);
-    }
-
-    private JButton createDatePickerButton(int x, int y) {
-        JButton button = new JButton();
-        button.setBounds(x, y, 15, 15);
-        button.setBackground(new Color(250, 128, 114));
-        return button;
-    }
-
-
-    public void updateErrorMessages(
-            String fullnameError,
-            String genderError,
-            String dateOfBirthError,
-            String emailError,
-            String passwordError,
-            String confirmPasswordError,
-            String contactError) {
-
-        updateErrorLabel(lblFullNameError, fullnameError);
-        updateErrorLabel(lblGenderError, genderError);
-        updateErrorLabel(lblDateOfBirthError, dateOfBirthError);
-        updateErrorLabel(lblEmailError, emailError);
-        updateErrorLabel(lblPasswordError, passwordError);
-        updateErrorLabel(lblConfirmPasswordError, confirmPasswordError);
-        updateErrorLabel(lblContactError, contactError);
-    }
-
-
-
-    private void updateErrorLabel(JLabel label, String errorMessage) {
-        label.setVisible(errorMessage != null);
-        if (errorMessage != null) {
-            label.setToolTipText(errorMessage);
-        }
-    }
-
-    public Student getStudentFromPanel() {
-        String id = mainView.libraryModelManage.createStudentID();
-        String fullName = txtFullName.getText().trim();
-        String userName = txtUserName.getText().trim();
-        String password = txtPassWord.getText().trim();
-        String contactNumber = txtContactNumber.getText().trim();
-        String date = txtDateOfBirth.getText().trim();
-        String gender = (String) cmbUserType.getSelectedItem();
-
-        boolean isMale = gender != null && gender.equalsIgnoreCase("Male");
-
-        return new Student(id, fullName, userName, password, contactNumber, isMale, "", date, "", "");
+        lblEmailError.setBounds(410, 185, 30, 30);
+        lblPasswordError.setBounds(410, 240, 30, 30);
+        lblConfirmPasswordError.setBounds(410, 280, 30, 30);
+        lblContactError.setBounds(410, 325, 30, 30);
     }
 
     public JButton getLoginButton() {
@@ -276,27 +189,32 @@ public class SignupView extends JPanel {
         return txtContactNumber.getText();
     }
 
-    public String getFullName() {
-        return new String(txtFullName.getText().trim());
+    public void showErrorMessages(String messages) {
+        JOptionPane.showMessageDialog(this, messages, "Error", JOptionPane.ERROR_MESSAGE);
     }
 
-    public String getDateOfBirth() {
-        return new String(txtDateOfBirth.getText().trim());
+    public void updateErrorMessages(String emailError, String passwordError, String confirmPasswordError, String contactError) {
+        updateErrorLabel(lblEmailError, emailError);
+        updateErrorLabel(lblPasswordError, passwordError);
+        updateErrorLabel(lblConfirmPasswordError, confirmPasswordError);
+        updateErrorLabel(lblContactError, contactError);
     }
 
-    public String getGender() {
-        return new String(cmbUserType.getSelectedItem() != null
-                ? cmbUserType.getSelectedItem().toString().trim()
-                : "");
+    private void updateErrorLabel(JLabel label, String errorMessage) {
+        label.setVisible(errorMessage != null);
+        if (errorMessage != null) {
+            label.setToolTipText(errorMessage);
+        }
     }
 
+    public Student getStudentFromPanel() {
+        String id = mainView.libraryModelManage.createStudentID();
+        String fullName = txtFullName.getText().trim();
+        String userName = txtUserName.getText().trim();
+        String password = txtPassWord.getText().trim();
+        String contactNumber = txtContactNumber.getText().trim();
 
-    public JButton getBtnDate() {
-        return btnDate;
-    }
-
-    public JTextField getTxtDateOfBirth() {
-        return txtDateOfBirth;
+        return new Student(id, fullName, userName, password, contactNumber, true, "", "", "", "");
     }
 
 }

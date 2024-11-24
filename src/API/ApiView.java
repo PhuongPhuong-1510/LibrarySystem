@@ -4,9 +4,12 @@ import MainApp.model.Book;
 import MainApp.model.LibraryModelManage;
 
 import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.Font;
+import java.awt.Color;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -76,6 +79,52 @@ public class ApiView extends JPanel {
 
     }
 
+    public void refresh() {
+
+        String jsonResponse = GoogleBooksAPI.searchBooks("a"); // Tìm kiếm ngẫu nhiên với từ khóa "a"
+        List<String[]> books = BookParser.getBookDetails(jsonResponse);
+
+        panel.removeAll();
+
+        for (int i = 0; i < books.size() && i < 50; i++) {
+            String[] book = books.get(i);
+            String title = book[0]; // Tên sách
+
+            // Giới hạn tên sách tối đa 50 ký tự
+            if (title.length() > 50) {
+                title = title.substring(0, 50) + "...";
+            }
+
+            JPanel panel_1 = new JPanel();
+            panel_1.setLayout(new BorderLayout(0, 0));
+            panel_1.setBackground(new Color(255, 255, 255));
+
+            JPanel panel_2 = new JPanel();
+            panel_1.add(panel_2, BorderLayout.EAST);
+            panel_2.setLayout(new GridLayout(1, 2, 10, 10));
+
+            JButton btnNewButton_2 = new JButton("Add");
+            btnNewButton_2.setBackground(new Color(75, 0, 130));
+            btnNewButton_2.setForeground(new Color(255, 255, 255));
+            panel_2.add(btnNewButton_2);
+
+            JButton btnNewButton_3 = new JButton("See");
+            btnNewButton_3.setBackground(new Color(0, 0, 128));
+            btnNewButton_3.setForeground(new Color(255, 255, 255));
+            panel_2.add(btnNewButton_3);
+
+            JMenuItem mntmNewMenuItem = new JMenuItem(title);
+            panel_1.add(mntmNewMenuItem, BorderLayout.CENTER);
+            mntmNewMenuItem.setBackground(new Color(255, 255, 255));
+            mntmNewMenuItem.setFont(new Font("Tahoma", Font.BOLD, 20));
+
+            panel.add(panel_1);
+        }
+
+        // Cập nhật giao diện
+        panel.revalidate();
+        panel.repaint();
+    }
 
     public void searchBooks(String query) {
         if (!isInternetAvailable()) {
@@ -116,63 +165,12 @@ public class ApiView extends JPanel {
                             btnAdd.setBackground(new Color(75, 0, 130));
                             btnAdd.setForeground(Color.WHITE);
                             btnAdd.addActionListener(e -> {
-                                showLoadingDialog();
-
-                                SwingWorker<Void, Void> addBookWorker = new SwingWorker<>() {
-                                    @Override
-                                    protected Void doInBackground() throws Exception {
-                                        String bookID = libraryModelManage.creatBookID();
-                                        String bookName = title;
-                                        String bookAuthor = author;
-                                        String bookCategory = category;
-                                        String bookLanguage = language;
-                                        int total = 1;
-                                        String current = "Still";
-                                        String bookPosition = "B2";
-
-                                        String fileName = null;
-
-                                        try {
-                                            String directoryPath = "src/ManageBook/icon/"; // Thư mục lưu ảnh
-                                            Files.createDirectories(Paths.get(directoryPath)); // Tạo thư mục nếu chưa tồn tại
-
-                                            if (imageUrl == null || imageUrl.isEmpty()) {
-                                                JOptionPane.showMessageDialog(null, "No image URL provided for this book.", "Error", JOptionPane.ERROR_MESSAGE);
-                                                return null;
-                                            }
-
-                                            URL url = new URL(imageUrl); // URL ảnh bìa
-                                            String sanitizedBookName = bookName.replaceAll("[^a-zA-Z0-9]", "_"); // Tạo tên file hợp lệ
-                                            fileName = directoryPath + sanitizedBookName + ".jpg";
-
-                                            InputStream in = url.openStream();
-                                            Files.copy(in, Paths.get(fileName), StandardCopyOption.REPLACE_EXISTING);
-                                            in.close();
-                                            fileName = fileName.replace("src", "");
-                                        } catch (IOException ex) {
-                                            ex.printStackTrace();
-                                            SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(null, "Failed to download book image.", "Error", JOptionPane.ERROR_MESSAGE));
-                                            return null;
-                                        }
-
-                                        // Tạo đối tượng Book và lưu vào database
-                                        Book bookk = new Book(bookID, bookName, fileName, bookAuthor, bookCategory, bookLanguage, total, current, bookPosition);
-                                        libraryModelManage.addBookToDatabase(bookk);
-                                        return null;
-                                    }
-
-                                    @Override
-                                    protected void done() {
-                                        hideLoadingDialog();
-                                        JOptionPane.showMessageDialog(null, "Book \"" + title + "\" has been added successfully!",
-                                                "Book Added", JOptionPane.INFORMATION_MESSAGE);
-                                    }
-                                };
-
-                                addBookWorker.execute();
+                                String bookID = libraryModelManage.creatBookID();
+                                Book bookk = new Book(bookID, title, "", author, category, language, 1, "Still", "B1");
+                                libraryModelManage.addBookToDatabase(bookk);
+                                JOptionPane.showMessageDialog(null, "Book \"" + title + "\" has been added successfully!",
+                                        "Book Added", JOptionPane.INFORMATION_MESSAGE);
                             });
-
-
                             panel_2.add(btnAdd);
 
                             JButton btnSee = new JButton("See");
@@ -235,28 +233,16 @@ public class ApiView extends JPanel {
 
     private JDialog loadingDialog;
     private SwingWorker<Void, Void> searchWorker;
-    private JProgressBar progressBar; // Thanh tiến trình
 
     private void showLoadingDialog() {
         loadingDialog = new JDialog((JFrame) SwingUtilities.getWindowAncestor(this), "Loading...", true);
         loadingDialog.setUndecorated(true);
-        loadingDialog.setSize(250, 60);
-        loadingDialog.setBackground(new Color(255, 255, 255));
+        loadingDialog.setSize(200, 100);
         loadingDialog.setLocationRelativeTo(this);
 
-        JPanel panel = new JPanel(new GridLayout(2, 1, 10, 10));
         JLabel label = new JLabel("Loading...", JLabel.CENTER);
-        label.setBackground(new Color(255, 255, 255));
         label.setFont(new Font("Tahoma", Font.BOLD, 16));
-        panel.add(label);
-
-        progressBar = new JProgressBar();
-        progressBar.setIndeterminate(true);
-        progressBar.setBackground(new Color(255, 255, 255));
-        progressBar.setPreferredSize(new Dimension(20, 20));
-        panel.add(progressBar);
-
-        loadingDialog.add(panel);
+        loadingDialog.add(label);
 
         loadingDialog.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
@@ -275,7 +261,6 @@ public class ApiView extends JPanel {
             loadingDialog.dispose();
         }
     }
-
 
 
 

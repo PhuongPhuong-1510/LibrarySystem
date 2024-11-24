@@ -157,7 +157,7 @@ public class AddStudentView extends JFrame {
     }
 
     private JTextField createPlaceholderField(String placeholderText, int x, int y) {
-        JTextField textField = new PlaceholderPasswordField(placeholderText);
+        JTextField textField = new PlaceholderPasswordField(placeholderText, 0);
         textField.setBounds(x, y, 200, 30);
         textField.setOpaque(false);
         textField.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, Color.WHITE));

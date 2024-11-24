@@ -57,12 +57,9 @@ public class DatePickerDemo extends JDialog {
                 String dayText = source.getText();
                 if (!dayText.isEmpty()) {
                     int day = Integer.parseInt(dayText);
-                    int selectedYear = (int) yearCombo.getSelectedItem(); // Lấy năm từ JComboBox
-                    int selectedMonth = monthCombo.getSelectedIndex() + 1; // Lấy tháng từ JComboBox
-                    selectedDate = LocalDate.of(selectedYear, selectedMonth, day); // Cập nhật selectedDate
-                    System.out.println("Ngày chọn: " + day + "/" + selectedMonth + "/" + selectedYear);
+                    selectedDate = LocalDate.of(year, month + 1, day); // Set the selected date with the correct day, month, and year
+                    System.out.println("Ngày chọn: " + day + "/" + (month + 1) + "/" + year);
                     this.dispose();
-
                 }
             });
         }

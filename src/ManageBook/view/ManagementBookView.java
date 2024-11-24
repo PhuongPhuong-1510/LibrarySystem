@@ -31,7 +31,6 @@ public class ManagementBookView extends JPanel {
         this.libraryModelManage = libraryModelManage;
         this.setLayout(new BorderLayout());
         this.init();
-        this.updateTable(libraryModelManage.getBooksList());
         new ManagementBookController(this);
     }
 
@@ -136,21 +135,35 @@ public class ManagementBookView extends JPanel {
     }
 
 
+
+//    private JLabel createImageLabel(String path) {
+//        String relativePath = getRelativeImagePath(path);
+//        ImageIcon icon;
+//        if (relativePath != null && getClass().getResource(relativePath) != null) {
+//            icon = new ImageIcon(getClass().getResource(relativePath));
+//            icon.setDescription(relativePath);
+//        } else {
+//            System.out.println("Image not found at path: " + path);
+//            icon = new ImageIcon(new BufferedImage(5, 5, BufferedImage.TYPE_INT_ARGB)); // Placeholder
+//        }
+//        return new JLabel(icon);
+//    }
+
     private JLabel createImageLabel(String path) {
-        String relativePath = getRelativeImagePath(path);
+        String relativePath = getRelativeImagePath(path); // Lấy đường dẫn tương đối
         ImageIcon icon;
 
+        // Kiểm tra xem đường dẫn có hợp lệ hay không
         if (relativePath != null && getClass().getResource(relativePath) != null) {
             icon = new ImageIcon(getClass().getResource(relativePath));
-            icon.setDescription(relativePath);
+            icon.setDescription(relativePath); // Đặt mô tả để sử dụng sau
         } else {
             System.out.println("Image not found at path: " + path);
             icon = new ImageIcon(new BufferedImage(5, 5, BufferedImage.TYPE_INT_ARGB)); // Placeholder ảnh trống
         }
 
-        return new JLabel(icon);
+        return new JLabel(icon); // Trả về JLabel với ảnh
     }
-
 
 
 
@@ -178,12 +191,11 @@ public class ManagementBookView extends JPanel {
         JButton editButton = createActionButton("/ManageBook/icon/bookEdit.png", new Color(255, 240, 245));
         JButton deleteButton = createActionButton("/ManageBook/icon/bookDelete.png", new Color(255, 240, 245));
         JButton imageButton = createActionButton("/ManageBook/icon/uploadImage.png", new Color(255, 240, 245));
-        JButton QRcodeButton = createActionButton("/ManageBook/icon/icons8-qrCode.png", new Color(255, 240, 245));
+
 
         editButton.setToolTipText("Edit Book");
         deleteButton.setToolTipText("Delete Book");
         imageButton.setToolTipText("Upload Cover");
-        QRcodeButton.setToolTipText("QR Code");
 
         editButton.addActionListener(e -> {
             toggleEditButtonIcon(actionPanel,editButton,deleteButton,imageButton, row);
