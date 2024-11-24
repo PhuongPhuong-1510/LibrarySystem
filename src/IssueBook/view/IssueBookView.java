@@ -9,6 +9,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class IssueBookView extends JPanel {
@@ -347,26 +348,30 @@ public class IssueBookView extends JPanel {
         }
     }
     public void issueBook() {
-        // Lấy thông tin từ các trường
         String bookID = this.bookIdField.getText() + "";
         String studentID = this.studentIdField.getText() + "";
         String issueDateString = this.issueDateField.getText();
         String dueDateString = this.dueDateField.getText();
         String status = "issued";
 
+// Kiểm tra nếu các ngày không trống
         if (issueDateString.isEmpty() || dueDateString.isEmpty()) {
             JOptionPane.showMessageDialog(null, "Issue Date and Due Date cannot be empty.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
-        Date issueDate = Date.valueOf(issueDateString); // Chuyển đổi chuỗi thành Date
-        Date dueDate = Date.valueOf(dueDateString); // Chuyển đổi chuỗi thành Date
+        Date issueDate = Date.valueOf(issueDateString);  // Chuyển đổi chuỗi thành java.sql.Date
+        Date dueDate = Date.valueOf(dueDateString);      // Chuyển đổi chuỗi thành java.sql.Date
 
+// Chuyển đổi java.sql.Date thành java.time.LocalDate
+        LocalDate localIssueDate = issueDate.toLocalDate();
+        LocalDate localDueDate = dueDate.toLocalDate();
 
+// Kiểm tra xem sinh viên và sách có hợp lệ không
         if (libraryModelManage.checkStudentAndBookEmpty(bookID, studentID)) {
             String issueId = this.libraryModelManage.creatIssueID();
-            Issue issue = new Issue(issueId, bookID, studentID, issueDate, dueDate, status);
-
+            // Tạo đối tượng Issue với LocalDate
+            Issue issue = new Issue(issueId, bookID, studentID, localIssueDate, localDueDate, status);
             this.libraryModelManage.addIssueToDatabase(issue);
 
             updateBookStatus(bookID);

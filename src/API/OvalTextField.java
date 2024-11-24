@@ -11,9 +11,8 @@ public class OvalTextField extends JTextField {
     public OvalTextField(int columns) {
         super(columns);
         setOpaque(false);
-        setFont(new Font("Tahoma", Font.BOLD, 16));
+        setFont(new Font("Arial", Font.PLAIN, 12));
 
-        // Thêm DocumentListener để repaint khi nội dung thay đổi
         getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
@@ -47,7 +46,8 @@ public class OvalTextField extends JTextField {
         // Nếu không có nội dung, vẽ placeholder
         if (getText().isEmpty() && placeholder != null) {
             g.setColor(Color.GRAY);
-            g.setFont(getFont().deriveFont(Font.ITALIC));
+            g.setFont(new Font("Arial", Font.ITALIC, 15));
+            Insets insets = getInsets();
             g.drawString(placeholder, getInsets().left, getHeight() / 2 + getFont().getSize() / 2 - 2);
         }
 
@@ -59,12 +59,17 @@ public class OvalTextField extends JTextField {
     @Override
     protected void paintBorder(Graphics g) {
         g.setColor(Color.BLACK);
-        g.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 60, 60);
+        Graphics2D g2d = (Graphics2D) g;
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+        g2d.setColor(Color.BLACK);
+        g2d.drawRoundRect(1, 1, getWidth() - 3, getHeight() - 3, 60, 60);
     }
 
     @Override
     public Insets getInsets() {
-        return new Insets(10, 10, 10, 10);
+
+        return new Insets(10, 40, 10, 10);
     }
 
     @Override
