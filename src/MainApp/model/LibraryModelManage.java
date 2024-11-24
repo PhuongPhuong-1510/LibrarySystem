@@ -12,6 +12,7 @@ public class LibraryModelManage {
     private ArrayList<Admin> adminsList;
     private ArrayList<Issue> issuesList;
     private ArrayList<Reserve> reserveList;
+    private ArrayList<Signup> signupList;
 
     public LibraryModelManage() {
         booksList = new ArrayList<>();
@@ -19,6 +20,7 @@ public class LibraryModelManage {
         adminsList = new ArrayList<>();
         issuesList = new ArrayList<>();
         reserveList = new ArrayList<>();
+        signupList = new ArrayList<>();
     }
 
     // Quản lý sách
@@ -358,7 +360,7 @@ public class LibraryModelManage {
                 return book;
             }
         }
-        return null; // Return null if the book is not found
+        return null;
     }
 
     public Student searchStudentByID(String studentID) {
@@ -403,6 +405,10 @@ public class LibraryModelManage {
         JOptionPane.showMessageDialog(null, "Issue not found.");
         return null; // Return null if no matching issue is found
     }
+
+
+
+    // đăng kí mượn sách
 
     public ArrayList<Reserve> getReserveList() {
         if (reserveList.isEmpty()) {
@@ -455,6 +461,53 @@ public class LibraryModelManage {
             newID++;
         }
         return newReserveID;
+    }
+    public void reloadReserveList() {
+        loadReservesFromDatabase(); // Tải lại dữ liệu từ cơ sở dữ liệu
+    }
+
+
+
+
+
+//    danh sách đăng kí
+public ArrayList<Signup> getSignupList() {
+    if (signupList.isEmpty()) {
+        loadSignupsFromDatabase();
+    }
+    return signupList;
+}
+
+    private void loadSignupsFromDatabase() {
+        SignupDAO signupDAO = new SignupDAO();
+        signupDAO.loadSignupsFromDatabase();
+        signupList = signupDAO.getSignupsList();
+    }
+
+    public void addSignupToDatabase(Signup signup) {
+        SignupDAO signupDAO = new SignupDAO();
+        signupDAO.addSignup(signup);
+        signupList.add(signup);
+    }
+
+    public void deleteSignupFromDatabase(String email) {
+        SignupDAO signupDAO = new SignupDAO();
+        signupDAO.deleteSignup(email);
+        signupList.removeIf(signup -> signup.getEmail().equals(email));
+    }
+
+    public Signup searchSignupByID(String email) {
+        for (Signup signup : getSignupList()) {
+            if (signup.getEmail().equals(email)) {
+                return signup;
+            }
+        }
+        return null;
+    }
+
+
+    public void reloadsignupList() {
+        loadSignupsFromDatabase(); // Tải lại dữ liệu từ cơ sở dữ liệu
     }
 
 
