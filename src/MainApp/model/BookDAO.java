@@ -77,8 +77,8 @@ public class BookDAO {
             preparedStatement.setInt(6, book.getTotal());
             preparedStatement.setString(7, book.getCurent());
             preparedStatement.setString(8, book.getPosition());
-            preparedStatement.setString(9, book.getBookID());
-            preparedStatement.setString(10, book.getURL());
+            preparedStatement.setString(10, book.getBookID());
+            preparedStatement.setString(9, book.getURL());
 
             int rowsUpdated = preparedStatement.executeUpdate();
             if (rowsUpdated > 0) {
