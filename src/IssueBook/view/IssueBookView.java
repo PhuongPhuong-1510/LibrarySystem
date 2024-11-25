@@ -418,7 +418,7 @@ public class IssueBookView extends JPanel {
 
             updateBookStatus(bookID);
         }
-    }
+}
 
     private void updateBookStatus(String bookID) {
         Book book = libraryModelManage.searchBookByID(bookID);

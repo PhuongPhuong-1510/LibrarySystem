@@ -280,6 +280,7 @@ public class ReturnBookView extends JPanel {
             Book book = libraryModelManage.searchBookByID(issue.getIssueBookID());
             book.setCurent("Still");
             libraryModelManage.editBookInDatabase(book);
+            JOptionPane.showMessageDialog(null, "Book has been successfully return.");
         }else{
             JOptionPane.showMessageDialog(this, "Can't not return.", "This status is Return", JOptionPane.WARNING_MESSAGE);
         }

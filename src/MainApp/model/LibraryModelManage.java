@@ -340,6 +340,8 @@ public class LibraryModelManage {
             JOptionPane.showMessageDialog(null, "Student not found.");
             return false;
         }
+        JOptionPane.showMessageDialog(null, "Book has been successfully borrowed.");
+
 
         bookslist.stream()
                 .filter(book -> book.getBookID().equals(bookID))
