@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+
 import HomePage.view.CustomScrollBarUI;
 import HomePage.view.HomePageView;
 import IssueBook.view.AppContext;
@@ -24,6 +25,11 @@ import LMSNotification.controller.NotificationController;
 import MainApp.model.Book;
 import MainApp.model.LibraryModelManage;
 import MainApp.model.Reserve;
+import MainApp.model.Signup;
+import ManageStudent.controller.AddStudentController;
+import ManageStudent.controller.StudentController;
+import ManageStudent.view.AddStudentView;
+import ManageStudent.view.ManagementStudentView;
 
 public class NotificationView extends JPanel {
 
@@ -101,28 +107,55 @@ public class NotificationView extends JPanel {
         return containerPanel;
     }
 
-    private List<String> createNotificationsList() {
-        String stringNoti;
-        List<String> listNoti = new ArrayList<>();
-        List<Reserve> notifications = libraryModelManage.getReserveList();
-        for (int i = 0; i < notifications.size(); i++) {
-            Reserve reserve = notifications.get(i);
+    private ArrayList<String> createNotificationsList() {
+        ArrayList<String> listNoti = new ArrayList<>();
 
-            LocalDate reservedDate = reserve.getReservedDate().toLocalDate();
+        // Lấy danh sách Reserve và kiểm tra null
+        ArrayList<Reserve> notifications = libraryModelManage.getReserveList();
+        if (notifications != null) {
+            for (Reserve reserve : notifications) {
+                if (reserve != null) { // Kiểm tra Reserve object không null
+                    LocalDate reservedDate = reserve.getReservedDate().toLocalDate();
+                    LocalDate currentDate = LocalDate.now();
+                    long daysAgo = ChronoUnit.DAYS.between(reservedDate, currentDate);
 
-            LocalDate currentDate = LocalDate.now();
+                    // Tạo thông báo Reserve
+                    String stringReserveNoti = "<html>STUDENT WITH ID " + reserve.getId() +
+                            " REQUESTED TO BORROW BOOK WITH ID " + reserve.getBookID() +
+                            "<br>REGISTERED " + daysAgo + " DAYS AGO</html>";
 
-            long daysAgo = ChronoUnit.DAYS.between(reservedDate, currentDate);
+                    listNoti.add(stringReserveNoti);
+                }
+            }
+        }
 
-            stringNoti = "<html>STUDENT WITH ID " + reserve.getId() +
-                    " REQUESTED TO BORROW BOOK WITH ID " + reserve.getBookID() +
-                    "<br>REGISTERED " + daysAgo + " DAYS AGO</html>";
+        try {
+            ArrayList<Signup> signups = libraryModelManage.getSignupList();
+            if (signups != null) {
+                for (Signup signup : signups) {
+                    if (signup != null) {
+                        String stringSignupNoti = "<html>STUDENT SIGNUP WITH EMAIL " + signup.getEmail() +
+                                " REQUESTED TO BORROW BOOK WITH ID " + signup.getName() +
+                                "<br>REGISTERED " + 11 + " DAYS AGO</html>";
+                        listNoti.add(stringSignupNoti);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Error processing signups: " + e.getMessage());
+            e.printStackTrace();
+        }
 
-            listNoti.add(stringNoti);
+
+
+
+        for(String notion : listNoti) {
+            System.out.println(notion);
         }
 
         return listNoti;
     }
+
 
     private JPanel createNotificationPanel(List<String> notifications) {
         JPanel notificationContentPanel = new JPanel();
@@ -138,18 +171,19 @@ public class NotificationView extends JPanel {
             notificationLabel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent e) {
-                    String notification = ((JLabel) e.getSource()).getText(); // Lấy chuỗi từ JLabel
-                    handleNotificationClick(notification);
+                    String notification = ((JLabel) e.getSource()).getText();
+                    if (notification.contains("STUDENT SIGNUP WITH EMAIL")) {
+                        handleSignupNotificationClick(notification);
+                    } else {
+                        handleNotificationClick(notification);
+                    }
                 }
             });
-
 
 
             notificationContentPanel.add(notificationLabel);
             notificationContentPanel.add(Box.createRigidArea(new Dimension(5, 10))); // Add spacing between notifications
         }
-
-
 
         int panelHeight = notifications.size() * 40;
         notificationContentPanel.setPreferredSize(new Dimension(500, panelHeight));
@@ -163,10 +197,6 @@ public class NotificationView extends JPanel {
 
         return containerPanel;
     }
-
-
-
-
 
     private JLabel createNotificationLabel(String notification) {
         String htmlText = "<html>" +
@@ -275,6 +305,60 @@ public class NotificationView extends JPanel {
             e.printStackTrace();
         }
     }
+
+    private void handleSignupNotificationClick(String notification) {
+        try {
+            // Xử lý thông báo và lấy thông tin email như trước
+            String plainText = notification.replaceAll("<[^>]+>", "");
+            String[] parts = plainText.split("STUDENT SIGNUP WITH EMAIL");
+            if (parts.length < 2) {
+                JOptionPane.showMessageDialog(null, "Invalid notification format.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            String input = parts[1].trim();
+            int emailEndIndex = input.indexOf(" ");
+            String email = input.substring(0, emailEndIndex);
+            System.out.println(email + "///////////////");
+
+
+            int response = JOptionPane.showConfirmDialog(
+                    null,
+                    "Do you want to add a new student with Email: " + email + "?",
+                    "Confirmation",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE
+            );
+
+            if (response == JOptionPane.YES_OPTION) {
+                Signup signup = libraryModelManage.searchSignupByEmail(email);
+                AddStudentFromSignup addStudentFromSignup = new AddStudentFromSignup(libraryModelManage, signup);
+                addStudentFromSignup.updateSignupStudent(
+                        signup.getName(),
+                        email,
+                        signup.getPassword(),
+                        signup.getPhone(),
+                        signup.getGender(),
+                        signup.getDateBirth(),
+                        signup.getMajor(),
+                        signup.getBranch()
+                );
+
+                addStudentFromSignup.setVisible(true);
+                libraryModelManage.deleteSignupFromDatabase(email);
+                refreshReserveTable();
+            } else {
+                System.out.println("Action canceled.");
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "An error occurred: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
+    }
+
+
+
+
     public void removeReserveByStudentAndBookId(String studentId, String bookId) {
         Reserve reserve = libraryModelManage.searchReserveByBookID(bookId);
         String reserveID = reserve.getReserveID();
@@ -282,7 +366,7 @@ public class NotificationView extends JPanel {
     }
 
     public void refreshReserveTable() {
-        List<Reserve> updatedReserves = libraryModelManage.getReserveList();
+        //List<Reserve> updatedReserves = libraryModelManage.getReserveList();
         notificationContainerPanel.removeAll();  // Xóa tất cả thông báo hiện tại
         notificationContainerPanel.add(createNotificationPanel(createNotificationsList()));  // Vẽ lại thông báo
         notificationContainerPanel.revalidate();  // Cập nhật giao diện

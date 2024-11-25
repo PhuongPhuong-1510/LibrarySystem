@@ -507,7 +507,7 @@ public class LibraryModelManage {
         signupList.removeIf(signup -> signup.getEmail().equals(email));
     }
 
-    public Signup searchSignupByID(String email) {
+    public Signup searchSignupByEmail(String email) {
         for (Signup signup : getSignupList()) {
             if (signup.getEmail().equals(email)) {
                 return signup;

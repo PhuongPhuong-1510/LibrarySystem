@@ -38,6 +38,7 @@ public class SignupDAO {
         }
     }
 
+
     // Phương thức để thêm sinh viên vào cơ sở dữ liệu
     public void addSignup(Signup signup) {
         String query = "INSERT INTO sigup ( name, email, password, phone, gender, cardImage, dateBirth, major, branch) " +

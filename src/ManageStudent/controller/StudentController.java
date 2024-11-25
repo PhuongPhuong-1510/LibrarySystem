@@ -11,6 +11,7 @@ public class StudentController implements ActionListener, AddStudentListener {
     private AddStudentView addStudentView;
 
     public StudentController(ManagementStudentView managementStudentView) {
+        this.addStudentView = new AddStudentView(managementStudentView.libraryModelManage);
         this.managementStudentView = managementStudentView;
         this.initializeListeners();
     }
@@ -26,7 +27,6 @@ public class StudentController implements ActionListener, AddStudentListener {
 
         if (e.getSource()==managementStudentView.getAddStudentButton()) {
             System.out.println("Add Student button clicked!");
-            addStudentView = new AddStudentView(managementStudentView.libraryModelManage);
             AddStudentController addStudentController = new AddStudentController(addStudentView, this);
             addStudentView.setVisible(true);
         }
