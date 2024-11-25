@@ -7,6 +7,10 @@ import MainApp.view.MainView;
 import ManageBook.view.BaseBookTableView;
 import ManageBook.view.PanelEditor;
 import UserMain.controller.UserController;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -264,7 +268,7 @@ public class UserView extends JPanel {
 
             @Override
             protected void setTableColumnWidths(JTable table) {
-                int[] columnWidths = {80, 115, 115, 105, 90, 90, 95, 95, 90, 115};
+                int[] columnWidths = {80, 110, 115, 95, 90, 90, 95, 95, 85, 155};
                 for (int i = 0; i < table.getColumnCount(); i++) {
                     TableColumn column = table.getColumnModel().getColumn(i);
                     column.setPreferredWidth(columnWidths[i]);
@@ -371,14 +375,14 @@ public class UserView extends JPanel {
         button.setContentAreaFilled(false);
         button.setOpaque(false);
         button.setBorder(null);
-        button.setPreferredSize(new Dimension(30, 30));
+        button.setPreferredSize(new Dimension(40, 40));
 
 
         return button;
     }
 
     public JPanel createAction(Book book, int row) {
-        JPanel actionPanel = new JPanel(new BorderLayout());
+        JPanel actionPanel = new JPanel(new GridBagLayout());
         JButton cardButton = createActionButton("/UserMain/view/icon/card.png", new Color(255, 240, 245));
         cardButton.setToolTipText("Reserve Book");
 
@@ -392,7 +396,80 @@ public class UserView extends JPanel {
             });
         }
 
-        actionPanel.add(cardButton);
+        JButton QRcodeButton = createActionButton("/ManageBook/icon/qr1.png", new Color(255, 240, 245));
+        QRcodeButton.setToolTipText("QR Code");
+        QRcodeButton.addActionListener(e -> {
+            JTable table = bookTableView.getTable();
+            String bookID = table.getValueAt(row, 0).toString();  // Assuming bookID is in the first column
+            Book book1 = libraryModelManage.searchBookByID(bookID);
+            String URL = book1.getURL();
+
+
+
+            JFrame qrCodeFrame = new JFrame("Book ID");
+            qrCodeFrame.setSize(360, 400);
+            qrCodeFrame.setUndecorated(true); // Loại bỏ viền cửa sổ
+            qrCodeFrame.setBackground(new Color(0, 0, 0, 0)); // Làm trong suốt toàn bộ JFrame
+            qrCodeFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            qrCodeFrame.setLocationRelativeTo(null); // Đặt giữa màn hình
+
+            JPanel qrCodePanel = new JPanel() {
+                @Override
+                protected void paintComponent(Graphics g) {
+                    super.paintComponent(g);
+                    // Không vẽ nền gì thêm để đảm bảo trong suốt
+                }
+            };
+            qrCodePanel.setOpaque(false);
+            qrCodePanel.setLayout(null);
+
+            JLayeredPane layeredPane = new JLayeredPane();
+            layeredPane.setLayout(null);
+            layeredPane.setSize(360, 400);
+
+            JPanel backgroundPanel = createBackgroundPanel("/ManageBook/icon/qrbg.png"); // Hàm tạo JPanel với ảnh nền
+            backgroundPanel.setOpaque(false);
+            backgroundPanel.setBounds(0, 0, 360, 360);
+
+            layeredPane.add(backgroundPanel, Integer.valueOf(0));
+
+            try {
+                BufferedImage qrCodeImage = generateQRCodeImage(URL, 220, 220); // Tạo ảnh QR code
+                JLabel lblQRCode = new JLabel(new ImageIcon(qrCodeImage));
+                lblQRCode.setBounds(72, 98, 220, 220); // Đặt vị trí và kích thước
+                qrCodePanel.add(lblQRCode);
+            } catch (Exception k) {
+                JLabel lblQRCode = new JLabel("QR Code Error");
+                lblQRCode.setForeground(Color.RED);
+                qrCodePanel.add(lblQRCode);
+                k.printStackTrace();
+            }
+
+            qrCodePanel.setBounds(0, 0, 360, 400);
+            layeredPane.add(qrCodePanel, Integer.valueOf(1));
+
+            JButton closeButton = createButtonn("X", 310, 7);
+            qrCodePanel.add(closeButton);
+            closeButton.addActionListener(e1 -> qrCodeFrame.dispose());
+
+
+
+            qrCodeFrame.add(layeredPane);
+            qrCodeFrame.setVisible(true);
+
+        });
+
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+//        gbc.insets = new Insets(0, 10, 0, 10);
+        gbc.anchor = GridBagConstraints.CENTER;
+
+        actionPanel.add(QRcodeButton, gbc);
+        gbc.gridx = 1;
+        actionPanel.add(cardButton, gbc);
+
         return actionPanel;
     }
 
@@ -499,7 +576,7 @@ public class UserView extends JPanel {
         JPanel genrePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         genrePanel.add(new JLabel("Genre:"));
         cboGenre = new JComboBox<>(new String[]{"All"});
-        cboGenre.setEditable(true); 
+        cboGenre.setEditable(true);
         genrePanel.add(cboGenre);
         panelSearchFields.add(genrePanel);
 
@@ -649,6 +726,20 @@ public class UserView extends JPanel {
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
         return button;
     }
+    private JButton createButtonn(String text, int x, int y) {
+        JButton button = new JButton(text);
+        button.setFont(new Font("Tahoma", Font.BOLD, 18));
+        button.setForeground(Color.WHITE);
+        button.setBackground(new Color(84, 255, 159));
+        button.setOpaque(true);
+        button.setBorderPainted(false);
+        button.setFocusPainted(false);
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        button.setToolTipText("CLOSE");
+        button.setBounds(x, y, 50, 50); // Size and position of the button
+        return button;
+    }
+
 
 
 
@@ -876,6 +967,80 @@ public class UserView extends JPanel {
 
     public JButton getBtnSearch() {
         return btnSearch;
+    }
+    private JPanel createBackgroundPanel(String path) {
+        return new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                ImageIcon backgroundIcon = new ImageIcon(getClass().getResource(path));
+                g.drawImage(backgroundIcon.getImage(), 0, 0, getWidth(), getHeight(), this);
+            }
+        };
+
+    }
+    private void configurePanel(JPanel panel, int x, int y, int width, int height) {
+        panel.setBounds(x, y, width, height);
+    }
+    private BufferedImage generateQRCodeImage(String text, int width, int height) throws WriterException {
+        QRCodeWriter qrCodeWriter = new QRCodeWriter();
+        BitMatrix bitMatrix = qrCodeWriter.encode(text, BarcodeFormat.QR_CODE, width, height);
+
+        int[] enclosingRectangle = findEnclosingRectangle(bitMatrix);
+
+        int x = enclosingRectangle[0];
+        int y = enclosingRectangle[1];
+        int qrWidth = enclosingRectangle[2];
+        int qrHeight = enclosingRectangle[3];
+
+        BitMatrix croppedMatrix = cropBitMatrix(bitMatrix, x, y, qrWidth, qrHeight);
+
+        BufferedImage image = new BufferedImage(qrWidth, qrHeight, BufferedImage.TYPE_INT_RGB);
+        int greenColor = new Color(84, 255, 159).getRGB();
+        int whiteColor = Color.WHITE.getRGB();
+
+        for (int i = 0; i < qrWidth; i++) {
+            for (int j = 0; j < qrHeight; j++) {
+                // Sử dụng mã màu
+                image.setRGB(i, j, croppedMatrix.get(i, j) ? greenColor : whiteColor);
+            }
+        }
+
+        return image;
+    }
+
+
+    private BitMatrix cropBitMatrix(BitMatrix bitMatrix, int x, int y, int width, int height) {
+        BitMatrix croppedMatrix = new BitMatrix(width, height);
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                if (bitMatrix.get(x + i, y + j)) {
+                    croppedMatrix.set(i, j);
+                }
+            }
+        }
+        return croppedMatrix;
+    }
+
+    // Hàm tìm vùng bao quanh nội dung QR Code
+    private int[] findEnclosingRectangle(BitMatrix bitMatrix) {
+        int top = Integer.MAX_VALUE;
+        int left = Integer.MAX_VALUE;
+        int bottom = Integer.MIN_VALUE;
+        int right = Integer.MIN_VALUE;
+
+        for (int y = 0; y < bitMatrix.getHeight(); y++) {
+            for (int x = 0; x < bitMatrix.getWidth(); x++) {
+                if (bitMatrix.get(x, y)) {
+                    if (x < left) left = x;
+                    if (y < top) top = y;
+                    if (x > right) right = x;
+                    if (y > bottom) bottom = y;
+                }
+            }
+        }
+
+        return new int[]{left, top, right - left + 1, bottom - top + 1};
     }
 }
 
