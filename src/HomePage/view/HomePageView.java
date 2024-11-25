@@ -15,9 +15,6 @@ import java.util.Date;
 import java.text.SimpleDateFormat;
 import java.util.Objects;
 import javax.swing.table.DefaultTableModel;
-import java.sql.*;
-import java.util.Vector;
-import MainApp.model.StudentDAO;
 
 public class HomePageView extends JPanel {
     private HomePageModel homePageModel;
@@ -73,7 +70,7 @@ public class HomePageView extends JPanel {
         jMenuHomePage.setBackground(new Color(185,173,173));
         jMenuHomePage.setOpaque(true);
         jMenuLMSDashBoard = createMenu("LMS Notification", "/HomePage/view/icon/notification.png", 50);
-        jMenuItemAPI = createMenu("Search Book API", "/HomePage/view/icon/searchAPI.png", 130);
+        jMenuItemAPI = createMenu("Search Book", "/HomePage/view/icon/searchAPI.png", 130);
         jMenuMGMTBooks = createMenu("Manage Books", "/HomePage/view/icon/icons8_Books_26px.png", 180);
         jMenuMGMTSutudents = createMenu("Manage Students", "/HomePage/view/icon/icons8_Read_Online_26px.png", 230);
         jMenuIssueBook = createMenu("Issue Book", "/HomePage/view/icon/icons8_Sell_26px.png", 280);

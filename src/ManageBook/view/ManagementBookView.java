@@ -1,8 +1,14 @@
 package ManageBook.view;
 
+import API.ChiTietController;
 import MainApp.model.Book;
 import MainApp.model.LibraryModelManage;
 import ManageBook.controller.ManagementBookController;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
 
 
 import javax.swing.*;
@@ -31,6 +37,7 @@ public class ManagementBookView extends JPanel {
         this.libraryModelManage = libraryModelManage;
         this.setLayout(new BorderLayout());
         this.init();
+        this.updateTable(libraryModelManage.getBooksList());
         new ManagementBookController(this);
     }
 
@@ -67,7 +74,7 @@ public class ManagementBookView extends JPanel {
             protected void setTableColumnWidths(JTable table) {
                 TableColumn column;
 
-                int[] columnWidths = {85, 250, 120, 110, 110, 100, 95, 95, 90, 115};
+                int[] columnWidths = {85, 250, 120, 110, 110, 100, 95, 95, 90, 135};
 
                 for (int i = 0; i < table.getColumnCount(); i++) {
                     column = table.getColumnModel().getColumn(i);
@@ -135,19 +142,22 @@ public class ManagementBookView extends JPanel {
     }
 
 
-
     private JLabel createImageLabel(String path) {
         String relativePath = getRelativeImagePath(path);
         ImageIcon icon;
+
         if (relativePath != null && getClass().getResource(relativePath) != null) {
             icon = new ImageIcon(getClass().getResource(relativePath));
             icon.setDescription(relativePath);
         } else {
             System.out.println("Image not found at path: " + path);
-            icon = new ImageIcon(new BufferedImage(5, 5, BufferedImage.TYPE_INT_ARGB)); // Placeholder
+            icon = new ImageIcon(new BufferedImage(5, 5, BufferedImage.TYPE_INT_ARGB)); // Placeholder ảnh trống
         }
+
         return new JLabel(icon);
     }
+
+
 
 
 
@@ -174,14 +184,15 @@ public class ManagementBookView extends JPanel {
         JButton editButton = createActionButton("/ManageBook/icon/bookEdit.png", new Color(255, 240, 245));
         JButton deleteButton = createActionButton("/ManageBook/icon/bookDelete.png", new Color(255, 240, 245));
         JButton imageButton = createActionButton("/ManageBook/icon/uploadImage.png", new Color(255, 240, 245));
-
+        JButton QRcodeButton = createActionButton("/ManageBook/icon/qr1.png", new Color(255, 240, 245));
 
         editButton.setToolTipText("Edit Book");
         deleteButton.setToolTipText("Delete Book");
         imageButton.setToolTipText("Upload Cover");
+        QRcodeButton.setToolTipText("QR Code");
 
         editButton.addActionListener(e -> {
-            toggleEditButtonIcon(actionPanel,editButton,deleteButton,imageButton, row);
+            toggleEditButtonIcon(actionPanel, editButton, deleteButton, imageButton, row);
         });
 
         deleteButton.addActionListener(e -> {
@@ -214,7 +225,67 @@ public class ManagementBookView extends JPanel {
             toggleImageButton(deleteButton, editButton, row);
         });
 
-        // Thêm các nút vào bảng điều khiển (actionPanel)
+        QRcodeButton.addActionListener(e -> {
+            JTable table = bookTableView.getTable();
+            String bookID = table.getValueAt(row, 0).toString();  // Assuming bookID is in the first column
+            Book book = libraryModelManage.searchBookByID(bookID);
+            String URL = book.getURL();
+
+
+
+            JFrame qrCodeFrame = new JFrame("Book ID");
+            qrCodeFrame.setSize(360, 400);
+            qrCodeFrame.setUndecorated(true); // Loại bỏ viền cửa sổ
+            qrCodeFrame.setBackground(new Color(0, 0, 0, 0)); // Làm trong suốt toàn bộ JFrame
+            qrCodeFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            qrCodeFrame.setLocationRelativeTo(null); // Đặt giữa màn hình
+
+            JPanel qrCodePanel = new JPanel() {
+                @Override
+                protected void paintComponent(Graphics g) {
+                    super.paintComponent(g);
+                    // Không vẽ nền gì thêm để đảm bảo trong suốt
+                }
+            };
+            qrCodePanel.setOpaque(false);
+            qrCodePanel.setLayout(null);
+
+            JLayeredPane layeredPane = new JLayeredPane();
+            layeredPane.setLayout(null);
+            layeredPane.setSize(360, 400);
+
+            JPanel backgroundPanel = createBackgroundPanel("/ManageBook/icon/qrbg.png"); // Hàm tạo JPanel với ảnh nền
+            backgroundPanel.setOpaque(false);
+            backgroundPanel.setBounds(0, 0, 360, 360);
+
+            layeredPane.add(backgroundPanel, Integer.valueOf(0));
+
+            try {
+                BufferedImage qrCodeImage = generateQRCodeImage(URL, 220, 220); // Tạo ảnh QR code
+                JLabel lblQRCode = new JLabel(new ImageIcon(qrCodeImage));
+                lblQRCode.setBounds(72, 98, 220, 220); // Đặt vị trí và kích thước
+                qrCodePanel.add(lblQRCode);
+            } catch (Exception k) {
+                JLabel lblQRCode = new JLabel("QR Code Error");
+                lblQRCode.setForeground(Color.RED);
+                qrCodePanel.add(lblQRCode);
+                k.printStackTrace();
+            }
+
+            qrCodePanel.setBounds(0, 0, 360, 400);
+            layeredPane.add(qrCodePanel, Integer.valueOf(1));
+
+            JButton closeButton = createButton("X", 310, 7);
+            qrCodePanel.add(closeButton);
+            closeButton.addActionListener(e1 -> qrCodeFrame.dispose());
+
+
+
+            qrCodeFrame.add(layeredPane);
+            qrCodeFrame.setVisible(true);
+
+        });
+
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -222,11 +293,16 @@ public class ManagementBookView extends JPanel {
         gbc.anchor = GridBagConstraints.CENTER;
 
         actionPanel.add(editButton, gbc);
+        gbc.gridx = 1;
+        actionPanel.add(QRcodeButton, gbc);
         gbc.gridx = 2;
         actionPanel.add(deleteButton, gbc);
 
         return actionPanel;
     }
+
+
+
 
 
 
@@ -262,7 +338,7 @@ public class ManagementBookView extends JPanel {
             actionPanel.add(imageButton, gbc);
             editButton.addActionListener(e -> {
                 System.out.println("Saved");
-                Book bookToEdit = getUpdatedBookFromRow(row) ; // Get the selected book
+                Book bookToEdit = getUpdatedBookFromRow(row) ;
                 libraryModelManage.editBookInDatabase(bookToEdit);
 
             });
@@ -283,8 +359,32 @@ public class ManagementBookView extends JPanel {
     }
 
     private void toggleImageButton(JButton deleteButton, JButton editButton, int row) {
-        chooseImage(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
+        FileDialog fileDialog = new FileDialog((Frame) SwingUtilities.getWindowAncestor(this), "Choose Image", FileDialog.LOAD);
+        fileDialog.setFile("*.jpg;*.jpeg;*.png;*.gif");
+        fileDialog.setVisible(true);
+
+        String filePath = fileDialog.getDirectory() + fileDialog.getFile();
+        if (filePath != null && !filePath.isEmpty()) {
+            // Lấy đường dẫn tương đối
+            String relativePath = getRelativeImagePath(filePath);
+
+            if (relativePath != null) {
+                System.out.println("Selected relative path: " + relativePath);
+                updateImageForRow(row, relativePath);
+            } else {
+                System.out.println("Invalid file path selected: " + filePath);
+            }
+        }
     }
+
+    private void updateImageForRow(int row, String relativePath) {
+        DefaultTableModel model = (DefaultTableModel) bookTableView.getTable().getModel();
+        JLabel newImageLabel = createImageLabel(relativePath);
+        model.setValueAt(newImageLabel, row, 2);
+        bookTableView.revalidate();
+        bookTableView.repaint();
+    }
+
 
 
 
@@ -313,13 +413,9 @@ public class ManagementBookView extends JPanel {
 
     public void addBook(Book book) {
         DefaultTableModel model = (DefaultTableModel) bookTableView.getTable().getModel();
-
-        // Lấy đường dẫn ảnh tương đối
         String imagePath = getRelativeImagePath(book.getImage());
-
-        // Nếu imagePath vẫn null, sử dụng một đường dẫn mặc định hoặc placeholder
         if (imagePath == null) {
-            imagePath = "/ManageBook/icon/default.png"; // Đảm bảo bạn có ảnh default.png trong thư mục icon
+            imagePath = "/ManageBook/icon/default.png";
         }
 
         Object[] rowData = new Object[]{
@@ -341,23 +437,21 @@ public class ManagementBookView extends JPanel {
         bookTableView.repaint();
     }
 
-
     private String getRelativeImagePath(String imagePath) {
-        if (imagePath == null) {
-            return null; // Trả về null nếu đường dẫn gốc không tồn tại
+        if (imagePath == null || imagePath.isEmpty()) {
+            return null;
         }
-
-        // Thay tất cả các dấu '\' thành '/' để đồng nhất
         String normalizedPath = imagePath.replace("\\", "/");
 
-        // Tìm vị trí chuỗi con "/ManageBook/icon/"
-        int relativePathIndex = normalizedPath.indexOf("/ManageBook/icon/");
+        String target = "/ManageBook/icon/";
+        int relativePathIndex = normalizedPath.indexOf(target);
         if (relativePathIndex != -1) {
             return normalizedPath.substring(relativePathIndex);
         }
 
-        return null; // Trả về null nếu chuỗi không chứa "/ManageBook/icon/"
+        return null;
     }
+
 
 
     private Book getUpdatedBookFromRow(int row) {
@@ -387,7 +481,10 @@ public class ManagementBookView extends JPanel {
         String curent = model.getValueAt(row, 7).toString();
         String position = model.getValueAt(row, 8).toString();
 
-        return new Book(bookID, bookName, image, author, category, language, total, curent, position);
+        Book book = libraryModelManage.searchBookByID(bookID);
+        String URL = book.getURL();
+
+        return new Book(bookID, bookName, image, author, category, language, total, curent, position, URL);
     }
 
 
@@ -414,4 +511,92 @@ public class ManagementBookView extends JPanel {
         bookTableView.revalidate();
         bookTableView.repaint();
     }
+    private JPanel createBackgroundPanel(String path) {
+        return new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                ImageIcon backgroundIcon = new ImageIcon(getClass().getResource(path));
+                g.drawImage(backgroundIcon.getImage(), 0, 0, getWidth(), getHeight(), this);
+            }
+        };
+
+    }
+    private void configurePanel(JPanel panel, int x, int y, int width, int height) {
+        panel.setBounds(x, y, width, height);
+    }
+    private BufferedImage generateQRCodeImage(String text, int width, int height) throws WriterException {
+        QRCodeWriter qrCodeWriter = new QRCodeWriter();
+        BitMatrix bitMatrix = qrCodeWriter.encode(text, BarcodeFormat.QR_CODE, width, height);
+
+        int[] enclosingRectangle = findEnclosingRectangle(bitMatrix);
+
+        int x = enclosingRectangle[0];
+        int y = enclosingRectangle[1];
+        int qrWidth = enclosingRectangle[2];
+        int qrHeight = enclosingRectangle[3];
+
+        BitMatrix croppedMatrix = cropBitMatrix(bitMatrix, x, y, qrWidth, qrHeight);
+
+        BufferedImage image = new BufferedImage(qrWidth, qrHeight, BufferedImage.TYPE_INT_RGB);
+        int greenColor = new Color(84, 255, 159).getRGB();
+        int whiteColor = Color.WHITE.getRGB();
+
+        for (int i = 0; i < qrWidth; i++) {
+            for (int j = 0; j < qrHeight; j++) {
+                // Sử dụng mã màu
+                image.setRGB(i, j, croppedMatrix.get(i, j) ? greenColor : whiteColor);
+            }
+        }
+
+        return image;
+    }
+
+
+    private BitMatrix cropBitMatrix(BitMatrix bitMatrix, int x, int y, int width, int height) {
+        BitMatrix croppedMatrix = new BitMatrix(width, height);
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                if (bitMatrix.get(x + i, y + j)) {
+                    croppedMatrix.set(i, j);
+                }
+            }
+        }
+        return croppedMatrix;
+    }
+
+    // Hàm tìm vùng bao quanh nội dung QR Code
+    private int[] findEnclosingRectangle(BitMatrix bitMatrix) {
+        int top = Integer.MAX_VALUE;
+        int left = Integer.MAX_VALUE;
+        int bottom = Integer.MIN_VALUE;
+        int right = Integer.MIN_VALUE;
+
+        for (int y = 0; y < bitMatrix.getHeight(); y++) {
+            for (int x = 0; x < bitMatrix.getWidth(); x++) {
+                if (bitMatrix.get(x, y)) {
+                    if (x < left) left = x;
+                    if (y < top) top = y;
+                    if (x > right) right = x;
+                    if (y > bottom) bottom = y;
+                }
+            }
+        }
+
+        return new int[]{left, top, right - left + 1, bottom - top + 1};
+    }
+    private JButton createButton(String text, int x, int y) {
+        JButton button = new JButton(text);
+        button.setFont(new Font("Tahoma", Font.BOLD, 18));
+        button.setForeground(Color.WHITE);
+        button.setBackground(new Color(84, 255, 159));
+        button.setOpaque(true);
+        button.setBorderPainted(false);
+        button.setFocusPainted(false);
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        button.setToolTipText("CLOSE");
+        button.setBounds(x, y, 50, 50); // Size and position of the button
+        return button;
+    }
+
 }

@@ -1,8 +1,10 @@
+
 package MainApp.model;
 
 import dataBase.DatabaseConnection;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class IssueDAO {
@@ -20,11 +22,11 @@ public class IssueDAO {
                 String issueID = resultSet.getString("issueID");
                 String bookID = resultSet.getString("bookID");
                 String studentID = resultSet.getString("id");
-                String isueDate = resultSet.getString("isueDate");
-                String dueDate = resultSet.getString("dueDate");
+                Date issueDate = resultSet.getDate("isueDate");
+                Date dueDate = resultSet.getDate("dueDate");
                 String status = resultSet.getString("status");
 
-                Issue issue = new Issue(issueID, bookID, studentID, isueDate, dueDate, status);
+                Issue issue = new Issue(issueID, bookID, studentID, issueDate, dueDate, status);
                 issuesList.add(issue); // Thêm vào danh sách
             }
 
@@ -35,7 +37,6 @@ public class IssueDAO {
         }
     }
 
-
     public void addIssue(Issue issue) {
         String query = "INSERT INTO issue (issueID, bookID, id, isueDate, dueDate, status) VALUES (?, ?, ?, ?, ?, ?)";
 
@@ -45,15 +46,17 @@ public class IssueDAO {
             preparedStatement.setString(1, issue.getIssueID());
             preparedStatement.setString(2, issue.getIssueBookID());
             preparedStatement.setString(3, issue.getIssueStudentID());
-            preparedStatement.setString(4, issue.getIssueDate());
-            preparedStatement.setString(5, issue.getDueDate());
+            preparedStatement.setDate(4, issue.getIssueDate()); // Convert LocalDate to java.sql.Date
+            preparedStatement.setDate(5, issue.getDueDate());
             preparedStatement.setString(6, issue.getStatus());
 
             preparedStatement.executeUpdate();
-            System.out.println("Đã thêm trang thai vào cơ sở dữ liệu.");
+            System.out.println("Data added to the database.");
+            loadIssuesFromDatabase(); // Refresh issues list
 
         } catch (SQLException e) {
-            System.out.println("Lỗi khi thêm trang thai vào cơ sở dữ liệu: " + e.getMessage());
+            System.err.println("Error adding data to database: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -65,8 +68,8 @@ public class IssueDAO {
 
             preparedStatement.setString(1, issue.getIssueBookID());
             preparedStatement.setString(2, issue.getIssueStudentID());
-            preparedStatement.setString(3, issue.getIssueDate());
-            preparedStatement.setString(4, issue.getDueDate());
+            preparedStatement.setDate(3, issue.getIssueDate()); // Chuyển LocalDate sang java.sql.Date
+            preparedStatement.setDate(4, issue.getDueDate()); // Chuyển LocalDate sang java.sql.Date
             preparedStatement.setString(5, issue.getStatus());
             preparedStatement.setString(6, issue.getIssueID());
 

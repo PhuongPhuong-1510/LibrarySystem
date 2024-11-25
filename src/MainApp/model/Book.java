@@ -10,11 +10,12 @@ public class Book {
     private int total;
     private String curent;
     private String Position;
+    private String URL;
 
 
     public Book(String id, String title, String imagePath, String author, String language, int total, String current, String position) {}
 
-    public Book(String bookID, String bookName, String image, String author, String category, String language, int total, String curent, String Position) {
+    public Book(String bookID, String bookName, String image, String author, String category, String language, int total, String curent, String Position, String URL) {
         this.bookID = bookID;
         this.bookName = bookName;
         this.image = image;
@@ -24,6 +25,7 @@ public class Book {
         this.total = total;
         this.curent = curent;
         this.Position = Position;
+        this.URL = URL;
 
     }
     public String getBookID() {
@@ -79,6 +81,12 @@ public class Book {
     }
     public void setPosition(String position) {
         Position = position;
+    }
+    public String getURL() {
+        return URL;
+    }
+    public void setURL(String URL) {
+        this.URL = URL;
     }
 
 

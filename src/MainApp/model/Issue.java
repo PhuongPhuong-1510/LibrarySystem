@@ -1,17 +1,23 @@
 package MainApp.model;
 
+import java.sql.Date;
+
 public class Issue {
     private String issueID;
     private String issueBookID;
+    private String bookName;
+    private String bookImage;
     private String issueStudentID;
-    private String issueDate;
-    private String dueDate;
+    private String studentName;
+    private String studentImage;
+    private Date issueDate;
+    private Date dueDate;
     private String status;
 
-    public Issue() {
+    public Issue(int issueID, int bookID, int studentID, String bookName, String bookImage, String studentName, String studentImage, Date issueDate, Date dueDate, String status) {
 
     }
-    public Issue(String issueID, String issueBook, String issueStudent, String issueDate, String dueDate, String status) {
+    public Issue(String issueID, String issueBook, String issueStudent, Date issueDate, Date dueDate, String status) {
         this.issueID = issueID;
         this.issueBookID = issueBook;
         this.issueStudentID = issueStudent;
@@ -40,16 +46,16 @@ public class Issue {
     public void setIssueStudentID(String issueStudentID) {
         this.issueStudentID = issueStudentID;
     }
-    public String getIssueDate() {
+    public Date getIssueDate() {
         return issueDate;
     }
-    public void setIssueDate(String issueDate) {
+    public void setIssueDate(Date issueDate) {
         this.issueDate = issueDate;
     }
-    public String getDueDate() {
+    public Date getDueDate() {
         return dueDate;
     }
-    public void setDueDate(String dueDate) {
+    public void setDueDate(Date dueDate) {
         this.dueDate = dueDate;
     }
     public String getStatus() {

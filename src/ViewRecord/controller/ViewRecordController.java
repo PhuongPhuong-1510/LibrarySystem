@@ -1,7 +1,6 @@
 package ViewRecord.controller;
 
 import IssueBook.view.DatePickerDemo;
-import IssueBook.view.IssueBookView;
 import ViewRecord.view.ViewRecordView;
 
 import javax.swing.*;
@@ -29,8 +28,54 @@ public class ViewRecordController implements ActionListener, MouseListener {
 
         viewRecordView.getAllRecordButton().addMouseListener(this);
         viewRecordView.getSearchButton().addMouseListener(this);
+        viewRecordView.getSearchButton().addActionListener(this);
+        viewRecordView.getAllRecordButton().addActionListener(this);
     }
 
+//    @Override
+//    public void actionPerformed(ActionEvent e) {
+//        if (e.getSource() == viewRecordView.getIssueDateButton()) {
+//            DatePickerDemo jDialogIssue = new DatePickerDemo();
+//            jDialogIssue.setBounds(965, 180, 400, 200);
+//            jDialogIssue.setModal(true);
+//            jDialogIssue.setVisible(true);
+//
+//            issueDate = jDialogIssue.getSelectedDate();
+//            viewRecordView.getIssueDateField().setText(issueDate.toString());
+//
+//        }
+//
+//        if (e.getSource() == viewRecordView.getDueDateButton()) {
+//            DatePickerDemo jDialogDue = new DatePickerDemo();
+//            jDialogDue.setBounds(965, 230, 400, 200);
+//            jDialogDue.setModal(true);
+//            jDialogDue.setVisible(true);
+//
+//
+//            dueDate = jDialogDue.getSelectedDate();
+//            viewRecordView.getDueDateField().setText(dueDate.toString());
+//
+//
+//
+//        }
+//        if (e.getSource() == viewRecordView.getSearchButton()) {
+//            // Lấy giá trị từ các trường tìm kiếm
+//            String bookID = viewRecordView.getBookIDField().getText();
+//            String nameID = viewRecordView.getNameIDField().getText();
+//            String issueDate = viewRecordView.getIssueDateField().getText();
+//            String dueDate = viewRecordView.getDueDateField().getText();
+//
+//            // Gọi phương thức fetchData với các tham số tìm kiếm
+//            Object[][] filteredData = viewRecordView.fetchData(bookID, nameID, issueDate, dueDate);
+//
+//            // Cập nhật bảng dữ liệu với kết quả tìm kiếm
+//            viewRecordView.updateTable(filteredData);
+//        } else if (e.getSource() == viewRecordView.getAllRecordButton()) {
+//            // Khi nhấn "All Record", hiển thị tất cả các bản ghi
+//            Object[][] allData = viewRecordView.fetchData("", "", "", ""); // Truyền tham số rỗng để lấy tất cả dữ liệu
+//            viewRecordView.updateTable(allData);
+//        }
+//    }
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == viewRecordView.getIssueDateButton()) {
@@ -41,7 +86,6 @@ public class ViewRecordController implements ActionListener, MouseListener {
 
             issueDate = jDialogIssue.getSelectedDate();
             viewRecordView.getIssueDateField().setText(issueDate.toString());
-
         }
 
         if (e.getSource() == viewRecordView.getDueDateButton()) {
@@ -50,16 +94,34 @@ public class ViewRecordController implements ActionListener, MouseListener {
             jDialogDue.setModal(true);
             jDialogDue.setVisible(true);
 
-
             dueDate = jDialogDue.getSelectedDate();
             viewRecordView.getDueDateField().setText(dueDate.toString());
+        }
 
+        if (e.getSource() == viewRecordView.getSearchButton()) {
+            // Lấy giá trị từ các trường tìm kiếm
+            String bookID = viewRecordView.getBookIDField().getText().trim();
+            String nameID = viewRecordView.getNameIDField().getText().trim();
+            String issueDateText = viewRecordView.getIssueDateField().getText().trim();
+            String dueDateText = viewRecordView.getDueDateField().getText().trim();
 
+            // Kiểm tra nếu trường là placeholder, thay bằng chuỗi rỗng
+            bookID = bookID.equals("Search Book ID") ? "" : bookID;
+            nameID = nameID.equals("Search Name ID") ? "" : nameID;
+            issueDateText = issueDateText.equals("Search Issue Date") ? "" : issueDateText;
+            dueDateText = dueDateText.equals("Search Due Date") ? "" : dueDateText;
 
+            // Gọi phương thức fetchData với các tham số tìm kiếm
+            Object[][] filteredData = viewRecordView.fetchData(bookID, nameID, issueDateText, dueDateText);
+
+            // Cập nhật bảng dữ liệu với kết quả tìm kiếm
+            viewRecordView.updateTable(filteredData);
+        } else if (e.getSource() == viewRecordView.getAllRecordButton()) {
+            // Khi nhấn "All Record", hiển thị tất cả các bản ghi
+            Object[][] allData = viewRecordView.fetchData("", "", "", ""); // Truyền tham số rỗng để lấy tất cả dữ liệu
+            viewRecordView.updateTable(allData);
         }
     }
-
-
 
 
 

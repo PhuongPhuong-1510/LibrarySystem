@@ -12,10 +12,10 @@ public class ApiController implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        String src = e.getActionCommand();
-        if (src.equals("Search")) {
+
             String query = apiView.getSearchQuery();
-            apiView.searchBooks(query);
-        }
+
+        apiView.searchBooks(query);
+//        }
     }
 }

@@ -2,13 +2,14 @@ package IssueBook.view;
 
 import IssueBook.controller.IssueBookController;
 import LoginPage.view.OvalButton;
-import MainApp.model.Book;
-import MainApp.model.Issue;
-import MainApp.model.LibraryModelManage;
-import MainApp.model.Student;
+import MainApp.model.*;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class IssueBookView extends JPanel {
@@ -30,18 +31,121 @@ public class IssueBookView extends JPanel {
     private JTextField bookIdField;
     private JTextField studentIdField;
     private LibraryModelManage libraryModelManage;
+    private JTextField categoryField;
 
 
     public IssueBookView(LibraryModelManage libraryModelManage) {
+        if (libraryModelManage == null) {
+            throw new IllegalArgumentException("LibraryModelManage cannot be null");
+        }
+        this.libraryModelManage = libraryModelManage;
+
         setupMainPanel();
         add(createBookPanel());
         add(createStudentPanel());
         add(createIssuePanel());
         setVisible(true);
         new IssueBookController(this);
-        this.libraryModelManage = libraryModelManage;
 
+        bookIdField.addKeyListener(new java.awt.event.KeyAdapter() {
+            @Override
+            public void keyPressed(java.awt.event.KeyEvent e) {
+                if (e.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
+                    updateBookInfo(); // Chỉ cập nhật thông tin sách
+                }
+            }
+        });
+
+        studentIdField.addKeyListener(new java.awt.event.KeyAdapter() {
+            @Override
+            public void keyPressed(java.awt.event.KeyEvent e) {
+                if (e.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
+                    updateStudentInfo();
+                }
+            }
+        });
     }
+
+    private void updateBookInfo() {
+        String bookID = this.bookIdField.getText();
+
+        Book book = libraryModelManage.searchBookByID(bookID);
+
+        if (book != null) {
+            bookTitleField.setText(book.getBookName());
+            authorField.setText(book.getAuthor());
+            languageField.setText(book.getLanguage());
+            categoryField.setText(book.getCategory());
+            totalField.setText(String.valueOf(book.getTotal()));
+        } else {
+            JOptionPane.showMessageDialog(null, "book not found", "Error", JOptionPane.ERROR_MESSAGE);
+            bookTitleField.setText("");
+            authorField.setText("");
+            languageField.setText("");
+            categoryField.setText("");
+            totalField.setText("");
+        }
+    }
+
+    private void updateStudentInfo() {
+        String studentID = this.studentIdField.getText();
+
+        Student student = libraryModelManage.searchStudentByID(studentID);
+
+        if (student != null) {
+            studentNameField.setText(student.getName());
+            contactPhoneField.setText(student.getPhone());
+            contactEmailField.setText(student.getEmail());
+            majorField.setText("Student");
+            branchField.setText("Student");
+        } else {
+            JOptionPane.showMessageDialog(null, "student not found", "Error", JOptionPane.ERROR_MESSAGE);
+            studentNameField.setText("");
+            contactPhoneField.setText("");
+            contactEmailField.setText("");
+            majorField.setText("");
+            branchField.setText("");
+        }
+    }
+
+    public void updateBookAndStudentInfo(String bookID, String studentID) {
+        // Cập nhật thông tin sách
+        Book book = libraryModelManage.searchBookByID(bookID);
+
+        if (book != null) {
+            bookTitleField.setText(book.getBookName());
+            authorField.setText(book.getAuthor());
+            languageField.setText(book.getLanguage());
+            categoryField.setText(book.getCategory());
+            totalField.setText(String.valueOf(book.getTotal()));
+        } else {
+            JOptionPane.showMessageDialog(null, "Book not found", "Error", JOptionPane.ERROR_MESSAGE);
+            bookTitleField.setText("");
+            authorField.setText("");
+            languageField.setText("");
+            categoryField.setText("");
+            totalField.setText("");
+        }
+
+        // Cập nhật thông tin sinh viên
+        Student student = libraryModelManage.searchStudentByID(studentID);
+
+        if (student != null) {
+            studentNameField.setText(student.getName());
+            contactPhoneField.setText(student.getPhone());
+            contactEmailField.setText(student.getEmail());
+            majorField.setText("Student");
+            branchField.setText("Student");
+        } else {
+            JOptionPane.showMessageDialog(null, "Student not found", "Error", JOptionPane.ERROR_MESSAGE);
+            studentNameField.setText("");
+            contactPhoneField.setText("");
+            contactEmailField.setText("");
+            majorField.setText("");
+            branchField.setText("");
+        }
+    }
+
 
     private void setupMainPanel() {
         setLayout(new GridLayout(1, 3, 10, 10));
@@ -66,23 +170,23 @@ public class IssueBookView extends JPanel {
 
 
         bookPanel.add(createLabelAtPosition("Book Title: ", 25, 250, 200, 30, labelColor));
-         bookTitleField = createTextField(150, 250, 200, 30,false);
+        bookTitleField = createTextField(150, 250, 200, 30,false);
         bookPanel.add(bookTitleField);
 
         bookPanel.add(createLabelAtPosition("Author: ", 25, 290, 200, 30, labelColor));
-         authorField = createTextField(150, 290, 200, 30,false);
+        authorField = createTextField(150, 290, 200, 30,false);
         bookPanel.add(authorField);
 
         bookPanel.add(createLabelAtPosition("Category: ", 25, 330, 200, 30, labelColor));
-        JTextField categoryField = createTextField(150, 330, 200, 30,false);
+        categoryField = createTextField(150, 330, 200, 30,false);
         bookPanel.add(categoryField);
 
         bookPanel.add(createLabelAtPosition("Language: ", 25, 370, 200, 30, labelColor));
-         languageField = createTextField(150, 370, 200, 30,false);
+        languageField = createTextField(150, 370, 200, 30,false);
         bookPanel.add(languageField);
 
         bookPanel.add(createLabelAtPosition("Total: ", 25, 410, 200, 30, labelColor));
-         totalField = createTextField(150, 410, 200, 30,false);
+        totalField = createTextField(150, 410, 200, 30,false);
         bookPanel.add(totalField);
 
         return bookPanel;
@@ -101,23 +205,23 @@ public class IssueBookView extends JPanel {
 
 
         studentPanel.add(createLabelAtPosition("Student Name: ", 25, 250, 200, 30, labelColor));
-         studentNameField = createTextField(150, 250, 100, 30,false);
+        studentNameField = createTextField(150, 250, 100, 30,false);
         studentPanel.add(studentNameField);
 
         studentPanel.add(createLabelAtPosition("Contact Phone: ", 25, 290, 200, 30, labelColor));
-         contactPhoneField = createTextField(150, 290, 100, 30,false);
+        contactPhoneField = createTextField(150, 290, 100, 30,false);
         studentPanel.add(contactPhoneField);
 
         studentPanel.add(createLabelAtPosition("Contact Email: ", 25, 330, 200, 30, labelColor));
-         contactEmailField = createTextField(150, 330, 100, 30,false);
+        contactEmailField = createTextField(155, 320, 100, 50,false);
         studentPanel.add(contactEmailField);
 
         studentPanel.add(createLabelAtPosition("Major: ", 25, 370, 200, 30, labelColor));
-         majorField = createTextField(150, 370, 100, 30,false);
+        majorField = createTextField(150, 370, 100, 30,false);
         studentPanel.add(majorField);
 
         studentPanel.add(createLabelAtPosition("Branch: ", 25, 410, 200, 30, labelColor));
-         branchField = createTextField(150, 410, 100, 30,false);
+        branchField = createTextField(150, 410, 100, 30,false);
         studentPanel.add(branchField);
 
         return studentPanel;
@@ -289,41 +393,43 @@ public class IssueBookView extends JPanel {
         return imagePanel;
     }
 
-    public void updatePanel(){
-        //ArrayList<Issue> issueLisst = libraryModelManage.getIssuesList();
-         String bookID = this.bookIdField.getText()+"";
-         String studentID = this.studentIdField.getText()+"";
-         String issueDate = this.issueDateField.getText()+"";
-         String dueDate = this.dueDateField.getText()+"";
-         String status = "issued";
 
-         if(libraryModelManage.checkStudentAndBookEmpty(bookID, studentID)){
-             String issueId = this.libraryModelManage.creatIssueID();
-             Issue issue = new Issue(issueId, bookID, studentID, issueDate, dueDate, status);
-             this.libraryModelManage.addIssueToDatabase(issue);
 
-             Book book = libraryModelManage.searchBookByID(bookID);
-             Student student = libraryModelManage.searchStudentByID(studentID);
+    public void issueBook() {
+        String bookID = this.bookIdField.getText() + "";
+        String studentID = this.studentIdField.getText() + "";
+        String issueDateString = this.issueDateField.getText();
+        String dueDateString = this.dueDateField.getText();
+        String status = "issued";
 
-             if (book != null) {
-                 // Populate book fields
-                 bookTitleField.setText(book.getBookName());
-                 authorField.setText(book.getAuthor());
-                 languageField.setText(book.getLanguage());
-                 totalField.setText(book.getTotal()+"");
-             }
+        if (issueDateString.isEmpty() || dueDateString.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Issue Date and Due Date cannot be empty.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
-             if (student != null) {
-                 // Populate student fields
-                 studentNameField.setText(student.getName());
-                 contactPhoneField.setText(student.getPhone());
-                 contactEmailField.setText(student.getEmail());
-                 majorField.setText("Student");
-                 branchField.setText("Student");
-             }
+        Date issueDate = Date.valueOf(issueDateString);
+        Date dueDate = Date.valueOf(dueDateString);
 
-         }
+
+        if (libraryModelManage.checkStudentAndBookEmpty(bookID, studentID)) {
+            String issueId = this.libraryModelManage.creatIssueID();
+            Issue issue = new Issue(issueId, bookID, studentID, issueDate, dueDate, status);
+            this.libraryModelManage.addIssueToDatabase(issue);
+
+            updateBookStatus(bookID);
+        }
     }
+
+    private void updateBookStatus(String bookID) {
+        Book book = libraryModelManage.searchBookByID(bookID);
+        if (book != null) {
+            book.setCurent("Borrowed");
+            libraryModelManage.editBookInDatabase(book);
+        }
+    }
+
+
+
 
     public void removeData() {
         // Xóa thông tin sách
@@ -346,6 +452,28 @@ public class IssueBookView extends JPanel {
         dueDateField.setText("");
     }
 
+    public void setBookIdField(String bookId) {
+        if (this.bookIdField != null) {
+            this.bookIdField.setText(bookId); // Đặt giá trị chuỗi vào JTextField
+        }
+    }
+
+    public void setStudentIdField(String studentId) {
+        if (this.studentIdField != null) {
+            this.studentIdField.setText(studentId); // Đặt giá trị chuỗi vào JTextField
+        }
+    }
+
+
+
+    public void setDueDateField(String dueDate) {
+        this.dueDateField.setText(dueDate);
+    }
+
+
+    public void setIssueDateField(String issueDateField) {
+        this.issueDateField.setText(issueDateField);
+    }
 
     public JButton getDueDateButton() {
         return dueDateButton;

@@ -12,6 +12,7 @@ public class LibraryModelManage {
     private ArrayList<Admin> adminsList;
     private ArrayList<Issue> issuesList;
     private ArrayList<Reserve> reserveList;
+    private ArrayList<Signup> signupList;
 
     public LibraryModelManage() {
         booksList = new ArrayList<>();
@@ -19,6 +20,7 @@ public class LibraryModelManage {
         adminsList = new ArrayList<>();
         issuesList = new ArrayList<>();
         reserveList = new ArrayList<>();
+        signupList = new ArrayList<>();
     }
 
     // Quản lý sách
@@ -44,6 +46,29 @@ public class LibraryModelManage {
     public void editBookInDatabase(Book book) {
         BookDAO bookDAO = new BookDAO();
         bookDAO.editBook(book);
+        editBook(book);
+    }
+
+
+    public void editBook(Book updatedBook) {
+        if (updatedBook == null || updatedBook.getBookID() == null) {
+            System.out.println("Invalid book data.");
+            return;
+        }
+        for (Book book : booksList) {
+            if (book.getBookID().equals(updatedBook.getBookID())) {
+                book.setBookName(updatedBook.getBookName());
+                book.setAuthor(updatedBook.getAuthor());
+                book.setCurent(updatedBook.getCurent());
+                book.setImage(updatedBook.getImage());
+                book.setLanguage(updatedBook.getLanguage());
+                book.setTotal(updatedBook.getTotal());
+                book.setCategory(updatedBook.getCategory());
+                book.setPosition(updatedBook.getPosition());
+                book.setURL(updatedBook.getURL());
+                break;
+            }
+        }
     }
 
     public void deleteBookFromDatabase(String bookID) {
@@ -70,6 +95,7 @@ public class LibraryModelManage {
 
     public String creatBookID() {
         int newID = 1;
+        //ArrayList<Book> bookslist = getBooksList();
         Set<String> existingIDs = booksList.stream()
                 .map(Book::getBookID)
                 .collect(Collectors.toSet());
@@ -112,6 +138,7 @@ public class LibraryModelManage {
     public void editStudentInDatabase(Student student) {
         StudentDAO studentDAO = new StudentDAO();
         studentDAO.editStudent(student);
+        editStudent(student);
 
         // Cập nhật trong danh sách cục bộ
         studentsList.stream()
@@ -122,6 +149,27 @@ public class LibraryModelManage {
                     studentsList.set(index, student);
                 });
     }
+
+    public void editStudent(Student updatedStudent) {
+        if (updatedStudent == null || updatedStudent.getID() == null) {
+            System.out.println("Invalid student data.");
+            return;
+        }
+        for (Student student : studentsList) {
+            if (student.getID().equals(updatedStudent.getID())) {
+                student.setName(updatedStudent.getName());
+                student.setEmail(updatedStudent.getEmail());
+                student.setPassword(updatedStudent.getPassword());
+                student.setPhone(updatedStudent.getPhone());
+                student.setGender(updatedStudent.getGender());
+                student.setDateOfBirth(updatedStudent.getDateOfBirth());
+                student.setMajor(updatedStudent.getMajor());
+                student.setBranch(updatedStudent.getBranch());
+                break;
+            }
+        }
+    }
+
 
     // Xóa sinh viên
     public void deleteStudentFromDatabase(String studentID) {
@@ -219,7 +267,26 @@ public class LibraryModelManage {
     public void editIssueInDatabase(Issue issue) {
         IssueDAO issueDAO = new IssueDAO();
         issueDAO.editIssue(issue);
+        editIssue(issue);
     }
+    public void editIssue(Issue updatedIssue) {
+        if (updatedIssue == null || updatedIssue.getIssueID() == null) {
+            System.out.println("Invalid issue data.");
+            return;
+        }
+        for (Issue issue : issuesList) {
+            if (issue.getIssueID().equals(updatedIssue.getIssueID())) {
+                issue.setIssueBookID(updatedIssue.getIssueBookID());
+                issue.setIssueStudentID(updatedIssue.getIssueStudentID());
+                issue.setIssueDate(updatedIssue.getIssueDate());
+                issue.setDueDate(updatedIssue.getDueDate());
+                issue.setStatus(updatedIssue.getStatus());
+                break;
+            }
+        }
+
+    }
+
 
 
     public String creatIssueID() {
@@ -240,6 +307,16 @@ public class LibraryModelManage {
         return newIssueID;
     }
 
+    public Issue searchIssueByID(String issueID) {
+        for (Issue issue : getIssuesList()) {
+            if (issue.getIssueID().equals(issueID)) {
+                return issue;
+            }
+        }
+        return null;
+    }
+
+
     public boolean checkStudentAndBookEmpty(String bookID, String studentID) {
         ArrayList<Book> bookslist = getBooksList();
         boolean isBookPresent = bookslist.stream()
@@ -250,7 +327,7 @@ public class LibraryModelManage {
         }
 
         boolean isBookStill = bookslist.stream()
-                .anyMatch(book -> book.getBookID().equals(bookID) && "Still".equals(book.getCurent()));
+                .anyMatch(book -> book.getBookID().equals(bookID) && ("Still".equals(book.getCurent()) || "Reserved".equals(book.getCurent())));
         if (!isBookStill) {
             JOptionPane.showMessageDialog(null, "Book is not in 'Still' state.");
             return false;
@@ -283,7 +360,7 @@ public class LibraryModelManage {
                 return book;
             }
         }
-        return null; // Return null if the book is not found
+        return null;
     }
 
     public Student searchStudentByID(String studentID) {
@@ -329,6 +406,10 @@ public class LibraryModelManage {
         return null; // Return null if no matching issue is found
     }
 
+
+
+    // đăng kí mượn sách
+
     public ArrayList<Reserve> getReserveList() {
         if (reserveList.isEmpty()) {
             loadReservesFromDatabase();
@@ -360,9 +441,19 @@ public class LibraryModelManage {
                 return reserve;
             }
         }
-        JOptionPane.showMessageDialog(null, "Reserve not found.");
         return null;
     }
+
+    public Reserve searchReserveByBookID(String bookID) {
+        for (Reserve reserve : getReserveList()) {
+            if (reserve.getBookID().equals(bookID)) {
+                return reserve;
+            }
+        }
+        return null;
+    }
+
+
 
 
     public String createReserveID() {
@@ -381,6 +472,53 @@ public class LibraryModelManage {
             newID++;
         }
         return newReserveID;
+    }
+    public void reloadReserveList() {
+        loadReservesFromDatabase(); // Tải lại dữ liệu từ cơ sở dữ liệu
+    }
+
+
+
+
+
+    //    danh sách đăng kí
+    public ArrayList<Signup> getSignupList() {
+        if (signupList.isEmpty()) {
+            loadSignupsFromDatabase();
+        }
+        return signupList;
+    }
+
+    private void loadSignupsFromDatabase() {
+        SignupDAO signupDAO = new SignupDAO();
+        signupDAO.loadSignupsFromDatabase();
+        signupList = signupDAO.getSignupsList();
+    }
+
+    public void addSignupToDatabase(Signup signup) {
+        SignupDAO signupDAO = new SignupDAO();
+        signupDAO.addSignup(signup);
+        signupList.add(signup);
+    }
+
+    public void deleteSignupFromDatabase(String email) {
+        SignupDAO signupDAO = new SignupDAO();
+        signupDAO.deleteSignup(email);
+        signupList.removeIf(signup -> signup.getEmail().equals(email));
+    }
+
+    public Signup searchSignupByEmail(String email) {
+        for (Signup signup : getSignupList()) {
+            if (signup.getEmail().equals(email)) {
+                return signup;
+            }
+        }
+        return null;
+    }
+
+
+    public void reloadsignupList() {
+        loadSignupsFromDatabase(); // Tải lại dữ liệu từ cơ sở dữ liệu
     }
 
 
