@@ -1,6 +1,9 @@
 package UserAccount.view;
 
 import LoginPage.view.OvalButton;
+import MainApp.model.LibraryModelManage;
+import MainApp.model.Student;
+import MainApp.model.StudentDAO;
 import UserAccount.controller.AccountController;
 
 import javax.swing.*;
@@ -9,11 +12,29 @@ import java.awt.*;
 public class AccountView extends JPanel {
 
     private JButton passButton;
+    private LibraryModelManage libraryModelManage;
+    private Student student;
+    private JTextField txtEmail;
+    private JTextField txtUsername;
+    private JTextField txtGender;
+    private JTextField txtDob;
+    private JTextField txtMajor;
+    private JTextField txtBranch;
+    private JTextField txtPhone;
+    private JPasswordField txtCurrentPassword;
+    private JPasswordField txtNewPassword;
+    private JPasswordField txtConfirmPassword;
 
-    public AccountView() {
+
+    public AccountView(Student student, LibraryModelManage libraryModelManage) {
         this.setLayout(new BorderLayout());
         JLayeredPane layeredPane = createLayeredPane();
         this.add(layeredPane, BorderLayout.CENTER);
+        this.student = student;
+        this.libraryModelManage = libraryModelManage;
+        populateStudentData();
+
+
         new AccountController(this);
     }
 
@@ -61,37 +82,37 @@ public class AccountView extends JPanel {
 
         JLabel lblUsername = createLabel("Username:", new Font("Tahoma", Font.PLAIN, 14), 20, 50, 100, 20);
         panel.add(lblUsername);
-        JTextField txtUsername = createTextField("admin", 120, 50, 150, 25, false);
+         txtUsername = createTextField("admin", 120, 50, 150, 25, false);
         panel.add(txtUsername);
 
         JLabel lblGender = createLabel("Gender:", new Font("Tahoma", Font.PLAIN, 14), 20, 100, 100, 20);
         panel.add(lblGender);
-        JTextField txtGender = createTextField("Male", 120, 100, 150, 25, false);
+         txtGender = createTextField("Male", 120, 100, 150, 25, false);
         panel.add(txtGender);
 
         JLabel lblDob = createLabel("Date of Birth:", new Font("Tahoma", Font.PLAIN, 14), 20, 150, 100, 20);
         panel.add(lblDob);
-        JTextField txtDob = createTextField("15/10/2005", 120, 150, 150, 25, false);
+         txtDob = createTextField("15/10/2005", 120, 150, 150, 25, false);
         panel.add(txtDob);
 
         JLabel lblMajor = createLabel("Major:", new Font("Tahoma", Font.PLAIN, 14), 20, 200, 100, 20);
         panel.add(lblMajor);
-        JTextField txtMajor = createTextField("IT", 120, 200, 150, 25, false);
+         txtMajor = createTextField("IT", 120, 200, 150, 25, false);
         panel.add(txtMajor);
 
         JLabel lblBranch = createLabel("Branch:", new Font("Tahoma", Font.PLAIN, 14), 20, 250, 100, 20);
         panel.add(lblBranch);
-        JTextField txtBranch = createTextField("UET", 120, 250, 150, 25, false);
+         txtBranch = createTextField("UET", 120, 250, 150, 25, false);
         panel.add(txtBranch);
 
         JLabel lblPhone = createLabel("Contact Number:", new Font("Tahoma", Font.PLAIN, 14), 20, 300, 150, 20);
         panel.add(lblPhone);
-        JTextField txtPhone = createTextField("0123456789", 170, 300, 150, 25, false);
+         txtPhone = createTextField("0123456789", 170, 300, 150, 25, false);
         panel.add(txtPhone);
 
         JLabel lblEmail = createLabel("Email:", new Font("Tahoma", Font.PLAIN, 14), 20, 350, 100, 20);
         panel.add(lblEmail);
-        JTextField txtEmail = createTextField("admin@example.com", 120, 350, 150, 25, false);
+         txtEmail = createTextField("admin@example.com", 120, 350, 150, 25, false);
         panel.add(txtEmail);
 
         return panel;
@@ -110,17 +131,17 @@ public class AccountView extends JPanel {
 
         JLabel lblCurrentPassword = createLabel("Current Password:", new Font("Tahoma", Font.PLAIN, 14), 20, 50, 150, 20);
         panel.add(lblCurrentPassword);
-        JPasswordField txtCurrentPassword = createPasswordField(150, 50, 150, 25);
+         txtCurrentPassword = createPasswordField(150, 50, 150, 25);
         panel.add(txtCurrentPassword);
 
         JLabel lblNewPassword = createLabel("New Password:", new Font("Tahoma", Font.PLAIN, 14), 20, 100, 150, 20);
         panel.add(lblNewPassword);
-        JPasswordField txtNewPassword = createPasswordField(150, 100, 150, 25);
+         txtNewPassword = createPasswordField(150, 100, 150, 25);
         panel.add(txtNewPassword);
 
         JLabel lblConfirmPassword = createLabel("Confirm New Password:", new Font("Tahoma", Font.PLAIN, 14), 20, 150, 150, 20);
         panel.add(lblConfirmPassword);
-        JPasswordField txtConfirmPassword = createPasswordField(180, 150, 150, 25);
+         txtConfirmPassword = createPasswordField(180, 150, 150, 25);
         panel.add(txtConfirmPassword);
 
         passButton=createButton("SUBMIT");
@@ -164,8 +185,70 @@ public class AccountView extends JPanel {
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
         return button;
     }
+    private void populateStudentData() {
+        if (student != null) {
+            txtUsername.setText(student.getName());
+
+            txtGender.setText(student.getGender() ? "Male" : "Female"); // Hiển thị "Nam" nếu true, "Nữ" nếu false
+            txtMajor.setText(student.getMajor());
+            txtDob.setText(student.getDateOfBirth());
+            txtBranch.setText(student.getBranch());
+            txtPhone.setText(student.getPhone());
+            txtEmail.setText(student.getEmail());
+        } else {
+            System.out.println("Student data is null.");
+        }
+    }
 
     public JButton getPassButton() {
         return passButton;
     }
+    public void addChangePasswordListener() {
+        if (student == null || student.getPassword() == null) {
+            JOptionPane.showMessageDialog(this, "Cannot change the password as student information is invalid.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        String currentPassword = new String(txtCurrentPassword.getPassword());
+        String newPassword = new String(txtNewPassword.getPassword());
+        String confirmPassword = new String(txtConfirmPassword.getPassword());
+
+        if (!currentPassword.equals(student.getPassword())) {
+            JOptionPane.showMessageDialog(this, "Current password is incorrect.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        String validationMessage = validatePassword(newPassword);
+        if (validationMessage != null) {
+            JOptionPane.showMessageDialog(this, validationMessage, "Invalid Password", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        if (!newPassword.equals(confirmPassword)) {
+            JOptionPane.showMessageDialog(this, "New password and confirmation password do not match.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        student.setPassword(newPassword);
+        StudentDAO studentDAO = new StudentDAO();
+        studentDAO.editStudent(student);
+
+        JOptionPane.showMessageDialog(this, "Password successfully changed!", "Success", JOptionPane.INFORMATION_MESSAGE);
+
+        txtCurrentPassword.setText("");
+        txtNewPassword.setText("");
+        txtConfirmPassword.setText("");
+    }
+
+    private String validatePassword(String password) {
+        if (password.length() < 8 ||
+                !password.matches(".*[a-z].*") ||
+                !password.matches(".*[A-Z].*") ||
+                !password.matches(".*[0-9].*") ||
+                !password.matches(".*[!@#$%^&*(),.?\":{}|<>].*")) {
+            return "Password must be at least 8 characters long and include uppercase letters, lowercase letters, numbers, and special characters!";
+        }
+        return null; // Không có lỗi
+    }
+
 }
