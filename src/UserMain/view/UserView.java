@@ -58,7 +58,6 @@ public class UserView extends JPanel {
         this.libraryModelManage = libraryModelManage;
         this.student = student;
         this.mainView = mainView;
-        this.mainView = mainView;
         init();
         new UserController(this);
 
@@ -798,21 +797,11 @@ public class UserView extends JPanel {
         return hamburgerButton;
     }
 
-    public JMenuBar getMenuBar() {
-        return menuBar;
-    }
-
-    public boolean isMenuVisible() {
-        return isMenuVisible;
-    }
 
     public JPanel getMainHomePanel() {
         return mainHomePanel;
     }
 
-    public JPanel getHomePagePanel() {
-        return homePagePanel;
-    }
 
     public JMenu getjMenuHomePage() {
         return jMenuHomePage;
@@ -834,91 +823,13 @@ public class UserView extends JPanel {
         return jMenuOut;
     }
 
-    public void setMainView(MainView mainView) {
-        this.mainView = mainView;
-    }
-
-    public void setHamburgerButton(JButton hamburgerButton) {
-        this.hamburgerButton = hamburgerButton;
-    }
-
-    public void setMenuBar(JMenuBar menuBar) {
-        this.menuBar = menuBar;
-    }
-
-    public void setMenuVisible(boolean menuVisible) {
-        isMenuVisible = menuVisible;
-    }
 
 
-
-
-    public void setHomePagePanel(JPanel homePagePanel) {
-        this.homePagePanel = homePagePanel;
-    }
-
-    public void setjMenuHomePage(JMenu jMenuHomePage) {
-        this.jMenuHomePage = jMenuHomePage;
-    }
-
-    public void setjMenuHistory(JMenu jMenuHistory) {
-        this.jMenuHistory = jMenuHistory;
-    }
-
-
-
-    public void setjMenuInfo(JMenu jMenuInfo) {
-        this.jMenuInfo = jMenuInfo;
-    }
-
-
-    public void setjMenuOut(JMenu jMenuOut) {
-        this.jMenuOut = jMenuOut;
-    }
-
-    public void setTxtBookId(JTextField txtBookId) {
-        this.txtBookId = txtBookId;
-    }
-
-    public void setTxtBookName(JTextField txtBookName) {
-        this.txtBookName = txtBookName;
-    }
-
-    public void setTxtAuthor(JTextField txtAuthor) {
-        this.txtAuthor = txtAuthor;
-    }
-
-    public void setTxtGenre(JTextField txtGenre) {
-        this.txtGenre = txtGenre;
-    }
-
-    public void setCboGenre(JComboBox<String> cboGenre) {
-        this.cboGenre = cboGenre;
-    }
-
-    public void setBookTableView(BaseBookTableView bookTableView) {
-        this.bookTableView = bookTableView;
-    }
-
-    public void setModelCart(DefaultTableModel modelCart) {
-        this.modelCart = modelCart;
-    }
-
-    public void setTableCart(JTable tableCart) {
-        this.tableCart = tableCart;
-    }
 
     public void setLibraryModelManage(LibraryModelManage libraryModelManage) {
         this.libraryModelManage = libraryModelManage;
     }
 
-    public void setBtnRegister(JButton btnRegister) {
-        this.btnRegister = btnRegister;
-    }
-
-    public void setBtnSearch(JButton btnSearch) {
-        this.btnSearch = btnSearch;
-    }
 
     public JTextField getTxtBookId() {
         return txtBookId;
@@ -928,29 +839,6 @@ public class UserView extends JPanel {
         return txtBookName;
     }
 
-    public JTextField getTxtAuthor() {
-        return txtAuthor;
-    }
-
-    public JTextField getTxtGenre() {
-        return txtGenre;
-    }
-
-    public JComboBox<String> getCboGenre() {
-        return cboGenre;
-    }
-
-    public BaseBookTableView getBookTableView() {
-        return bookTableView;
-    }
-
-    public DefaultTableModel getModelCart() {
-        return modelCart;
-    }
-
-    public JTable getTableCart() {
-        return tableCart;
-    }
 
     public LibraryModelManage getLibraryModelManage() {
         return libraryModelManage;
@@ -979,9 +867,7 @@ public class UserView extends JPanel {
         };
 
     }
-    private void configurePanel(JPanel panel, int x, int y, int width, int height) {
-        panel.setBounds(x, y, width, height);
-    }
+
     private BufferedImage generateQRCodeImage(String text, int width, int height) throws WriterException {
         QRCodeWriter qrCodeWriter = new QRCodeWriter();
         BitMatrix bitMatrix = qrCodeWriter.encode(text, BarcodeFormat.QR_CODE, width, height);
