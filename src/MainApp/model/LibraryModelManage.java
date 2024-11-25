@@ -444,6 +444,17 @@ public class LibraryModelManage {
         return null;
     }
 
+    public Reserve searchReserveByBookID(String bookID) {
+        for (Reserve reserve : getReserveList()) {
+            if (reserve.getBookID().equals(bookID)) {
+                return reserve;
+            }
+        }
+        return null;
+    }
+
+
+
 
     public String createReserveID() {
         int newID = 1;

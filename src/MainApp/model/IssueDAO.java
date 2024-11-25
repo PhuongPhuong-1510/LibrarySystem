@@ -38,7 +38,7 @@ public class IssueDAO {
     }
 
     public void addIssue(Issue issue) {
-        String query = "INSERT INTO issue (issueID, bookID, id, issueDate, dueDate, status) VALUES (?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO issue (issueID, bookID, id, isueDate, dueDate, status) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {

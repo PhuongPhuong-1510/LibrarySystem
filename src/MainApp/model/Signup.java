@@ -9,13 +9,13 @@ public class Signup {
     private String phone;
     private boolean gender;
     private String cardImage;
-    private Date dateBirth;
+    private String dateBirth;
     private String major;
     private String branch;
 
     // Constructor
     public Signup(String name, String email, String password, String phone, boolean gender,
-                  String cardImage, Date dateBirth, String major, String branch) {
+                  String cardImage, String dateBirth, String major, String branch) {
         this.name = name;
         this.email = email;
         this.password = password;
@@ -46,8 +46,8 @@ public class Signup {
     public String getCardImage() { return cardImage; }
     public void setCardImage(String cardImage) { this.cardImage = cardImage; }
 
-    public Date getDateBirth() { return dateBirth; }
-    public void setDateBirth(Date dateBirth) { this.dateBirth = dateBirth; }
+    public String getDateBirth() { return dateBirth; }
+    public void setDateBirth(String dateBirth) { this.dateBirth = dateBirth; }
 
     public String getMajor() { return major; }
     public void setMajor(String major) { this.major = major; }

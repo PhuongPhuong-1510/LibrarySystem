@@ -21,6 +21,7 @@ import HomePage.view.HomePageView;
 import IssueBook.view.AppContext;
 import IssueBook.view.IssueBookView;
 import LMSNotification.controller.NotificationController;
+import MainApp.model.Book;
 import MainApp.model.LibraryModelManage;
 import MainApp.model.Reserve;
 
@@ -249,8 +250,8 @@ public class NotificationView extends JPanel {
 
 
                 HomePageView homePageView = AppContext.getInstance().getHomePageView();
-                LibraryModelManage libraryModelManage = new LibraryModelManage();
                 IssueBookView issueBookView = new IssueBookView(libraryModelManage);
+                issueBookView.updateBookAndStudentInfo(bookId, studentId);
                 issueBookView.setBookIdField(bookId);
                 issueBookView.setStudentIdField(studentId);
                 String issueDate = dateFormat.format(calendar.getTime());
@@ -275,43 +276,9 @@ public class NotificationView extends JPanel {
         }
     }
     public void removeReserveByStudentAndBookId(String studentId, String bookId) {
-        Connection connection = null;
-        PreparedStatement preparedStatement = null;
-
-        try {
-            connection = DriverManager.getConnection("jdbc:sqlite:resources/librarymanage.db");
-
-            String sql = "DELETE FROM reserve WHERE id = ? AND bookId = ?";
-            preparedStatement = connection.prepareStatement(sql);
-
-            preparedStatement.setString(1, studentId);
-            preparedStatement.setString(2, bookId);
-
-            int rowsAffected = preparedStatement.executeUpdate();
-            if (rowsAffected > 0) {
-                System.out.println("Successfully removed the reservation from the database.");
-            } else {
-                System.out.println("No matching reservation found.");
-            }
-
-            libraryModelManage.reloadReserveList();  // Giả sử bạn có phương thức này trong libraryModelManage để tải lại danh sách
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            System.out.println("An error occurred while removing the reserve: " + e.getMessage());
-        } finally {
-            // Đóng kết nối và PreparedStatement
-            try {
-                if (preparedStatement != null) {
-                    preparedStatement.close();
-                }
-                if (connection != null) {
-                    connection.close();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
+        Reserve reserve = libraryModelManage.searchReserveByBookID(bookId);
+        String reserveID = reserve.getReserveID();
+        libraryModelManage.deleteReserveFromDatabase(reserveID);
     }
 
     public void refreshReserveTable() {

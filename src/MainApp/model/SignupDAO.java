@@ -23,7 +23,7 @@ public class SignupDAO {
                 String phone = resultSet.getString("phone");
                 boolean gender = "Male".equalsIgnoreCase(resultSet.getString("gender"));
                 String cardPhoto = resultSet.getString("cardImage");
-                Date dateOfBirth = resultSet.getDate("dateBirth");
+                String dateOfBirth = resultSet.getString("dateBirth");
                 String major = resultSet.getString("major");
                 String branch = resultSet.getString("branch");
 
@@ -52,7 +52,7 @@ public class SignupDAO {
             preparedStatement.setString(4, signup.getPhone());
             preparedStatement.setString(5, signup.getGender() ? "Male" : "Female");
             preparedStatement.setString(6, signup.getCardImage());
-            preparedStatement.setDate(7, signup.getDateBirth());
+            preparedStatement.setString(7, signup.getDateBirth());
             preparedStatement.setString(8, signup.getMajor());
             preparedStatement.setString(9, signup.getBranch());
 
