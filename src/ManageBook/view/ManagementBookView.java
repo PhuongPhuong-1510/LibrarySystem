@@ -1,6 +1,5 @@
 package ManageBook.view;
 
-import API.ChiTietController;
 import MainApp.model.Book;
 import MainApp.model.LibraryModelManage;
 import ManageBook.controller.ManagementBookController;
@@ -74,7 +73,7 @@ public class ManagementBookView extends JPanel {
             protected void setTableColumnWidths(JTable table) {
                 TableColumn column;
 
-                int[] columnWidths = {85, 250, 120, 110, 110, 100, 95, 95, 90, 135};
+                int[] columnWidths = {85, 250, 120, 110, 110, 100, 95, 95, 90, 130};
 
                 for (int i = 0; i < table.getColumnCount(); i++) {
                     column = table.getColumnModel().getColumn(i);
@@ -184,7 +183,7 @@ public class ManagementBookView extends JPanel {
         JButton editButton = createActionButton("/ManageBook/icon/bookEdit.png", new Color(255, 240, 245));
         JButton deleteButton = createActionButton("/ManageBook/icon/bookDelete.png", new Color(255, 240, 245));
         JButton imageButton = createActionButton("/ManageBook/icon/uploadImage.png", new Color(255, 240, 245));
-        JButton QRcodeButton = createActionButton("/ManageBook/icon/qr1.png", new Color(255, 240, 245));
+        JButton QRcodeButton = createActionButton("/ManageBook/icon/qrcode.png", new Color(255, 240, 245));
 
         editButton.setToolTipText("Edit Book");
         deleteButton.setToolTipText("Delete Book");
@@ -231,59 +230,27 @@ public class ManagementBookView extends JPanel {
             Book book = libraryModelManage.searchBookByID(bookID);
             String URL = book.getURL();
 
-
-
             JFrame qrCodeFrame = new JFrame("Book ID");
-            qrCodeFrame.setSize(360, 400);
-            qrCodeFrame.setUndecorated(true); // Loại bỏ viền cửa sổ
-            qrCodeFrame.setBackground(new Color(0, 0, 0, 0)); // Làm trong suốt toàn bộ JFrame
+            qrCodeFrame.setSize(400, 300);
             qrCodeFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            qrCodeFrame.setLocationRelativeTo(null); // Đặt giữa màn hình
+            qrCodeFrame.setLocationRelativeTo(null);
 
-            JPanel qrCodePanel = new JPanel() {
-                @Override
-                protected void paintComponent(Graphics g) {
-                    super.paintComponent(g);
-                    // Không vẽ nền gì thêm để đảm bảo trong suốt
-                }
-            };
-            qrCodePanel.setOpaque(false);
-            qrCodePanel.setLayout(null);
-
-            JLayeredPane layeredPane = new JLayeredPane();
-            layeredPane.setLayout(null);
-            layeredPane.setSize(360, 400);
-
-            JPanel backgroundPanel = createBackgroundPanel("/ManageBook/icon/qrbg.png"); // Hàm tạo JPanel với ảnh nền
-            backgroundPanel.setOpaque(false);
-            backgroundPanel.setBounds(0, 0, 360, 360);
-
-            layeredPane.add(backgroundPanel, Integer.valueOf(0));
+            JPanel qrCodePanel = new JPanel();
+            qrCodePanel.setSize( 200, 200);
 
             try {
-                BufferedImage qrCodeImage = generateQRCodeImage(URL, 220, 220); // Tạo ảnh QR code
+                String bookLink = URL;
+                System.out.println(bookLink);
+                BufferedImage qrCodeImage = generateQRCodeImage(bookLink, 200, 200);
                 JLabel lblQRCode = new JLabel(new ImageIcon(qrCodeImage));
-                lblQRCode.setBounds(72, 98, 220, 220); // Đặt vị trí và kích thước
                 qrCodePanel.add(lblQRCode);
             } catch (Exception k) {
                 JLabel lblQRCode = new JLabel("QR Code Error");
-                lblQRCode.setForeground(Color.RED);
                 qrCodePanel.add(lblQRCode);
                 k.printStackTrace();
             }
-
-            qrCodePanel.setBounds(0, 0, 360, 400);
-            layeredPane.add(qrCodePanel, Integer.valueOf(1));
-
-            JButton closeButton = createButton("X", 310, 7);
-            qrCodePanel.add(closeButton);
-            closeButton.addActionListener(e1 -> qrCodeFrame.dispose());
-
-
-
-            qrCodeFrame.add(layeredPane);
+            qrCodeFrame.add(qrCodePanel);
             qrCodeFrame.setVisible(true);
-
         });
 
         GridBagConstraints gbc = new GridBagConstraints();
@@ -301,7 +268,11 @@ public class ManagementBookView extends JPanel {
         return actionPanel;
     }
 
-
+    private BufferedImage generateQRCodeImage(String text, int width, int height) throws WriterException {
+        QRCodeWriter qrCodeWriter = new QRCodeWriter();
+        BitMatrix bitMatrix = qrCodeWriter.encode(text, BarcodeFormat.QR_CODE, width, height);
+        return MatrixToImageWriter.toBufferedImage(bitMatrix);
+    }
 
 
 
@@ -511,92 +482,4 @@ public class ManagementBookView extends JPanel {
         bookTableView.revalidate();
         bookTableView.repaint();
     }
-    private JPanel createBackgroundPanel(String path) {
-        return new JPanel() {
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                ImageIcon backgroundIcon = new ImageIcon(getClass().getResource(path));
-                g.drawImage(backgroundIcon.getImage(), 0, 0, getWidth(), getHeight(), this);
-            }
-        };
-
-    }
-    private void configurePanel(JPanel panel, int x, int y, int width, int height) {
-        panel.setBounds(x, y, width, height);
-    }
-    private BufferedImage generateQRCodeImage(String text, int width, int height) throws WriterException {
-        QRCodeWriter qrCodeWriter = new QRCodeWriter();
-        BitMatrix bitMatrix = qrCodeWriter.encode(text, BarcodeFormat.QR_CODE, width, height);
-
-        int[] enclosingRectangle = findEnclosingRectangle(bitMatrix);
-
-        int x = enclosingRectangle[0];
-        int y = enclosingRectangle[1];
-        int qrWidth = enclosingRectangle[2];
-        int qrHeight = enclosingRectangle[3];
-
-        BitMatrix croppedMatrix = cropBitMatrix(bitMatrix, x, y, qrWidth, qrHeight);
-
-        BufferedImage image = new BufferedImage(qrWidth, qrHeight, BufferedImage.TYPE_INT_RGB);
-        int greenColor = new Color(84, 255, 159).getRGB();
-        int whiteColor = Color.WHITE.getRGB();
-
-        for (int i = 0; i < qrWidth; i++) {
-            for (int j = 0; j < qrHeight; j++) {
-                // Sử dụng mã màu
-                image.setRGB(i, j, croppedMatrix.get(i, j) ? greenColor : whiteColor);
-            }
-        }
-
-        return image;
-    }
-
-
-    private BitMatrix cropBitMatrix(BitMatrix bitMatrix, int x, int y, int width, int height) {
-        BitMatrix croppedMatrix = new BitMatrix(width, height);
-        for (int i = 0; i < width; i++) {
-            for (int j = 0; j < height; j++) {
-                if (bitMatrix.get(x + i, y + j)) {
-                    croppedMatrix.set(i, j);
-                }
-            }
-        }
-        return croppedMatrix;
-    }
-
-    // Hàm tìm vùng bao quanh nội dung QR Code
-    private int[] findEnclosingRectangle(BitMatrix bitMatrix) {
-        int top = Integer.MAX_VALUE;
-        int left = Integer.MAX_VALUE;
-        int bottom = Integer.MIN_VALUE;
-        int right = Integer.MIN_VALUE;
-
-        for (int y = 0; y < bitMatrix.getHeight(); y++) {
-            for (int x = 0; x < bitMatrix.getWidth(); x++) {
-                if (bitMatrix.get(x, y)) {
-                    if (x < left) left = x;
-                    if (y < top) top = y;
-                    if (x > right) right = x;
-                    if (y > bottom) bottom = y;
-                }
-            }
-        }
-
-        return new int[]{left, top, right - left + 1, bottom - top + 1};
-    }
-    private JButton createButton(String text, int x, int y) {
-        JButton button = new JButton(text);
-        button.setFont(new Font("Tahoma", Font.BOLD, 18));
-        button.setForeground(Color.WHITE);
-        button.setBackground(new Color(84, 255, 159));
-        button.setOpaque(true);
-        button.setBorderPainted(false);
-        button.setFocusPainted(false);
-        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        button.setToolTipText("CLOSE");
-        button.setBounds(x, y, 50, 50); // Size and position of the button
-        return button;
-    }
-
 }

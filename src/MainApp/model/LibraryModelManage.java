@@ -327,7 +327,7 @@ public class LibraryModelManage {
         }
 
         boolean isBookStill = bookslist.stream()
-                .anyMatch(book -> book.getBookID().equals(bookID) && "Still".equals(book.getCurent()));
+                .anyMatch(book -> book.getBookID().equals(bookID) && ("Still".equals(book.getCurent()) || "Reserved".equals(book.getCurent())));
         if (!isBookStill) {
             JOptionPane.showMessageDialog(null, "Book is not in 'Still' state.");
             return false;
@@ -340,8 +340,6 @@ public class LibraryModelManage {
             JOptionPane.showMessageDialog(null, "Student not found.");
             return false;
         }
-        JOptionPane.showMessageDialog(null, "Book has been successfully borrowed.");
-
 
         bookslist.stream()
                 .filter(book -> book.getBookID().equals(bookID))
