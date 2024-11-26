@@ -2,9 +2,7 @@ package HomePage.view;
 
 import HomePage.controller.HomePageController;
 import HomePage.model.HomePageModel;
-import MainApp.model.Book;
-import MainApp.model.LibraryModelManage;
-import MainApp.model.Student;
+import MainApp.model.*;
 import MainApp.view.MainView;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -175,7 +173,7 @@ public class HomePageView extends JPanel {
         infoPanel.setPreferredSize(new Dimension(getWidth(), 150));
         infoPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        String[] infoTitles = {"No Of Books", "No Of Students", "Issued Books", "Defaulter List"};
+        String[] infoTitles = {"No Of Books", "No Of Students", "Issued Books", "No Of Admins"};
         String[] icons = {
                 "/HomePage/view/icon/icons8_Book_Shelf_50px.png",
                 "/HomePage/view/icon/icons8_People_50px.png",
@@ -187,18 +185,20 @@ public class HomePageView extends JPanel {
             String count = "";
             switch (i) {
                 case 0:
-                    ArrayList<Student> students = this.libraryModelManage.getStudentsList();
-                    count = String.valueOf(students.size());
-                    break;
-                case 1:
                     ArrayList<Book> books = this.libraryModelManage.getBooksList();
                     count = String.valueOf(books.size());
                     break;
+                case 1:
+                    ArrayList<Student> students = this.libraryModelManage.getStudentsList();
+                    count = String.valueOf(students.size());
+                    break;
                 case 2:
-                    count = "10";
+                    ArrayList<Issue> issues = this.libraryModelManage.getIssuesList();
+                    count = String.valueOf(issues.size());
                     break;
                 case 3:
-                    count = "10";
+                    ArrayList<Admin> admins = this.libraryModelManage.getAdminsList();
+                    count = String.valueOf(admins.size());
                     break;
             }
             infoPanel.add(createInfoTile(infoTitles[i], icons[i], i % 2 == 0, count));
@@ -229,26 +229,7 @@ public class HomePageView extends JPanel {
     }
 
     private JPanel createStudentDetails() {
-        if (this.libraryModelManage == null) {
-            throw new IllegalStateException("LibraryModelManage chưa được khởi tạo!");
-        }
-        String[] studentColumnNames = {"Student ID", "Student Name", "Student Email", "Contact Number"};
 
-        ArrayList<Student> students = this.libraryModelManage.getStudentsList();
-        Object[][] studentData = new Object[students.size()][4];
-
-        for (int i = 0; i < students.size(); i++) {
-            Student student = students.get(i);
-            studentData[i][0] = student.getID();
-            studentData[i][1] = student.getName();
-            studentData[i][2] = student.getEmail();
-            studentData[i][3] = student.getPhone();
-        }
-        
-        return createTablePanel(studentData, studentColumnNames, 5,"Student Details");
-    }
-
-    private JPanel createBookDetailsTable() {
         if (this.libraryModelManage == null) {
             throw new IllegalStateException("LibraryModelManage chưa được khởi tao!");
         }
@@ -266,6 +247,27 @@ public class HomePageView extends JPanel {
         }
 
         return createTablePanel(bookData, bookColumnNames, 5,"Book Details");
+    }
+
+    private JPanel createBookDetailsTable() {
+
+        if (this.libraryModelManage == null) {
+            throw new IllegalStateException("LibraryModelManage chưa được khởi tạo!");
+        }
+        String[] studentColumnNames = {"Student ID", "Student Name", "Student Email", "Contact Number"};
+
+        ArrayList<Student> students = this.libraryModelManage.getStudentsList();
+        Object[][] studentData = new Object[students.size()][4];
+
+        for (int i = 0; i < students.size(); i++) {
+            Student student = students.get(i);
+            studentData[i][0] = student.getID();
+            studentData[i][1] = student.getName();
+            studentData[i][2] = student.getEmail();
+            studentData[i][3] = student.getPhone();
+        }
+
+        return createTablePanel(studentData, studentColumnNames, 5,"Student Details");
     }
 
     private JPanel createTablePanel(Object[][] data, String[] columnNames, int rowCount,String title) {
@@ -379,6 +381,7 @@ public class HomePageView extends JPanel {
     }
     private JPanel createPieChart()
     {
+        ArrayList<Issue> issues = this.libraryModelManage.getIssuesList();
         JPanel jPanel=new JPanel();
         jPanel.setLayout(new BorderLayout());
         double[] values = {30,
