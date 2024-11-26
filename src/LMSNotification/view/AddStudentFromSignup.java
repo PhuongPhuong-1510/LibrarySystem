@@ -119,6 +119,7 @@ public class AddStudentFromSignup extends JFrame {
 
         btnSubmit.addActionListener(e->{
             Student student = getStudentFromPanel();
+            this.setVisible(false);
         });
 
 
@@ -203,6 +204,12 @@ public class AddStudentFromSignup extends JFrame {
                 : "/ManageStudent/view/icon/girlicon.png";
 
         Student student = new Student(id, name, email, password, phone, gender, cardPhoto, dateOfBirth, major, branch);
+        JOptionPane.showMessageDialog(
+                this,
+                "Add student successfully",
+                "Success",
+                JOptionPane.INFORMATION_MESSAGE
+        );
         libraryModelManage.addStudentToDatabase(student);
 
         return student;

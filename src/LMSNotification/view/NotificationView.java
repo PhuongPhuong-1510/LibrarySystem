@@ -134,8 +134,8 @@ public class NotificationView extends JPanel {
                 for (Signup signup : signups) {
                     if (signup != null) {
                         String stringSignupNoti = "<html>STUDENT SIGNUP WITH EMAIL " + signup.getEmail() +
-                                " REQUESTED TO BORROW BOOK WITH ID " + signup.getName() +
-                                "<br>REGISTERED " + 11 + " DAYS AGO</html>";
+                                " AND NAME " + signup.getName() +
+                                "<br> " + 11 + " DAYS AGO</html>";
                         listNoti.add(stringSignupNoti);
                     }
                 }
