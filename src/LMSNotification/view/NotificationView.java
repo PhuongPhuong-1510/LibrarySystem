@@ -28,7 +28,6 @@ import MainApp.model.Reserve;
 import MainApp.model.Signup;
 import ManageStudent.controller.AddStudentController;
 import ManageStudent.controller.StudentController;
-import ManageStudent.view.AddStudentView;
 import ManageStudent.view.ManagementStudentView;
 
 public class NotificationView extends JPanel {
