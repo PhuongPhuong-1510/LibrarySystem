@@ -23,7 +23,7 @@ public class HomePageController implements ActionListener, MouseListener {
 
 
     public HomePageController(HomePageView homePageView) {
-        this.libraryModelManage = new LibraryModelManage();
+        this.libraryModelManage = homePageView.getMainView().getLibraryModelManage();
         this.homePageView = homePageView;
         AppContext.getInstance().setHomePageView(homePageView);
         initializeListeners();
@@ -133,7 +133,6 @@ public class HomePageController implements ActionListener, MouseListener {
                         }
                         if(menu==homePageView.getjMenuLMSDashBoard())
                         {
-                            LibraryModelManage libraryModelManage = new LibraryModelManage();
                             System.out.println(("LMS Notification Button clicked"));
                             NotificationView notificationView = new NotificationView(libraryModelManage);
                             homePageView.toggleMenuBar();

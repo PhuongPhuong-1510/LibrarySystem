@@ -2,12 +2,14 @@ package SignupPage.view;
 
 import LoginPage.view.OvalButton;
 import LoginPage.view.PlaceholderPasswordField;
+import MainApp.model.Signup;
 import MainApp.model.Student;
 import MainApp.view.MainView;
 import SignupPage.model.SignupModel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.sql.Date;
 
 public class SignupView extends JPanel {
     private SignupModel signupModel;
@@ -234,18 +236,17 @@ public class SignupView extends JPanel {
         }
     }
 
-    public Student getStudentFromPanel() {
-        String id = mainView.libraryModelManage.createStudentID();
+    public Signup getSignupFromPanel() {
         String fullName = txtFullName.getText().trim();
         String userName = txtUserName.getText().trim();
         String password = txtPassWord.getText().trim();
         String contactNumber = txtContactNumber.getText().trim();
-        String date = txtDateOfBirth.getText().trim();
+        String dateStr = txtDateOfBirth.getText().trim();
         String gender = (String) cmbUserType.getSelectedItem();
 
         boolean isMale = gender != null && gender.equalsIgnoreCase("Male");
 
-        return new Student(id, fullName, userName, password, contactNumber, isMale, "", date, "", "");
+        return new Signup(fullName, userName, password, contactNumber, isMale, "", dateStr, "", "");
     }
 
     public JButton getLoginButton() {

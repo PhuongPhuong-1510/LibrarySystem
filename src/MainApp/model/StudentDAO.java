@@ -9,6 +9,7 @@ public class StudentDAO {
 
     // Phương thức tải danh sách sinh viên từ cơ sở dữ liệu
     public void loadStudentsFromDatabase() {
+
         try (Connection connection = DatabaseConnection.getConnection();
              Statement statement = connection.createStatement()) {
 

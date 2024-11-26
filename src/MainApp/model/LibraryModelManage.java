@@ -327,7 +327,7 @@ public class LibraryModelManage {
         }
 
         boolean isBookStill = bookslist.stream()
-                .anyMatch(book -> book.getBookID().equals(bookID) && "Still".equals(book.getCurent()));
+                .anyMatch(book -> book.getBookID().equals(bookID) && ("Still".equals(book.getCurent()) || "Reserved".equals(book.getCurent())));
         if (!isBookStill) {
             JOptionPane.showMessageDialog(null, "Book is not in 'Still' state.");
             return false;
@@ -444,6 +444,17 @@ public class LibraryModelManage {
         return null;
     }
 
+    public Reserve searchReserveByBookID(String bookID) {
+        for (Reserve reserve : getReserveList()) {
+            if (reserve.getBookID().equals(bookID)) {
+                return reserve;
+            }
+        }
+        return null;
+    }
+
+
+
 
     public String createReserveID() {
         int newID = 1;
@@ -496,7 +507,7 @@ public class LibraryModelManage {
         signupList.removeIf(signup -> signup.getEmail().equals(email));
     }
 
-    public Signup searchSignupByID(String email) {
+    public Signup searchSignupByEmail(String email) {
         for (Signup signup : getSignupList()) {
             if (signup.getEmail().equals(email)) {
                 return signup;

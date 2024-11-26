@@ -35,48 +35,118 @@ public class IssueBookView extends JPanel {
 
 
     public IssueBookView(LibraryModelManage libraryModelManage) {
+        if (libraryModelManage == null) {
+            throw new IllegalArgumentException("LibraryModelManage cannot be null");
+        }
+        this.libraryModelManage = libraryModelManage;
+
         setupMainPanel();
         add(createBookPanel());
         add(createStudentPanel());
         add(createIssuePanel());
         setVisible(true);
         new IssueBookController(this);
-        this.libraryModelManage = libraryModelManage;
 
-        bookIdField.getDocument().addDocumentListener(new DocumentListener() {
+        bookIdField.addKeyListener(new java.awt.event.KeyAdapter() {
             @Override
-            public void insertUpdate(DocumentEvent e) {
-                updateBookAndStudentInfo();  // Tìm kiếm và cập nhật khi có thay đổi
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                updateBookAndStudentInfo();  // Cập nhật khi xóa ký tự
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                updateBookAndStudentInfo();  // Cập nhật khi có thay đổi
+            public void keyPressed(java.awt.event.KeyEvent e) {
+                if (e.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
+                    updateBookInfo(); // Chỉ cập nhật thông tin sách
+                }
             }
         });
 
-        studentIdField.getDocument().addDocumentListener(new DocumentListener() {
+        studentIdField.addKeyListener(new java.awt.event.KeyAdapter() {
             @Override
-            public void insertUpdate(DocumentEvent e) {
-                updateBookAndStudentInfo();  // Tìm kiếm và cập nhật khi có thay đổi
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                updateBookAndStudentInfo();  // Cập nhật khi xóa ký tự
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                updateBookAndStudentInfo();  // Cập nhật khi có thay đổi
+            public void keyPressed(java.awt.event.KeyEvent e) {
+                if (e.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
+                    updateStudentInfo();
+                }
             }
         });
     }
+
+    private void updateBookInfo() {
+        String bookID = this.bookIdField.getText();
+
+        Book book = libraryModelManage.searchBookByID(bookID);
+
+        if (book != null) {
+            bookTitleField.setText(book.getBookName());
+            authorField.setText(book.getAuthor());
+            languageField.setText(book.getLanguage());
+            categoryField.setText(book.getCategory());
+            totalField.setText(String.valueOf(book.getTotal()));
+        } else {
+            JOptionPane.showMessageDialog(null, "book not found", "Error", JOptionPane.ERROR_MESSAGE);
+            bookTitleField.setText("");
+            authorField.setText("");
+            languageField.setText("");
+            categoryField.setText("");
+            totalField.setText("");
+        }
+    }
+
+    private void updateStudentInfo() {
+        String studentID = this.studentIdField.getText();
+
+        Student student = libraryModelManage.searchStudentByID(studentID);
+
+        if (student != null) {
+            studentNameField.setText(student.getName());
+            contactPhoneField.setText(student.getPhone());
+            contactEmailField.setText(student.getEmail());
+            majorField.setText("Student");
+            branchField.setText("Student");
+        } else {
+            JOptionPane.showMessageDialog(null, "student not found", "Error", JOptionPane.ERROR_MESSAGE);
+            studentNameField.setText("");
+            contactPhoneField.setText("");
+            contactEmailField.setText("");
+            majorField.setText("");
+            branchField.setText("");
+        }
+    }
+
+    public void updateBookAndStudentInfo(String bookID, String studentID) {
+        // Cập nhật thông tin sách
+        Book book = libraryModelManage.searchBookByID(bookID);
+
+        if (book != null) {
+            bookTitleField.setText(book.getBookName());
+            authorField.setText(book.getAuthor());
+            languageField.setText(book.getLanguage());
+            categoryField.setText(book.getCategory());
+            totalField.setText(String.valueOf(book.getTotal()));
+        } else {
+            JOptionPane.showMessageDialog(null, "Book not found", "Error", JOptionPane.ERROR_MESSAGE);
+            bookTitleField.setText("");
+            authorField.setText("");
+            languageField.setText("");
+            categoryField.setText("");
+            totalField.setText("");
+        }
+
+        // Cập nhật thông tin sinh viên
+        Student student = libraryModelManage.searchStudentByID(studentID);
+
+        if (student != null) {
+            studentNameField.setText(student.getName());
+            contactPhoneField.setText(student.getPhone());
+            contactEmailField.setText(student.getEmail());
+            majorField.setText("Student");
+            branchField.setText("Student");
+        } else {
+            JOptionPane.showMessageDialog(null, "Student not found", "Error", JOptionPane.ERROR_MESSAGE);
+            studentNameField.setText("");
+            contactPhoneField.setText("");
+            contactEmailField.setText("");
+            majorField.setText("");
+            branchField.setText("");
+        }
+    }
+
+
     private void setupMainPanel() {
         setLayout(new GridLayout(1, 3, 10, 10));
         setBackground(new Color(230, 230, 250));
@@ -324,29 +394,7 @@ public class IssueBookView extends JPanel {
     }
 
 
-    public void updateBookAndStudentInfo() {
-        String bookID = this.bookIdField.getText() + "";
-        String studentID = this.studentIdField.getText() + "";
 
-        Book book = libraryModelManage.searchBookByID(bookID);
-        Student student = libraryModelManage.searchStudentByID(studentID);
-
-        if (book != null) {
-            bookTitleField.setText(book.getBookName());
-            authorField.setText(book.getAuthor());
-            languageField.setText(book.getLanguage());
-            categoryField.setText(book.getCategory());
-            totalField.setText(String.valueOf(book.getTotal()));
-        }
-
-        if (student != null) {
-            studentNameField.setText(student.getName());
-            contactPhoneField.setText(student.getPhone());
-            contactEmailField.setText(student.getEmail());
-            majorField.setText("Student");
-            branchField.setText("Student");
-        }
-    }
     public void issueBook() {
         String bookID = this.bookIdField.getText() + "";
         String studentID = this.studentIdField.getText() + "";
@@ -354,14 +402,13 @@ public class IssueBookView extends JPanel {
         String dueDateString = this.dueDateField.getText();
         String status = "issued";
 
-// Kiểm tra nếu các ngày không trống
         if (issueDateString.isEmpty() || dueDateString.isEmpty()) {
             JOptionPane.showMessageDialog(null, "Issue Date and Due Date cannot be empty.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
-        Date issueDate = Date.valueOf(issueDateString);  // Chuyển đổi chuỗi thành java.sql.Date
-        Date dueDate = Date.valueOf(dueDateString);      // Chuyển đổi chuỗi thành java.sql.Date
+        Date issueDate = Date.valueOf(issueDateString);
+        Date dueDate = Date.valueOf(dueDateString);
 
 
         if (libraryModelManage.checkStudentAndBookEmpty(bookID, studentID)) {
@@ -377,8 +424,7 @@ public class IssueBookView extends JPanel {
         Book book = libraryModelManage.searchBookByID(bookID);
         if (book != null) {
             book.setCurent("Borrowed");
-            BookDAO bookDAO = new BookDAO();
-            bookDAO.editBook(book);
+            libraryModelManage.editBookInDatabase(book);
         }
     }
 

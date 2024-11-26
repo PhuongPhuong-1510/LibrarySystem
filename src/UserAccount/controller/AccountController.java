@@ -19,10 +19,15 @@ public class AccountController implements ActionListener, MouseListener {
     }
     private void initializeListeners() {
         accountView.getPassButton().addMouseListener(this);
+        accountView.getPassButton().addActionListener(this);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        if(e.getSource()==accountView.getPassButton())
+        {
+            accountView.addChangePasswordListener();
+        }
 
     }
 

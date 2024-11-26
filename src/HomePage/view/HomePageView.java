@@ -34,7 +34,7 @@ public class HomePageView extends JPanel {
     public HomePageView(MainView mainView) {
         this.mainView = mainView;
         this.homePageModel = new HomePageModel();
-        this.libraryModelManage = new LibraryModelManage();
+        this.libraryModelManage = mainView.getLibraryModelManage();
         init();
         this.homePageController = new HomePageController(this);
 

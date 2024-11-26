@@ -87,7 +87,7 @@ public class UserController implements ActionListener, MouseListener {
                 if(menu==userView.getjMenuInfo())
                 {
                     System.out.println(("Info Button clicked"));
-                    AccountView accountView = new AccountView();
+                    AccountView accountView = new AccountView(userView.student, userView.libraryModelManage);
                     userView.toggleMenuBar();
                     accountView.setPreferredSize(new Dimension(userView.getMainHomePanel().getWidth(),userView.getMainHomePanel().getHeight()));
                     userView.setMainHomePanel(accountView);
