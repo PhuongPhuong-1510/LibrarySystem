@@ -700,7 +700,7 @@ public class UserView extends JPanel {
             String studentID = this.student.getID();
 
             LocalDate reservedDate = LocalDate.now();
-            LocalDate dueDate = reservedDate.plusDays(100); // Cộng thêm 100 ngày
+            LocalDate dueDate = reservedDate.plusMonths(1); // Cộng thêm 100 ngày
 
             String formattedReservedDate = reservedDate.format(formatter);
             String formattedDueDate = dueDate.format(formatter);

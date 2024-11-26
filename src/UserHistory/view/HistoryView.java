@@ -174,7 +174,8 @@ public class HistoryView extends JPanel {
                 }
             } else if (record instanceof Issue) {
                 Issue issue = (Issue) record;
-                if (Objects.equals(issue.getIssueStudentID(), student.getID())) {
+
+                if (Objects.equals(issue.getIssueStudentID(), student.getID())&&(issue.getStatus().equals("issued"))) {
                     filteredList.add(new Object[]{
                             issue.getIssueBookID(),
                             getBookName(issue.getIssueBookID()),
