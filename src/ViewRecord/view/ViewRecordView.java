@@ -132,23 +132,22 @@ public class ViewRecordView extends JPanel {
                 if (book != null) {
                     rowData[i][2] = book.getBookName();
                     String bookImagePath = book.getImage();
-                    rowData[i][3] = loadImageIcon(bookImagePath);
+                    rowData[i][3] = createImageLabel(bookImagePath);
                 } else {
                     rowData[i][2] = "Unknown Book";
                     rowData[i][3] = new ImageIcon(new BufferedImage(50, 50, BufferedImage.TYPE_INT_ARGB));
                 }
 
-                // Lấy thông tin sinh viên
                 Student student = libraryModelManage.searchStudentByID(issue.getIssueStudentID());
                 if (student != null) {
                     rowData[i][5] = student.getName();
                     String studentImagePath;
                     if (student.getGender() == true) {
-                        studentImagePath = "/ManageStudent/view/icon/boyicon.png";
+                        studentImagePath = "/ManageBook/icon/girlicon.png";
                     } else {
-                        studentImagePath = "/ManageStudent/view/icon/girlicon.png";
+                        studentImagePath = "/ManageBook/icon/boyicon.png";
                     }
-                    rowData[i][6] = loadImageIcon(studentImagePath);
+                    rowData[i][6] = createImageLabel(studentImagePath);
                 } else {
                     rowData[i][5] = "Unknown Student";
                     rowData[i][6] = new ImageIcon(new BufferedImage(50, 50, BufferedImage.TYPE_INT_ARGB));
@@ -166,46 +165,6 @@ public class ViewRecordView extends JPanel {
             return new Object[0][0];
         }
     }
-
-
-    //    private ImageIcon loadImageIcon(String path) {
-//        try {
-//            if (path != null && !path.isEmpty()) {
-//                ImageIcon icon = new ImageIcon(path); // Load ảnh từ đường dẫn
-//                Image img = icon.getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH); // Resize ảnh
-//                return new ImageIcon(img);
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        // Trả về ảnh mặc định nếu không load được
-//        return new ImageIcon(new BufferedImage(50, 50, BufferedImage.TYPE_INT_ARGB));
-//    }
-    private ImageIcon loadImageIcon(String path) {
-        ImageIcon icon = null;
-        try {
-            // Kiểm tra xem đường dẫn có hợp lệ không
-            if (path != null && !path.isEmpty() && getClass().getResource(path) != null) {
-                // Tải ảnh từ đường dẫn hợp lệ
-                icon = new ImageIcon(getClass().getResource(path));
-
-                // Resize ảnh nếu cần thiết
-                Image img = icon.getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH);
-                icon = new ImageIcon(img); // Cập nhật icon với ảnh đã resize
-            } else {
-                // Nếu không tìm thấy ảnh, trả về ảnh mặc định
-                System.out.println("Image not found at path: " + path);
-                icon = new ImageIcon(new BufferedImage(50, 50, BufferedImage.TYPE_INT_ARGB)); // Placeholder ảnh
-            }
-        } catch (Exception e) {
-            // Xử lý ngoại lệ nếu có
-            e.printStackTrace();
-        }
-
-        return icon; // Trả về ảnh đã load (hoặc ảnh mặc định nếu có lỗi)
-    }
-
-
 
     public void updateTable(Object[][] data) {
         // Lấy tableModel cũ từ table hiện tại
@@ -229,14 +188,33 @@ public class ViewRecordView extends JPanel {
 
 
     private JLabel createImageLabel(String path) {
+        String relativePath = getRelativeImagePath(path);
         ImageIcon icon;
-        if (path != null && getClass().getResource(path) != null) {
-            icon = new ImageIcon(getClass().getResource(path));
+
+        if (relativePath != null && getClass().getResource(relativePath) != null) {
+            icon = new ImageIcon(getClass().getResource(relativePath));
+            icon.setDescription(relativePath);
         } else {
             System.out.println("Image not found at path: " + path);
-            icon = new ImageIcon(new BufferedImage(5, 5, BufferedImage.TYPE_INT_ARGB)); // Placeholder image
+            icon = new ImageIcon(new BufferedImage(5, 5, BufferedImage.TYPE_INT_ARGB)); // Placeholder ảnh trống
         }
+
         return new JLabel(icon);
+    }
+
+    private String getRelativeImagePath(String imagePath) {
+        if (imagePath == null || imagePath.isEmpty()) {
+            return null;
+        }
+        String normalizedPath = imagePath.replace("\\", "/");
+
+        String target = "/ManageBook/icon/";
+        int relativePathIndex = normalizedPath.indexOf(target);
+        if (relativePathIndex != -1) {
+            return normalizedPath.substring(relativePathIndex);
+        }
+
+        return null;
     }
 
     private JPanel createSearchPanel() {
@@ -307,40 +285,6 @@ public class ViewRecordView extends JPanel {
         return searchField;
     }
 
-    //    protected JTextField createSearchField(String placeholder,int x,int y) {
-//        JTextField searchField = new JTextField(15);
-//        searchField.setBounds(x,y,130,25);
-//        searchField.setBorder(BorderFactory.createEmptyBorder());
-//
-//        searchField.setFont(new Font("Tahoma", Font.PLAIN, 12));
-//        searchField.setPreferredSize(new Dimension(200, 30));
-//        searchField.setBackground(new Color(255,245,238));
-//        searchField.setForeground(Color.GRAY);
-//        searchField.setOpaque(true);
-//        searchField.setHorizontalAlignment(JTextField.CENTER);
-//        searchField.setText(placeholder);
-//
-//        searchField.addFocusListener(new FocusAdapter() {
-//            @Override
-//            public void focusGained(FocusEvent e) {
-//                if (searchField.getText().equals(placeholder)) {
-//                    searchField.setText("");
-//                    searchField.setForeground(Color.BLACK);
-//                }
-//            }
-//
-//            @Override
-//            public void focusLost(FocusEvent e) {
-//                if (searchField.getText().isEmpty()) {
-//                    searchField.setForeground(Color.GRAY);
-//                    searchField.setText(placeholder);
-//                }
-//            }
-//        });
-//
-//
-//        return searchField;
-//    }
     private JButton createButton(String text, int x, int y) {
         JButton button = new OvalButton(text);
         button.setFont(new Font("Tahoma", Font.BOLD, 13));
