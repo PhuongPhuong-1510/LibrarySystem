@@ -192,7 +192,7 @@ public class LoginView extends JPanel {
     public boolean checkAdmin() {
         String username = txtUserName.getText();
         String password = new String(txtPassWord.getPassword());
-        ArrayList<Admin> admins = mainView.libraryModelManage.getAdminsList();
+        ArrayList<Admin> admins = mainView.getLibraryModelManage().getAdminsList();
         for (Admin admin : admins) {
             if (admin.getEmail().equals(username) && admin.getPassword().equals(password)) {
                 return true;
@@ -204,7 +204,7 @@ public class LoginView extends JPanel {
     public boolean checkStudent() {
         String username = txtUserName.getText();
         String password = new String(txtPassWord.getPassword());
-        ArrayList<Student> students = mainView.libraryModelManage.getStudentsList();
+        ArrayList<Student> students = mainView.getLibraryModelManage().getStudentsList();
         for (Student student : students) {
             if (student.getEmail().equals(username) && student.getPassword().equals(password)) {
                 return true;
@@ -217,7 +217,7 @@ public class LoginView extends JPanel {
         String username = txtUserName.getText();
         String password = new String(txtPassWord.getPassword());
         System.out.println(username);
-        return mainView.libraryModelManage.searchStudentByEmailPassword(username, password);
+        return mainView.getLibraryModelManage().searchStudentByEmailPassword(username, password);
     }
 
     public JTextField getTxtUserName() {

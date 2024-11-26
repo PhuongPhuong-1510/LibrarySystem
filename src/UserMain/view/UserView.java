@@ -54,8 +54,8 @@ public class UserView extends JPanel {
     public Student student;
 
 
-    public UserView(MainView mainView, Student student, LibraryModelManage libraryModelManage) {
-        this.libraryModelManage = libraryModelManage;
+    public UserView(MainView mainView, Student student) {
+        this.libraryModelManage = mainView.getLibraryModelManage();
         this.student = student;
         this.mainView = mainView;
         init();

@@ -86,14 +86,14 @@ public class SignupController implements ActionListener, MouseListener {
                 return;
             }
 
-            signupView.mainView.libraryModelManage.addSignupToDatabase(signupView.getSignupFromPanel());
+            signupView.mainView.getLibraryModelManage().addSignupToDatabase(signupView.getSignupFromPanel());
             showSuccessMessage();
             signupView.getMainView().showCard("Login", null);
         }
     }
 
     private boolean isEmailAlreadyRegistered(String email) {
-        for (Student student : signupView.mainView.libraryModelManage.getStudentsList()) {
+        for (Student student : signupView.mainView.getLibraryModelManage().getStudentsList()) {
             if (student.getEmail().equalsIgnoreCase(email)) {
                 return true;
             }
@@ -102,7 +102,7 @@ public class SignupController implements ActionListener, MouseListener {
     }
 
     private boolean isPhoneNumberAlreadyRegistered(String phoneNumber) {
-        for (Student student : signupView.mainView.libraryModelManage.getStudentsList()) {
+        for (Student student : signupView.mainView.getLibraryModelManage().getStudentsList()) {
             if (student.getPhone().equals(phoneNumber)) {
                 return true;
             }

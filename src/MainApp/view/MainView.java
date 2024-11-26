@@ -17,7 +17,8 @@ public class MainView extends JFrame {
     private JButton closeButton, minimizeButton;
     private JLayeredPane layeredPane;
     private MainController mainController;
-    public LibraryModelManage libraryModelManage;
+    private final LibraryModelManage libraryModelManage = new LibraryModelManage();
+
 
 
     public MainView() {
@@ -25,8 +26,6 @@ public class MainView extends JFrame {
         setupLayeredPane();
         setupButtons();
         setupCardLayout();
-
-        libraryModelManage = new LibraryModelManage();
 
         mainController = new MainController(this);
         cardLayout.show(cardPanel, "Login"); // Show the login view initially
@@ -113,12 +112,20 @@ public class MainView extends JFrame {
                 cardPanel.add(new HomePageView(this), "HomePage");
                 break;
             case "UserView":
-                cardPanel.add(new UserView(this, student, libraryModelManage), "UserView");
+                cardPanel.add(new UserView(this, student), "UserView");
                 cl.show(cardPanel, "UserView");
                 break;
         }
         cl.show(cardPanel, cardName);
     }
+
+    public LibraryModelManage getLibraryModelManage() {
+        if (this.libraryModelManage == null) {
+            throw new IllegalStateException("LibraryModelManage is not initialized!");
+        }
+        return this.libraryModelManage;
+    }
+
 
     public JButton getCloseButton() {
         return closeButton;
