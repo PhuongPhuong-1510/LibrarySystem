@@ -884,7 +884,7 @@ public class UserView extends JPanel {
         BitMatrix croppedMatrix = cropBitMatrix(bitMatrix, x, y, qrWidth, qrHeight);
 
         BufferedImage image = new BufferedImage(qrWidth, qrHeight, BufferedImage.TYPE_INT_RGB);
-        int greenColor = new Color(84, 255, 159).getRGB();
+        int greenColor = new Color(0,0,0).getRGB();
         int whiteColor = Color.WHITE.getRGB();
 
         for (int i = 0; i < qrWidth; i++) {
