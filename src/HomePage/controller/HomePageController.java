@@ -16,24 +16,36 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.Objects;
 
+/**
+ * Controller cho màn hình chính của ứng dụng (HomePage).
+ * Điều khiển các sự kiện liên quan đến menu và các chức năng giao diện.
+ */
 public class HomePageController implements ActionListener, MouseListener {
     private final HomePageView homePageView;
     private final LibraryModelManage libraryModelManage;
     private JMenu selectedMenu = null;
 
-
+    /**
+     * Constructor của HomePageController.
+     *
+     * @param homePageView Đối tượng giao diện chính của HomePage.
+     */
     public HomePageController(HomePageView homePageView) {
         this.libraryModelManage = homePageView.getMainView().getLibraryModelManage();
         this.homePageView = homePageView;
         AppContext.getInstance().setHomePageView(homePageView);
-        initializeListeners();
+        initializeListeners(); // Gắn các sự kiện
     }
 
+    /**
+     * Gắn các listener cho các thành phần giao diện để xử lý sự kiện.
+     */
     private void initializeListeners() {
         homePageView.getHamburgerButton().addActionListener(this);
         homePageView.getHamburgerButton().addMouseListener(createButtonHoverListener(
                 new Color(208, 204, 207), new Color(150, 180, 255)));
 
+        // Thêm hiệu ứng hover cho các menu
         addMenuHoverEffect(homePageView.getjMenuHomePage());
         addMenuHoverEffect(homePageView.getjMenuLogout());
         addMenuHoverEffect(homePageView.getjMenuIssueBook());
@@ -41,11 +53,17 @@ public class HomePageController implements ActionListener, MouseListener {
         addMenuHoverEffect(homePageView.getjMenuReturnBook());
         addMenuHoverEffect(homePageView.getjMenuLMSDashBoard());
         addMenuHoverEffect(homePageView.getjMenuMGMTBooks());
-//        addMenuHoverEffect(homePageView.getjMenuViewBooks());
         addMenuHoverEffect(homePageView.getjMenuViewRecords());
         addMenuHoverEffect(homePageView.getjMenuSearchApi());
     }
 
+    /**
+     * Tạo một MouseAdapter cho hiệu ứng hover khi di chuột qua nút.
+     *
+     * @param hoverColor   Màu sắc khi di chuột.
+     * @param defaultColor Màu sắc mặc định khi không di chuột.
+     * @return MouseAdapter đã được cấu hình.
+     */
     private MouseAdapter createButtonHoverListener(Color hoverColor, Color defaultColor) {
         return new MouseAdapter() {
             @Override
@@ -60,6 +78,11 @@ public class HomePageController implements ActionListener, MouseListener {
         };
     }
 
+    /**
+     * Thêm hiệu ứng hover cho các thành phần menu trong giao diện.
+     *
+     * @param menu JMenu cần thêm hiệu ứng hover.
+     */
     private void addMenuHoverEffect(JMenu menu) {
         menu.addMouseListener(new MouseAdapter() {
             @Override
@@ -74,11 +97,14 @@ public class HomePageController implements ActionListener, MouseListener {
                     menu.setBackground(new Color(185, 173, 173));
                 }
 
+                // Hiển thị hộp thoại "Loading..."
                 showLoadingDialog();
 
+                // Thực thi tác vụ trong luồng riêng (SwingWorker)
                 new SwingWorker<Void, Void>() {
                     @Override
                     protected Void doInBackground() {
+                        // Điều hướng đến màn hình tương ứng khi click menu
                         if (menu == homePageView.getjMenuLogout()) {
                             System.out.println("Logout clicked!");
                             homePageView.getMainView().showCard("Login", null);
@@ -145,7 +171,7 @@ public class HomePageController implements ActionListener, MouseListener {
                     @Override
                     protected void done() {
                         hideLoadingDialog();
-                    }
+                    } // Ẩn hộp thoại khi hoàn tất
                 }.execute();
             }
 
@@ -171,6 +197,7 @@ public class HomePageController implements ActionListener, MouseListener {
 
 
     }
+
     private JDialog loadingDialog;
     private JProgressBar progressBar;
     private JPanel panel;
@@ -179,6 +206,9 @@ public class HomePageController implements ActionListener, MouseListener {
     private final int dotSize = 20;
     private SwingWorker<Void, Integer> searchWorker;
 
+    /**
+     * Hiển thị hộp thoại "Loading..." với hiệu ứng hình ảnh và tiến trình.
+     */
     public void showLoadingDialog() {
         // Tạo dialog
         loadingDialog = new JDialog((JFrame) SwingUtilities.getWindowAncestor(homePageView), "Loading...", true);
@@ -187,6 +217,7 @@ public class HomePageController implements ActionListener, MouseListener {
         loadingDialog.setLocationRelativeTo(homePageView);
         loadingDialog.setBackground(new Color(0, 0, 0, 0)); // ARGB: alpha = 0 (trong suốt)
 
+        // Tạo nội dung cho hộp thoại
         panel = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
@@ -262,14 +293,14 @@ public class HomePageController implements ActionListener, MouseListener {
         searchWorker.execute();
     }
 
+    /**
+     * Ẩn hộp thoại "Loading..." khi tiến trình hoàn tất.
+     */
     private void hideLoadingDialog() {
         if (loadingDialog != null) {
             loadingDialog.dispose(); // Đóng dialog
         }
     }
-
-
-
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -279,6 +310,7 @@ public class HomePageController implements ActionListener, MouseListener {
         }
     }
 
+    // Các phương thức trống cho MouseListener
     @Override
     public void mousePressed(MouseEvent e) {
     }

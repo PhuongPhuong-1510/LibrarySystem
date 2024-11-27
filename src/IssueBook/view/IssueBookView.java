@@ -12,6 +12,10 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
+/**
+ * View panel xử lý việc mượn sách của người dùng.
+ * Cung cấp giao diện để hiển thị thông tin sách và sinh viên, và thực hiện việc mượn sách.
+ */
 public class IssueBookView extends JPanel {
     private JTextField bookTitleField;
     private JTextField authorField;
@@ -33,7 +37,11 @@ public class IssueBookView extends JPanel {
     private LibraryModelManage libraryModelManage;
     private JTextField categoryField;
 
-
+    /**
+     * Constructor khởi tạo giao diện mượn sách.
+     * @param libraryModelManage Đối tượng quản lý thư viện.
+     * @throws IllegalArgumentException nếu đối tượng libraryModelManage là null.
+     */
     public IssueBookView(LibraryModelManage libraryModelManage) {
         if (libraryModelManage == null) {
             throw new IllegalArgumentException("LibraryModelManage cannot be null");
@@ -47,6 +55,7 @@ public class IssueBookView extends JPanel {
         setVisible(true);
         new IssueBookController(this);
 
+        // Lắng nghe sự kiện nhấn Enter để cập nhật thông tin sách và sinh viên
         bookIdField.addKeyListener(new java.awt.event.KeyAdapter() {
             @Override
             public void keyPressed(java.awt.event.KeyEvent e) {
@@ -66,6 +75,9 @@ public class IssueBookView extends JPanel {
         });
     }
 
+    /**
+     * Cập nhật thông tin sách khi nhập mã sách.
+     */
     private void updateBookInfo() {
         String bookID = this.bookIdField.getText();
 
@@ -87,6 +99,9 @@ public class IssueBookView extends JPanel {
         }
     }
 
+    /**
+     * Cập nhật thông tin sinh viên khi nhập mã sinh viên.
+     */
     private void updateStudentInfo() {
         String studentID = this.studentIdField.getText();
 
@@ -108,6 +123,11 @@ public class IssueBookView extends JPanel {
         }
     }
 
+    /**
+     * Cập nhật thông tin sách và sinh viên theo mã sách và mã sinh viên.
+     * @param bookID Mã sách cần tìm.
+     * @param studentID Mã sinh viên cần tìm.
+     */
     public void updateBookAndStudentInfo(String bookID, String studentID) {
         // Cập nhật thông tin sách
         Book book = libraryModelManage.searchBookByID(bookID);
@@ -146,15 +166,19 @@ public class IssueBookView extends JPanel {
         }
     }
 
-
+    /**
+     * Thiết lập panel chính cho giao diện.
+     */
     private void setupMainPanel() {
         setLayout(new GridLayout(1, 3, 10, 10));
         setBackground(new Color(230, 230, 250));
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
     }
 
-
-
+    /**
+     * Tạo panel hiển thị thông tin sách.
+     * @return JPanel chứa thông tin sách.
+     */
     private JPanel createBookPanel() {
         JPanel bookPanel = new JPanel();
         bookPanel.setBackground(new Color(246, 222, 236));
@@ -191,6 +215,11 @@ public class IssueBookView extends JPanel {
 
         return bookPanel;
     }
+
+    /**
+     * Tạo panel hiển thị thông tin sinh viên.
+     * @return JPanel chứa thông tin sinh viên.
+     */
     private JPanel createStudentPanel() {
         JPanel studentPanel = new JPanel();
         studentPanel.setBackground(new Color(202, 225, 255));
@@ -227,9 +256,10 @@ public class IssueBookView extends JPanel {
         return studentPanel;
     }
 
-
-
-
+    /**
+     * Tạo panel cho giao diện mượn sách, bao gồm các trường nhập thông tin và các nút chức năng.
+     * @return JPanel chứa các thành phần mượn sách.
+     */
     private JPanel createIssuePanel() {
         JPanel issuePanel = initializeIssuePanel();
         JPanel titlePanel = createTitlePanel();
@@ -244,6 +274,10 @@ public class IssueBookView extends JPanel {
         return issuePanel;
     }
 
+    /**
+     * Khởi tạo panel mượn sách với nền màu và layout mặc định.
+     * @return JPanel đã được khởi tạo.
+     */
     private JPanel initializeIssuePanel() {
         JPanel panel = new JPanel();
         panel.setBackground(new Color(248, 248, 255));
@@ -251,12 +285,21 @@ public class IssueBookView extends JPanel {
         return panel;
     }
 
+    /**
+     * Tạo panel tiêu đề với ảnh và tiêu đề "ISSUE BOOK".
+     * @return JPanel chứa tiêu đề.
+     */
     private JPanel createTitlePanel() {
         JPanel titlePanel = createImageLabel("/IssueBook/view/icon/issue.png", "ISSUE BOOK", new Color(248, 248, 255), new Color(238, 162, 173));
         titlePanel.setBounds(20, 50, 400, 200);
         return titlePanel;
     }
 
+    /**
+     * Thêm các trường thông tin mượn sách như mã sách và mã sinh viên vào panel.
+     * @param issuePanel Panel chứa các trường thông tin.
+     * @param labelColor Màu sắc của nhãn cho các trường.
+     */
     private void addIssueDetailsFields(JPanel issuePanel, Color labelColor) {
         issuePanel.add(createLabelAtPosition("Book Id: ", 25, 250, 200, 30, labelColor));
         bookIdField = createTextField(150, 250, 100, 30, true);
@@ -267,6 +310,10 @@ public class IssueBookView extends JPanel {
         issuePanel.add(studentIdField);
     }
 
+    /**
+     * Thêm các bộ chọn ngày mượn và ngày trả vào panel.
+     * @param issuePanel Panel chứa các bộ chọn ngày.
+     */
     private void addDatePickers(JPanel issuePanel) {
         Color backgroundColor = new Color(255, 192, 203);
 
@@ -288,6 +335,12 @@ public class IssueBookView extends JPanel {
         issuePanel.add(dueDateButton);
     }
 
+    /**
+     * Tạo nút chọn ngày với vị trí và màu sắc mặc định.
+     * @param x Vị trí x của nút.
+     * @param y Vị trí y của nút.
+     * @return JButton nút chọn ngày.
+     */
     private JButton createDatePickerButton(int x, int y) {
         JButton button = new JButton();
         button.setBounds(x, y, 20, 20);
@@ -295,7 +348,10 @@ public class IssueBookView extends JPanel {
         return button;
     }
 
-
+    /**
+     * Thêm các nút chức năng "ISSUE" và "CLEAR" vào panel.
+     * @param issuePanel Panel chứa các nút.
+     */
     private void addButtons(JPanel issuePanel) {
         issueButton = createButton("ISSUE", 50, 470);
         clearButton = createButton("CLEAR", 240, 470);
@@ -304,14 +360,27 @@ public class IssueBookView extends JPanel {
         issuePanel.add(clearButton);
     }
 
-
-
-
+    /**
+     * Tạo nhãn với văn bản chỉ định.
+     * @param text Văn bản hiển thị trên nhãn.
+     * @return JLabel nhãn đã tạo.
+     */
     private JLabel createLabel(String text) {
         JLabel label = new JLabel(text);
         label.setFont(new Font("SansSerif", Font.PLAIN, 16));  // Sử dụng font SansSerif với kiểu chữ bình thường và cỡ 16
         return label;
     }
+
+    /**
+     * Tạo nhãn với văn bản và vị trí chỉ định.
+     * @param text Văn bản hiển thị trên nhãn.
+     * @param x Vị trí x của nhãn.
+     * @param y Vị trí y của nhãn.
+     * @param width Chiều rộng của nhãn.
+     * @param height Chiều cao của nhãn.
+     * @param labelColor Màu sắc của nhãn.
+     * @return JLabel nhãn đã tạo.
+     */
     private JLabel createLabelAtPosition(String text, int x, int y, int width, int height,Color labelColor) {
         JLabel label = createLabel(text);
         label.setForeground(labelColor);
@@ -319,6 +388,15 @@ public class IssueBookView extends JPanel {
         return label;
     }
 
+    /**
+     * Tạo một trường văn bản với vị trí và kích thước chỉ định.
+     * @param x Vị trí x của trường văn bản.
+     * @param y Vị trí y của trường văn bản.
+     * @param width Chiều rộng của trường văn bản.
+     * @param height Chiều cao của trường văn bản.
+     * @param hasBorder Chỉ định có viền cho trường văn bản hay không.
+     * @return JTextField trường văn bản đã tạo.
+     */
     private JTextField createTextField(int x, int y, int width, int height, boolean hasBorder) {
         JTextField textField = new JTextField();
         textField.setBounds(x, y, width, height);
@@ -344,9 +422,14 @@ public class IssueBookView extends JPanel {
         return button;
     }
 
-
-
-
+    /**
+     * Tạo một label chứa ảnh và tiêu đề với các màu nền và màu tiêu đề chỉ định.
+     * @param path Đường dẫn tới hình ảnh.
+     * @param title Tiêu đề của panel.
+     * @param background Màu nền của panel.
+     * @param titleColor Màu của tiêu đề.
+     * @return JPanel chứa tiêu đề và hình ảnh.
+     */
     private JPanel createImageLabel(String path, String title, Color background, Color titleColor) {
         JPanel imagePanel = new JPanel();
         imagePanel.setLayout(new BorderLayout());
@@ -393,8 +476,10 @@ public class IssueBookView extends JPanel {
         return imagePanel;
     }
 
-
-
+    /**
+     * Phương thức này xử lý việc mượn sách: kiểm tra thông tin hợp lệ,
+     * tạo mã mượn sách, và thêm thông tin vào cơ sở dữ liệu.
+     */
     public void issueBook() {
         String bookID = this.bookIdField.getText() + "";
         String studentID = this.studentIdField.getText() + "";
@@ -402,15 +487,17 @@ public class IssueBookView extends JPanel {
         String dueDateString = this.dueDateField.getText();
         String status = "issued";
 
+        // Kiểm tra nếu ngày mượn hoặc ngày trả để trống
         if (issueDateString.isEmpty() || dueDateString.isEmpty()) {
             JOptionPane.showMessageDialog(null, "Issue Date and Due Date cannot be empty.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
+        // Chuyển đổi chuỗi ngày mượn và ngày trả thành kiểu Date
         Date issueDate = Date.valueOf(issueDateString);
         Date dueDate = Date.valueOf(dueDateString);
 
-
+        // Kiểm tra xem sách và sinh viên có hợp lệ không
         if (libraryModelManage.checkStudentAndBookEmpty(bookID, studentID)) {
             String issueId = this.libraryModelManage.creatIssueID();
             Issue issue = new Issue(issueId, bookID, studentID, issueDate, dueDate, status);
@@ -420,7 +507,13 @@ public class IssueBookView extends JPanel {
         }
     }
 
+
+    /**
+     * Cập nhật trạng thái của sách sau khi mượn.
+     * @param bookID Mã sách cần cập nhật trạng thái.
+     */
     private void updateBookStatus(String bookID) {
+        // Hiển thị thông báo mượn sách thành công
         Book book = libraryModelManage.searchBookByID(bookID);
         if (book != null) {
             JOptionPane.showMessageDialog(
@@ -429,14 +522,16 @@ public class IssueBookView extends JPanel {
                     "Success",
                     JOptionPane.INFORMATION_MESSAGE
             );
+            // Đặt trạng thái sách thành "borrowed"
             book.setCurent("Borrowed");
             libraryModelManage.editBookInDatabase(book);
         }
     }
 
-
-
-
+    /**
+     * Xóa tất cả dữ liệu trong các trường nhập liệu.
+     * Phương thức này được sử dụng để làm sạch các trường nhập liệu sau mỗi lần mượn sách.
+     */
     public void removeData() {
         // Xóa thông tin sách
         bookIdField.setText("");
@@ -458,12 +553,20 @@ public class IssueBookView extends JPanel {
         dueDateField.setText("");
     }
 
+    /**
+     * Đặt giá trị cho trường mã sách.
+     * @param bookId Mã sách cần đặt vào trường.
+     */
     public void setBookIdField(String bookId) {
         if (this.bookIdField != null) {
             this.bookIdField.setText(bookId); // Đặt giá trị chuỗi vào JTextField
         }
     }
 
+    /**
+     * Đặt giá trị cho trường mã sinh viên.
+     * @param studentId Mã sinh viên cần đặt vào trường.
+     */
     public void setStudentIdField(String studentId) {
         if (this.studentIdField != null) {
             this.studentIdField.setText(studentId); // Đặt giá trị chuỗi vào JTextField
@@ -471,7 +574,11 @@ public class IssueBookView extends JPanel {
     }
 
 
-
+    /**
+     * Đặt giá trị cho trường ngày trả.
+     * @param dueDate Ngày trả sách cần đặt vào trường.
+     */
+    // PHương thức phía sau là getter và setter
     public void setDueDateField(String dueDate) {
         this.dueDateField.setText(dueDate);
     }
