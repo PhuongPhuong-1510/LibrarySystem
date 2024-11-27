@@ -327,7 +327,7 @@ public class LibraryModelManage {
         }
 
         boolean isBookStill = bookslist.stream()
-                .anyMatch(book -> book.getBookID().equals(bookID) && ("Still".equals(book.getCurent()) || "Reserved".equals(book.getCurent())));
+                .anyMatch(book -> book.getBookID().equals(bookID) && ("Still".equals(book.getCurent())||"Reserved".equals(book.getCurent())));
         if (!isBookStill) {
             JOptionPane.showMessageDialog(null, "Book is not in 'Still' state.");
             return false;
@@ -373,6 +373,24 @@ public class LibraryModelManage {
         return null; // Return null if the student is not found
     }
 
+    public boolean checkStudentByEmail(String studentEmail) {;
+        for (Student student : studentsList) {
+            if (student.getEmail().equals(studentEmail)) {
+                return true;
+            }
+        }
+        return false; // Return null if the student is not found
+    }
+
+    public boolean checkStudentByPhone(String studentPhone) {;
+        for (Student student : studentsList) {
+            if (student.getPhone().equals(studentPhone)) {
+                return true;
+            }
+        }
+        return false; // Return null if the student is not found
+    }
+
     public ArrayList<Book> searchBooks(String bookId, String bookName, String author, String genre) {
         return booksList.stream()
                 .filter(book -> (bookId.isEmpty() || book.getBookID().contains(bookId)) &&
@@ -395,10 +413,10 @@ public class LibraryModelManage {
     }
 
 
-    public Issue searchIssueByBookStudent(String bookID, String studentID) {
+    public Issue searchIssueByBookStudentStatus(String bookID, String studentID, String status) {
         ArrayList<Issue> issueslist = getIssuesList();
         for (Issue issue : issueslist) {
-            if (issue.getIssueBookID().equals(bookID) && issue.getIssueStudentID().equals(studentID)) {
+            if (issue.getIssueBookID().equals(bookID) && issue.getIssueStudentID().equals(studentID) && issue.getStatus().equals(status)) {
                 return issue;
             }
         }

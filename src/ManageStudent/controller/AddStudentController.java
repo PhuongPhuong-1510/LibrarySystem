@@ -41,12 +41,6 @@ public class AddStudentController implements ActionListener, MouseListener {
 
                 if(addStudentView.validateInputFields()) {
                     addStudentView.setVisible(true);
-                    JOptionPane.showMessageDialog(
-                            addStudentView,
-                            "Add student successfully",
-                            "Success",
-                            JOptionPane.INFORMATION_MESSAGE
-                    );
                     addStudentListener.onStudentAdded();
                 }
                 addStudentView.revalidate();

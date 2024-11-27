@@ -14,6 +14,8 @@ import java.awt.event.MouseListener;
 
 public class ReturnBookController implements ActionListener, MouseListener {
     private ReturnBookView returnBookView;
+    private boolean isFindButtonClicked = false;
+
 
 
     public ReturnBookController(ReturnBookView returnBookView) {
@@ -32,12 +34,28 @@ public class ReturnBookController implements ActionListener, MouseListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == returnBookView.getReturnButton()) {
+            if (!isFindButtonClicked) {
+                int confirm = JOptionPane.showConfirmDialog(
+                        returnBookView,
+                        "You have not updated issue information. Do you want to proceed?",
+                        "Warning",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.WARNING_MESSAGE
+                );
+
+                if (confirm == JOptionPane.NO_OPTION) {
+                    return; // Người dùng chọn không tiếp tục
+                }
+            }
             returnBookView.returnBook();
         }
+
         if (e.getSource() == returnBookView.getFindButton()) {
-             returnBookView.updateIssue();
+            returnBookView.updateIssue();
+            isFindButtonClicked = true; // Đánh dấu rằng FindButton đã được bấm
         }
     }
+
 
 
 

@@ -18,6 +18,10 @@ import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 
 public class ManagementBookView extends JPanel {
@@ -365,15 +369,43 @@ public class ManagementBookView extends JPanel {
 
         String filePath = fileDialog.getDirectory() + fileDialog.getFile();
         if (filePath != null && !filePath.isEmpty()) {
-            // Lấy đường dẫn tương đối
-            String relativePath = getRelativeImagePath(filePath);
+            String relativePath;
+            if (filePath.contains("/ManageBook/icon/")) {
+                // Nếu file đã nằm trong thư mục icon
+                relativePath = getRelativeImagePath(filePath);
+            } else {
+                // Sao chép file vào thư mục icon
+                relativePath = copyImageToIconFolder(filePath);
+            }
 
             if (relativePath != null) {
                 System.out.println("Selected relative path: " + relativePath);
                 updateImageForRow(row, relativePath);
             } else {
-                System.out.println("Invalid file path selected: " + filePath);
+                System.out.println("Failed to process image: " + filePath);
             }
+        }
+    }
+
+
+    private String copyImageToIconFolder(String imagePath) {
+        try {
+            // Tạo đường dẫn đích cho thư mục `/ManageBook/icon/`
+            String targetDir = System.getProperty("user.dir") + "/src/ManageBook/icon/";
+            File sourceFile = new File(imagePath);
+            File targetFile = new File(targetDir + sourceFile.getName());
+
+            // Kiểm tra nếu file đã tồn tại trong thư mục đích
+            if (!targetFile.exists()) {
+                Files.copy(sourceFile.toPath(), targetFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            }
+            // Trả về đường dẫn tương đối
+            return "/ManageBook/icon/" + sourceFile.getName();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error copying image file: " + ex.getMessage(),
+                    "Error", JOptionPane.ERROR_MESSAGE);
+            return null;
         }
     }
 
@@ -471,6 +503,7 @@ public class ManagementBookView extends JPanel {
                 if (relativePathIndex != -1) {
                     image = image.substring(relativePathIndex);
                 }
+
             }
         }
 

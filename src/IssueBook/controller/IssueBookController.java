@@ -51,21 +51,34 @@ public class IssueBookController implements ActionListener, MouseListener {
             jDialogDue.setModal(true);
             jDialogDue.setVisible(true);
 
-            dueDate = jDialogDue.getSelectedDate();  // Lưu vào biến thành viên
+            dueDate = jDialogDue.getSelectedDate();
 
             if (dueDate != null) {
-                if (isDueDateValid(issueDate, dueDate)) {
+                if (issueDate == null) {
+                    JOptionPane.showMessageDialog(issueBookView,
+                            "Please select the Issue Date first.",
+                            "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                } else if (isDueDateValid(issueDate, dueDate)) {
+
                     issueBookView.getDueDateField().setText(dueDate.toString());
-                } else {
-                    JOptionPane.showMessageDialog(issueBookView, "The due date cannot be earlier than the issue date.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         }
+
     }
 
     private boolean isDueDateValid(LocalDate issueDate, LocalDate dueDate) {
-        return !dueDate.isBefore(issueDate);  // Trả về true nếu ngày trả không sớm hơn ngày mượn
+        if (issueDate == null || dueDate == null) {
+            JOptionPane.showMessageDialog(issueBookView,
+                    "Both Issue Date and Due Date must be selected.",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        return !dueDate.isBefore(issueDate); // Trả về true nếu ngày trả không sớm hơn ngày mượn
     }
+
 
 
 

@@ -4,6 +4,8 @@ import LoginPage.view.OvalButton;
 
 import javax.swing.*;
 import java.awt.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Objects;
 
 import LoginPage.view.PlaceholderPasswordField;
@@ -184,23 +186,44 @@ public class AddStudentView extends JFrame {
         String branch = this.txtBranch.getText().trim();
         String major = this.txtMajor.getText().trim();
 
-        // Tạo mật khẩu từ ID và 3 số cuối của số điện thoại
-        String password = id; // Mặc định là ID
+        SimpleDateFormat inputDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat outputDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        inputDateFormat.setLenient(false);
+        String formattedDateOfBirth;
+        try {
+            formattedDateOfBirth = outputDateFormat.format(inputDateFormat.parse(dateOfBirth));
+        } catch (ParseException e) {
+            JOptionPane.showMessageDialog(null, "Ngày sinh không đúng định dạng (dd/MM/yyyy). Vui lòng nhập lại.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return null;
+        }
+
+        String password = id;
         if (phone.length() >= 3) {
             String lastThreeDigits = phone.substring(phone.length() - 3); // Lấy 3 số cuối
-            password += lastThreeDigits; // Gộp ID với 3 số cuối
+            password += lastThreeDigits;
         }
 
         String cardPhoto = gender
                 ? "/ManageStudent/view/icon/boyicon.png"
                 : "/ManageStudent/view/icon/girlicon.png";
 
-        // Tạo đối tượng Student với mật khẩu
-        Student student = new Student(id, name, email, password, phone, gender, cardPhoto, dateOfBirth, major, branch);
-        libraryModelManage.addStudentToDatabase(student);
+        boolean emailExists = libraryModelManage.checkStudentByEmail(email);
+        if (emailExists) {
+            JOptionPane.showMessageDialog(null, "Email đã tồn tại! Vui lòng sử dụng email khác.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return null;
+        }
 
+        boolean phoneExists = libraryModelManage.checkStudentByPhone(phone);
+        if (phoneExists) {
+            JOptionPane.showMessageDialog(null, "Số điện thoại đã tồn tại! Vui lòng sử dụng số khác.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return null;
+        }
+
+
+        Student student = new Student(id, name, email, password, phone, gender, cardPhoto, formattedDateOfBirth, major, branch);
         return student;
     }
+
 
 
     public boolean validateInputFields() {
