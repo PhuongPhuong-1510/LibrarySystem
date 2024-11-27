@@ -128,6 +128,7 @@ public class ApiView extends JPanel {
 
     public void searchBooks(String query) {
         if (!isInternetAvailable()) {
+
             JOptionPane.showMessageDialog(this, "No Internet connection. Please check your connection and try again.",
                     "Error", JOptionPane.ERROR_MESSAGE);
             return;

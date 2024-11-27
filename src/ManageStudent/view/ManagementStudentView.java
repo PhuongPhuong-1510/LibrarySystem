@@ -219,10 +219,20 @@ public class ManagementStudentView extends JPanel {
                     table.getCellEditor().stopCellEditing();
                 }
                 if (row >= 0 && row < model.getRowCount()) {
-                    model.removeRow(row);
                     Student studentToRemove = libraryModelManage.getStudentsList().get(row);
-                    libraryModelManage.deleteStudentFromDatabase(studentToRemove.getID());
-                    updateStudentTable(libraryModelManage.getStudentsList());
+                    if(libraryModelManage.searchReserveByStudentID(studentToRemove.getID())==null
+                        && libraryModelManage.searchIssueByStudentID(studentToRemove.getID())==null){
+                         model.removeRow(row);
+                         libraryModelManage.deleteStudentFromDatabase(studentToRemove.getID());
+                         updateStudentTable(libraryModelManage.getStudentsList());
+                    }else{
+                        JOptionPane.showMessageDialog(
+                                this, // Tham chiếu đến JFrame hoặc JPanel hiện tại
+                                "Sinh viên đang mượn hoặc đăng chờ duyệt sách",
+                                "Input Error",
+                                JOptionPane.ERROR_MESSAGE
+                        );
+                    }
                 }
                 if (model.getRowCount() == 0) {
                     table.clearSelection();
@@ -269,9 +279,21 @@ public class ManagementStudentView extends JPanel {
             editButton.setIcon(new ImageIcon(getClass().getResource("/ManageStudent/view/icon/completeStudent.png")));
             editButton.addActionListener(e -> {
                 System.out.println("Saved");
-                Student studentToEdit = getUpdatedStudentFromRow(row) ; // Get the selected book
-                libraryModelManage.editStudentInDatabase(studentToEdit);
-                updateCardPhoto(row, studentToEdit.getGender());
+                Student studentToEdit = getUpdatedStudentFromRow(row) ;// Get the selected book
+                if (studentToEdit != null) {
+
+                    libraryModelManage.editStudentInDatabase(studentToEdit);
+                    updateCardPhoto(row, studentToEdit.getGender());
+                } else {
+                    editButton.setIcon(new ImageIcon(getClass().getResource("/ManageStudent/view/icon/completeStudent.png")));
+                    JOptionPane.showMessageDialog(
+                            this, // Tham chiếu đến JFrame hoặc JPanel hiện tại
+                            "Invalid gender input. Please enter only 'Male' or 'Female'.",
+                            "Input Error",
+                            JOptionPane.ERROR_MESSAGE
+                    );
+                }
+
 
             });
         } else {
@@ -303,8 +325,13 @@ public class ManagementStudentView extends JPanel {
         String genderStr = model.getValueAt(row, 2).toString();
         Student student = libraryModelManage.searchStudentByID(studentID);
         boolean gender = true;
-        if( "Female".equals(genderStr)) gender = false;
-        else gender = true;
+        if( "Female".equals(genderStr)){
+            gender = false;
+        }else if( "Male".equals(genderStr)){
+            gender = true;
+        }else{
+            return null;
+        }
         String dateOfBirth = model.getValueAt(row, 3).toString();
 
         String cardPhoto = gender ? "/ManageStudent/view/icon/girlicon.png" : "/ManageStudent/view/icon/boyicon.png";
