@@ -601,6 +601,7 @@ public class LibraryModelManage {
                 // Chuyển đổi đường dẫn tương đối thành đường dẫn chuẩn hóa
                 String basePath = "src/"; // Đường dẫn gốc của dự án
                 String fullPath = Paths.get(basePath, relativePath).normalize().toString();
+                System.out.println(fullPath);
 
                 ImageIcon icon = new ImageIcon(fullPath); // Tạo ImageIcon từ đường dẫn đầy đủ
                 imageCache.put(relativePath, icon);       // Lưu trữ icon trong cache
