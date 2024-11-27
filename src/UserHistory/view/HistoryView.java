@@ -208,7 +208,7 @@ public class HistoryView extends JPanel {
     }
     public JPanel createReturnAction() {
         JPanel actionPanel = new JPanel(new BorderLayout());
-        JButton returnButton = createActionButton("/UserHistory/view/icon/return.png", new Color(255, 240, 245));
+        JButton returnButton = createActionButton("/UserHistory/view/icon/returns.png", new Color(255, 240, 245));
 
         returnButton.addActionListener(e -> {
             int rowIndex = getSelectedRowIndex(returnButton);
@@ -265,7 +265,7 @@ public class HistoryView extends JPanel {
 
     public JPanel createDeleteAction() {
         JPanel actionPanel = new JPanel(new BorderLayout());
-        JButton deleteButton = createActionButton("/UserHistory/view/icon/delete2.png", new Color(255, 240, 245));
+        JButton deleteButton = createActionButton("/UserHistory/view/icon/deletes.png", new Color(255, 240, 245));
 
         deleteButton.addActionListener(e -> {
             int rowIndex = getSelectedRowIndex(deleteButton);

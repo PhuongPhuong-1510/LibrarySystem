@@ -52,6 +52,7 @@ public class UserView extends JPanel {
     private JButton btnRegister;
     private JButton btnSearch;
     public Student student;
+    private JMenu jMenuSuggest;
 
 
     public UserView(MainView mainView, Student student) {
@@ -85,32 +86,34 @@ public class UserView extends JPanel {
         menuBar.setBackground(new Color(80, 80, 80));
         menuBar.setPreferredSize(new Dimension(215, 632));
         menuBar.setBorder(null);
-        menuBar.setVisible(false);
+        menuBar.setVisible(false); // Thay đổi từ false sang true để menu có thể hiển thị
 
+        // Tiêu đề "Features"
         JLabel lblMenu1 = new JLabel("Features");
         lblMenu1.setFont(new Font("Tahoma", Font.PLAIN, 20));
         lblMenu1.setBounds(15, 20, 300, 20);
         menuBar.add(lblMenu1);
 
-
+        // Các mục trong "Features"
         jMenuHomePage = createMenu("Home Page", "/UserMain/view/icon/find.png", 50);
-        jMenuHomePage.setBackground(new Color(185,173,173));
+        jMenuHomePage.setBackground(new Color(185, 173, 173));
         jMenuHomePage.setOpaque(true);
-        jMenuHistory  = createMenu("History", "/UserMain/view/icon/reserved.png", 100);
 
+        // Thêm mục "Suggest" sau "Home Page"
+        jMenuSuggest = createMenu("Suggest", "/UserMain/view/icon/suggest.png", 100);
 
+        // Tạo "History" (sử dụng 2 mục cách đều)
+        jMenuHistory = createMenu("History", "/UserMain/view/icon/reserved.png", 150);
+
+        // Tiêu đề "System"
         JLabel lblMenu2 = new JLabel("System");
         lblMenu2.setFont(new Font("Tahoma", Font.PLAIN, 20));
-        lblMenu2.setBounds(15, 165, 300, 20);
+        lblMenu2.setBounds(15, 205, 300, 20);
         menuBar.add(lblMenu2);
 
-
-        jMenuInfo = createMenu("Account", "/UserMain/view/icon/info.png", 205);
-        jMenuOut = createMenu("Log Out", "/UserMain/view/icon/out.png", 255);
-
-
-
-
+        // Các mục trong "System"
+        jMenuInfo = createMenu("Account", "/UserMain/view/icon/info.png", 245);
+        jMenuOut = createMenu("Log Out", "/UserMain/view/icon/out.png", 295);
 
         return menuBar;
     }
@@ -702,8 +705,6 @@ public class UserView extends JPanel {
             LocalDate reservedDate = LocalDate.now();
             LocalDate dueDate = reservedDate.plusMonths(1); // Cộng thêm 100 ngày
 
-            String formattedReservedDate = reservedDate.format(formatter);
-            String formattedDueDate = dueDate.format(formatter);
 
             java.sql.Date sqlReservedDate = java.sql.Date.valueOf(reservedDate);
             java.sql.Date sqlDueDate = java.sql.Date.valueOf(dueDate);
@@ -823,8 +824,9 @@ public class UserView extends JPanel {
         return jMenuOut;
     }
 
-
-
+    public JMenu getjMenuSuggest() {
+        return jMenuSuggest;
+    }
 
     public void setLibraryModelManage(LibraryModelManage libraryModelManage) {
         this.libraryModelManage = libraryModelManage;
@@ -882,7 +884,7 @@ public class UserView extends JPanel {
         BitMatrix croppedMatrix = cropBitMatrix(bitMatrix, x, y, qrWidth, qrHeight);
 
         BufferedImage image = new BufferedImage(qrWidth, qrHeight, BufferedImage.TYPE_INT_RGB);
-        int greenColor = new Color(84, 255, 159).getRGB();
+        int greenColor = new Color(0,0,0).getRGB();
         int whiteColor = Color.WHITE.getRGB();
 
         for (int i = 0; i < qrWidth; i++) {

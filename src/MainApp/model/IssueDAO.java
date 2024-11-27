@@ -88,4 +88,25 @@ public class IssueDAO {
     public ArrayList<Issue> getIssuesList() {
         return issuesList;
     }
+
+    public ArrayList<String> getBooksBorrowedByStudent(String studentID) {
+        ArrayList<String> bookIDs = new ArrayList<>();
+        String query = "SELECT bookID FROM issue WHERE id = ?";
+
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+
+            preparedStatement.setString(1, studentID);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                bookIDs.add(resultSet.getString("bookID"));
+            }
+        } catch (SQLException e) {
+            System.out.println("Error fetching borrowed books: " + e.getMessage());
+        }
+
+        return bookIDs;
+    }
+
 }
