@@ -2,6 +2,7 @@ package UserMain.controller;
 
 import MainApp.model.LibraryModelManage;
 import MainApp.model.Reserve;
+import Suggest.view.SuggestView;
 import UserAccount.view.AccountView;
 import UserHistory.view.HistoryView;
 import UserMain.view.UserView;
@@ -30,6 +31,8 @@ public class UserController implements ActionListener, MouseListener {
         addMenuHoverEffect(userView.getjMenuHistory());
         addMenuHoverEffect(userView.getjMenuInfo());
         addMenuHoverEffect(userView.getjMenuOut());
+        addMenuHoverEffect(userView.getjMenuSuggest());
+
 
 
         userView.getBtnSearch().addMouseListener(this);
@@ -92,6 +95,15 @@ public class UserController implements ActionListener, MouseListener {
                     accountView.setPreferredSize(new Dimension(userView.getMainHomePanel().getWidth(),userView.getMainHomePanel().getHeight()));
                     userView.setMainHomePanel(accountView);
                 }
+                if(menu==userView.getjMenuSuggest())
+                {
+                    System.out.println(("Suggest Button clicked"));
+                    SuggestView suggestView = new SuggestView(userView.student, userView.libraryModelManage);
+                    userView.toggleMenuBar();
+                    suggestView.setPreferredSize(new Dimension(userView.getMainHomePanel().getWidth(),userView.getMainHomePanel().getHeight()));
+                    userView.setMainHomePanel(suggestView);
+                }
+
 
             }
 
