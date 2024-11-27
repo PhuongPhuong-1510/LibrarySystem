@@ -52,7 +52,7 @@ public class ManagementBookView extends JPanel {
         String[] columnNames = createColumnNames();
         Object[][] data = fetchData();  // Phương thức để lấy dữ liệu
 
-        bookTableView = new BaseBookTableView(columnNames, data,9,180,2) {
+        bookTableView = new BaseBookTableView(columnNames, data,9,180,2, "book") {
 
             @Override
             protected void centerTableCells(JTable table) {
@@ -85,7 +85,11 @@ public class ManagementBookView extends JPanel {
                     column.setPreferredWidth(columnWidths[i]);
                 }
             }
+
+
         };
+
+
 
         managementPanel = new BaseManagementPanel("Search id, author, genre, title", "/ManageBook/icon/bookAdd.png", "Add Book", this, true) {
             @Override
@@ -147,7 +151,7 @@ public class ManagementBookView extends JPanel {
 
 
     private JLabel createImageLabel(String imagePath) {
-        // Lấy ImageIcon từ bộ nhớ đệm của LibraryModelManage
+
         ImageIcon icon = libraryModelManage.getImageFromCache(imagePath);
 
         if (icon == null) {
@@ -212,10 +216,19 @@ public class ManagementBookView extends JPanel {
                     table.getCellEditor().stopCellEditing();
                 }
                 if (row >= 0 && row < model.getRowCount()) {
-                    model.removeRow(row);
                     Book bookToRemove = libraryModelManage.getBooksList().get(row);
-                    libraryModelManage.deleteBookFromDatabase(bookToRemove.getBookID());
-                    updateTable(libraryModelManage.getBooksList());
+                    if(bookToRemove.getCurent().equals("Still")) {
+                        model.removeRow(row);
+                        libraryModelManage.deleteBookFromDatabase(bookToRemove.getBookID());
+                        updateTable(libraryModelManage.getBooksList());
+                    }else{
+                        JOptionPane.showMessageDialog(
+                                this,
+                                "this book is not still",
+                                "not still",
+                                JOptionPane.WARNING_MESSAGE
+                        );
+                    }
                 }
                 if (model.getRowCount() == 0) {
                     table.clearSelection();
@@ -224,7 +237,7 @@ public class ManagementBookView extends JPanel {
         });
 
         imageButton.addActionListener(e -> {
-            toggleImageButton(deleteButton, editButton, row);
+            toggleImageButton(row);
         });
 
         QRcodeButton.addActionListener(e -> {
@@ -302,13 +315,42 @@ public class ManagementBookView extends JPanel {
 
         return actionPanel;
     }
+    private void toggleImageButton(int row) {
+        FileDialog fileDialog = new FileDialog((Frame) SwingUtilities.getWindowAncestor(this), "Choose Image", FileDialog.LOAD);
+        fileDialog.setFile("*.jpg;*.jpeg;*.png;*.gif");
+        fileDialog.setVisible(true);
+
+        String filePath = fileDialog.getDirectory() + fileDialog.getFile();
+        if (filePath != null && !filePath.isEmpty()) {
+            // Lấy đường dẫn tương đối
+            String relativePath = getRelativeImagePath(filePath);
+
+            if (relativePath != null) {
+                System.out.println("Selected relative path: " + relativePath);
+                updateImageForRow(row, relativePath);
+            } else {
+                System.out.println("Invalid file path selected: " + filePath);
+            }
+        }
+    }
 
 
 
 
 
 
-    private void toggleEditButtonIcon(JPanel actionPanel,JButton editButton,JButton deleteButton,JButton imageButton, int row) {
+    private void toggleEditButtonIcon(JPanel actionPanel, JButton editButton, JButton deleteButton, JButton imageButton, int row) {
+        if (lastSelectedRow != -1 && lastSelectedRow != row && count % 2 == 1) {
+            // Nếu có dòng khác đang ở chế độ chỉnh sửa (Edit) và chưa lưu (Save)
+            JOptionPane.showMessageDialog(
+                    this,
+                    "You must save the current row before editing another row!",
+                    "Unsaved Changes",
+                    JOptionPane.WARNING_MESSAGE
+            );
+            return;
+        }
+
         if (row != lastSelectedRow) {
             if (lastSelectedEditButton != null) {
                 lastSelectedEditButton.setIcon(new ImageIcon(getClass().getResource("/ManageBook/icon/bookEdit.png")));
@@ -319,7 +361,6 @@ public class ManagementBookView extends JPanel {
                 gbc.gridy = 0;
                 gbc.insets = new Insets(0, 7, 0, 7);
                 actionPanel.add(deleteButton, gbc);
-
             }
 
             lastSelectedRow = row;
@@ -331,7 +372,7 @@ public class ManagementBookView extends JPanel {
 
         if (count % 2 == 1) {
             actionPanel.remove(deleteButton);
-            editButton.setToolTipText("Please Save! ");
+            editButton.setToolTipText("Please Save!");
             editButton.setIcon(new ImageIcon(getClass().getResource("/ManageBook/icon/completeBook.png")));
             GridBagConstraints gbc = new GridBagConstraints();
             gbc.gridx = 2;
@@ -340,9 +381,8 @@ public class ManagementBookView extends JPanel {
             actionPanel.add(imageButton, gbc);
             editButton.addActionListener(e -> {
                 System.out.println("Saved");
-                Book bookToEdit = getUpdatedBookFromRow(row) ;
+                Book bookToEdit = getUpdatedBookFromRow(row);
                 libraryModelManage.editBookInDatabase(bookToEdit);
-
             });
         } else {
             editButton.setIcon(new ImageIcon(getClass().getResource("/ManageBook/icon/bookEdit.png")));
@@ -353,91 +393,20 @@ public class ManagementBookView extends JPanel {
             gbc.gridy = 0;
             gbc.insets = new Insets(0, 7, 0, 7);
             actionPanel.add(deleteButton, gbc);
-
         }
 
         bookTableView.setSelectedRow(row);
         editButton.repaint();
     }
 
-    private void toggleImageButton(JButton deleteButton, JButton editButton, int row) {
-        FileDialog fileDialog = new FileDialog((Frame) SwingUtilities.getWindowAncestor(this), "Choose Image", FileDialog.LOAD);
-        fileDialog.setFile("*.jpg;*.jpeg;*.png;*.gif");
-        fileDialog.setVisible(true);
 
-        String filePath = fileDialog.getDirectory() + fileDialog.getFile();
-        if (filePath != null && !filePath.isEmpty()) {
-            String relativePath;
-            if (filePath.contains("/ManageBook/icon/")) {
-                // Nếu file đã nằm trong thư mục icon
-                relativePath = getRelativeImagePath(filePath);
-            } else {
-                // Sao chép file vào thư mục icon
-                relativePath = copyImageToIconFolder(filePath);
-            }
-
-            if (relativePath != null) {
-                System.out.println("Selected relative path: " + relativePath);
-                updateImageForRow(row, relativePath);
-            } else {
-                System.out.println("Failed to process image: " + filePath);
-            }
-        }
-    }
-
-
-    private String copyImageToIconFolder(String imagePath) {
-        try {
-            // Tạo đường dẫn đích cho thư mục `/ManageBook/icon/`
-            String targetDir = System.getProperty("user.dir") + "/src/ManageBook/icon/";
-            File sourceFile = new File(imagePath);
-            File targetFile = new File(targetDir + sourceFile.getName());
-
-            // Kiểm tra nếu file đã tồn tại trong thư mục đích
-            if (!targetFile.exists()) {
-                Files.copy(sourceFile.toPath(), targetFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-            }
-            // Trả về đường dẫn tương đối
-            return "/ManageBook/icon/" + sourceFile.getName();
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Error copying image file: " + ex.getMessage(),
-                    "Error", JOptionPane.ERROR_MESSAGE);
-            return null;
-        }
-    }
 
     private void updateImageForRow(int row, String relativePath) {
-        // Nạp ảnh mới vào bộ nhớ đệm
-        libraryModelManage.loadImageToCache(relativePath);
-
-        // Cập nhật bảng
         DefaultTableModel model = (DefaultTableModel) bookTableView.getTable().getModel();
         JLabel newImageLabel = createImageLabel(relativePath);
         model.setValueAt(newImageLabel, row, 2);
         bookTableView.revalidate();
         bookTableView.repaint();
-    }
-
-
-
-
-    public void chooseImage(ActionEvent e) {
-        FileDialog fileDialog = new FileDialog((Frame) SwingUtilities.getWindowAncestor(this), "Chọn ảnh", FileDialog.LOAD);
-        fileDialog.setFile("*.jpg;*.jpeg;*.png;*.gif");
-        fileDialog.setVisible(true);
-
-        String filePath = fileDialog.getDirectory() + fileDialog.getFile();
-        if (filePath != null && !filePath.isEmpty()) {
-            displayImage(filePath);
-        }
-    }
-
-    private void displayImage(String filePath) {
-        ImageIcon imageIcon = new ImageIcon(filePath);
-        Image image = imageIcon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH); // Điều chỉnh kích thước ảnh hiển thị
-        JLabel coverLabel = new JLabel(new ImageIcon(image));
-        JOptionPane.showMessageDialog(this, coverLabel, "Image Preview", JOptionPane.PLAIN_MESSAGE);
     }
 
 
@@ -518,14 +487,16 @@ public class ManagementBookView extends JPanel {
 
         Book book = libraryModelManage.searchBookByID(bookID);
         String URL = book.getURL();
-
-        return new Book(bookID, bookName, image, author, category, language, total, curent, position, URL);
+        int startIndex = image.indexOf("\\ManageBook\\icon\\");
+        String result = image.substring(startIndex);
+        result = result.replace("\\", "/");
+        return new Book(bookID, bookName, result, author, category, language, total, curent, position, URL);
     }
 
 
     public void updateTable(ArrayList<Book> books) {
         DefaultTableModel model = (DefaultTableModel) bookTableView.getTable().getModel();
-        model.setRowCount(0);  // Xóa toàn bộ dữ liệu cũ
+        model.setRowCount(0);
 
         for (Book book : books) {
             Object[] rowData = new Object[]{
@@ -561,6 +532,11 @@ public class ManagementBookView extends JPanel {
         panel.setBounds(x, y, width, height);
     }
     private BufferedImage generateQRCodeImage(String text, int width, int height) throws WriterException {
+
+        if (text == null || text.trim().isEmpty()) {
+            text = "No content provided";
+        }
+
         QRCodeWriter qrCodeWriter = new QRCodeWriter();
         BitMatrix bitMatrix = qrCodeWriter.encode(text, BarcodeFormat.QR_CODE, width, height);
 
@@ -633,7 +609,4 @@ public class ManagementBookView extends JPanel {
         button.setBounds(x, y, 50, 50); // Size and position of the button
         return button;
     }
-
-
-
 }

@@ -436,6 +436,15 @@ public class LibraryModelManage {
         return null; // Return null if no matching issue is found
     }
 
+    public Issue searchIssueByStudentID(String studentID) {
+        for (Issue issue : getIssuesList()) {
+            if (issue.getIssueStudentID().equals(studentID) && !issue.getStatus().equals("Returned")) {
+                return issue;
+            }
+        }
+        return null;
+    }
+
 
 
     // đăng kí mượn sách
@@ -468,6 +477,15 @@ public class LibraryModelManage {
     public Reserve searchReserveByID(String reserveID) {
         for (Reserve reserve : getReserveList()) {
             if (reserve.getReserveID().equals(reserveID)) {
+                return reserve;
+            }
+        }
+        return null;
+    }
+
+    public Reserve searchReserveByStudentID(String studentID) {
+        for (Reserve reserve : getReserveList()) {
+            if (reserve.getId().equals(studentID)) {
                 return reserve;
             }
         }
