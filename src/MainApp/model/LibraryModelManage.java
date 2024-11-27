@@ -550,6 +550,18 @@ public class LibraryModelManage {
     public void reloadsignupList() {
         loadSignupsFromDatabase(); // Tải lại dữ liệu từ cơ sở dữ liệu
     }
+    public ArrayList<Book> getBorrowedBooksByStudent(String studentID) {
+        IssueDAO issueDAO = new IssueDAO();
+        BookDAO bookDAO = new BookDAO();
+
+        // Bước 1: Lấy danh sách bookID mà sinh viên đã mượn
+        ArrayList<String> borrowedBookIDs = issueDAO.getBooksBorrowedByStudent(studentID);
+
+        // Bước 2: Lấy thông tin chi tiết của các sách từ danh sách bookID
+        return bookDAO.getBooksByIDs(borrowedBookIDs, borrowedBookIDs);
+    }
+
+
 
     /**
      * Tải toàn bộ ảnh từ thư mục /ManageBook/icon
@@ -652,5 +664,6 @@ public class LibraryModelManage {
             }
         }
     }
+
 
 }

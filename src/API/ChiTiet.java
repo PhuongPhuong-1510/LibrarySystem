@@ -19,7 +19,7 @@ public class ChiTiet extends JPanel {
     private JFrame parentFrame; // Tham chiếu tới JFrame chứa ChiTiet panel
 
     public ChiTiet(JFrame parentFrame, String title, String author, String language, String category, String thumbnailUrl, String infoLink, String description) {
-        this.parentFrame = parentFrame; // Lưu tham chiếu frame
+        this.parentFrame = parentFrame;
      setLayout(new BorderLayout());
         this.setBorder(new LineBorder(new Color(232,244,252), 3, true));
 
@@ -177,7 +177,7 @@ public class ChiTiet extends JPanel {
         return scrollPane;
     }
 
-    private BufferedImage generateQRCodeImage(String text, int width, int height) throws WriterException {
+    public BufferedImage generateQRCodeImage(String text, int width, int height) throws WriterException {
         QRCodeWriter qrCodeWriter = new QRCodeWriter();
         BitMatrix bitMatrix = qrCodeWriter.encode(text, BarcodeFormat.QR_CODE, width, height);
 

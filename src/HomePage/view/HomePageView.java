@@ -28,7 +28,6 @@ public class HomePageView extends JPanel {
 
     private JMenu jMenuHomePage, jMenuLogout, jMenuLMSDashBoard, jMenuMGMTBooks, jMenuMGMTSutudents,
             jMenuIssueBook, jMenuReturnBook, jMenuViewRecords;
-    private JMenu jMenuAboutProject;
     private JMenu jMenuItemAPI;
 
     public HomePageView(MainView mainView) {
@@ -74,8 +73,7 @@ public class HomePageView extends JPanel {
         jMenuIssueBook = createMenu("Issue Book", "/HomePage/view/icon/icons8_Sell_26px.png", 280);
         jMenuReturnBook = createMenu("Return Book", "/HomePage/view/icon/icons8_Return_Purchase_26px.png", 330);
         jMenuViewRecords = createMenu("View Records", "/HomePage/view/icon/icons8_View_Details_26px.png", 380);
-        jMenuAboutProject = createMenu("About Project", "/HomePage/view/icon/icons8_Books_26px.png", 430);
-        jMenuLogout = createMenu("Logout", "/HomePage/view/icon/icons8_Exit_26px_2.png", 480);
+        jMenuLogout = createMenu("Logout", "/HomePage/view/icon/icons8_Exit_26px_2.png", 430);
 
         JLabel lblMenu = new JLabel("Features");
         lblMenu.setFont(new Font("Tahoma", Font.PLAIN, 15));
@@ -675,9 +673,7 @@ public class HomePageView extends JPanel {
         this.jMenuViewRecords = jMenuViewRecords;
     }
 
-    public JMenu getjMenuAboutProject() {
-        return jMenuAboutProject;
-    }
+
 
     public JMenu getjMenuSearchApi(){
         return  jMenuItemAPI;
