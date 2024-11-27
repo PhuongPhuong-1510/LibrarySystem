@@ -2,19 +2,17 @@ package HomePage.view;
 
 import HomePage.controller.HomePageController;
 import HomePage.model.HomePageModel;
-import MainApp.model.Book;
-import MainApp.model.LibraryModelManage;
-import MainApp.model.Student;
+import MainApp.model.*;
 import MainApp.view.MainView;
 import javax.swing.*;
+import javax.swing.Timer;
 import javax.swing.border.LineBorder;
 import javax.swing.table.*;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Date;
+import java.util.*;
 import java.text.SimpleDateFormat;
-import java.util.Objects;
 import javax.swing.table.DefaultTableModel;
+import java.util.stream.Collectors;
 
 public class HomePageView extends JPanel {
     private HomePageModel homePageModel;
@@ -175,7 +173,7 @@ public class HomePageView extends JPanel {
         infoPanel.setPreferredSize(new Dimension(getWidth(), 150));
         infoPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        String[] infoTitles = {"No Of Books", "No Of Students", "Issued Books", "Defaulter List"};
+        String[] infoTitles = {"No Of Books", "No Of Students", "Issued Books", "No Of Admins"};
         String[] icons = {
                 "/HomePage/view/icon/icons8_Book_Shelf_50px.png",
                 "/HomePage/view/icon/icons8_People_50px.png",
@@ -187,18 +185,20 @@ public class HomePageView extends JPanel {
             String count = "";
             switch (i) {
                 case 0:
-                    ArrayList<Student> students = this.libraryModelManage.getStudentsList();
-                    count = String.valueOf(students.size());
-                    break;
-                case 1:
                     ArrayList<Book> books = this.libraryModelManage.getBooksList();
                     count = String.valueOf(books.size());
                     break;
+                case 1:
+                    ArrayList<Student> students = this.libraryModelManage.getStudentsList();
+                    count = String.valueOf(students.size());
+                    break;
                 case 2:
-                    count = "10";
+                    ArrayList<Issue> issues = this.libraryModelManage.getIssuesList();
+                    count = String.valueOf(issues.size());
                     break;
                 case 3:
-                    count = "10";
+                    ArrayList<Admin> admins = this.libraryModelManage.getAdminsList();
+                    count = String.valueOf(admins.size());
                     break;
             }
             infoPanel.add(createInfoTile(infoTitles[i], icons[i], i % 2 == 0, count));
@@ -229,26 +229,7 @@ public class HomePageView extends JPanel {
     }
 
     private JPanel createStudentDetails() {
-        if (this.libraryModelManage == null) {
-            throw new IllegalStateException("LibraryModelManage chưa được khởi tạo!");
-        }
-        String[] studentColumnNames = {"Student ID", "Student Name", "Student Email", "Contact Number"};
 
-        ArrayList<Student> students = this.libraryModelManage.getStudentsList();
-        Object[][] studentData = new Object[students.size()][4];
-
-        for (int i = 0; i < students.size(); i++) {
-            Student student = students.get(i);
-            studentData[i][0] = student.getID();
-            studentData[i][1] = student.getName();
-            studentData[i][2] = student.getEmail();
-            studentData[i][3] = student.getPhone();
-        }
-        
-        return createTablePanel(studentData, studentColumnNames, 5,"Student Details");
-    }
-
-    private JPanel createBookDetailsTable() {
         if (this.libraryModelManage == null) {
             throw new IllegalStateException("LibraryModelManage chưa được khởi tao!");
         }
@@ -266,6 +247,27 @@ public class HomePageView extends JPanel {
         }
 
         return createTablePanel(bookData, bookColumnNames, 5,"Book Details");
+    }
+
+    private JPanel createBookDetailsTable() {
+
+        if (this.libraryModelManage == null) {
+            throw new IllegalStateException("LibraryModelManage chưa được khởi tạo!");
+        }
+        String[] studentColumnNames = {"Student ID", "Student Name", "Student Email", "Contact Number"};
+
+        ArrayList<Student> students = this.libraryModelManage.getStudentsList();
+        Object[][] studentData = new Object[students.size()][4];
+
+        for (int i = 0; i < students.size(); i++) {
+            Student student = students.get(i);
+            studentData[i][0] = student.getID();
+            studentData[i][1] = student.getName();
+            studentData[i][2] = student.getEmail();
+            studentData[i][3] = student.getPhone();
+        }
+
+        return createTablePanel(studentData, studentColumnNames, 5,"Student Details");
     }
 
     private JPanel createTablePanel(Object[][] data, String[] columnNames, int rowCount,String title) {
@@ -377,49 +379,199 @@ public class HomePageView extends JPanel {
         tablesPanel.add(createBookDetailsTable());
         return tablesPanel;
     }
-    private JPanel createPieChart()
-    {
-        JPanel jPanel=new JPanel();
+
+//    private JPanel createPieChart() {
+//        ArrayList<Issue> issues = this.libraryModelManage.getIssuesList();
+//        HashMap<String, Integer> bookCountMap = new HashMap<>();
+//
+//        // Đếm số lần mượn mỗi sách
+//        for (Issue issue : issues) {
+//            Book book = this.libraryModelManage.searchBookByID(issue.getIssueBookID());
+//            if (book != null) { // Kiểm tra nếu book không null
+//                String bookName = book.getBookName(); // Lấy tên sách
+//                bookCountMap.put(bookName, bookCountMap.getOrDefault(bookName, 0) + 1); // Tăng số lần mượn
+//            }
+//        }
+//
+//        // Sắp xếp bookCountMap theo giá trị giảm dần và lấy 4 phần tử đầu tiên
+//        LinkedHashMap<String, Integer> sortedBookCountMap = bookCountMap.entrySet()
+//                .stream()
+//                .sorted((entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()))
+//                .limit(4)
+//                .collect(Collectors.toMap(
+//                        Map.Entry::getKey,
+//                        Map.Entry::getValue,
+//                        (oldValue, newValue) -> oldValue,
+//                        LinkedHashMap::new
+//                ));
+//
+//        // Tính tổng số sách đã mượn
+//        int totalIssues = bookCountMap.values().stream().mapToInt(Integer::intValue).sum();
+//
+//        // Khởi tạo các mảng values, labels và colors
+//        double[] values = new double[sortedBookCountMap.size()+1];
+//        String[] labels = new String[sortedBookCountMap.size()+1];
+//        Color[] colors = {
+//                new Color(238, 232, 170),
+//                new Color(0, 250, 0),
+//                new Color(30, 144, 255),
+//                new Color(238, 174, 238),
+//                new Color(255, 20, 147)
+//        };
+//
+//        int index = 0;
+//        int sum = 0;
+//        for (Map.Entry<String, Integer> entry : sortedBookCountMap.entrySet()) {
+//            String bookName = entry.getKey();
+//            int count = entry.getValue();
+//            double percentage = (double) count / totalIssues * 100;
+//
+//            sum += percentage;
+//            values[index] = percentage;
+//            labels[index] = bookName + "\n(" + String.format("%.2f", percentage) + "%)";
+//            index++;
+//        }
+//
+//        double otherPercentage = 100 - sum;
+//        values[index] = otherPercentage;
+//        labels[index] = "Other (" + String.format("%.2f", otherPercentage) + "%)";
+//
+//        // Vẽ biểu đồ
+//        JPanel jPanel = new JPanel();
+//        jPanel.setLayout(new BorderLayout());
+//        PieChartExample pieChart = new PieChartExample(values, colors, labels);
+//        pieChart.setBackground(new Color(230, 230, 250));
+//        jPanel.setBackground(new Color(230, 230, 250));
+//        jPanel.add(pieChart, BorderLayout.CENTER);
+//        jPanel.setVisible(true);
+//
+//        JLabel jLabel = new JLabel("<html><div style='width:200px;'>Popular books</div></html>");
+//        jLabel.setFont(new Font("Tahoma", Font.BOLD, 20));
+//        jLabel.setHorizontalAlignment(SwingConstants.CENTER);
+//        jLabel.setPreferredSize(new Dimension(200, 50));  // Thiết lập kích thước của JLabel
+//
+//        jPanel.add(jLabel, BorderLayout.NORTH);
+//        jPanel.setBorder(BorderFactory.createCompoundBorder(
+//                BorderFactory.createLineBorder(Color.BLACK, 1), // Viền đen
+//                BorderFactory.createEmptyBorder(10, 10, 10, 10) // Khoảng cách bên trong 10px từ viền
+//        ));
+//
+//        JPanel outerPanel = new JPanel(new BorderLayout());
+//        outerPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 10)); // Khoảng cách với cạnh JFrame
+//        outerPanel.add(jPanel, BorderLayout.CENTER); // Đặt jPanel vào giữa outerPanel
+//        outerPanel.setBackground(new Color(230, 230, 250));
+//
+//        jPanel.revalidate();
+//        jPanel.repaint();
+//        return outerPanel;
+//    }
+
+    private JPanel createPieChart() {
+        ArrayList<Issue> issues = this.libraryModelManage.getIssuesList();
+        HashMap<String, Integer> bookCountMap = new HashMap<>();
+
+        // Đếm số lần mượn mỗi sách
+        for (Issue issue : issues) {
+            Book book = this.libraryModelManage.searchBookByID(issue.getIssueBookID());
+            if (book != null) { // Kiểm tra nếu book không null
+                String bookName = book.getBookName(); // Lấy tên sách
+                bookCountMap.put(bookName, bookCountMap.getOrDefault(bookName, 0) + 1); // Tăng số lần mượn
+            }
+        }
+
+        // Sắp xếp bookCountMap theo giá trị giảm dần và lấy 4 phần tử đầu tiên
+        LinkedHashMap<String, Integer> sortedBookCountMap = bookCountMap.entrySet()
+                .stream()
+                .sorted((entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()))
+                .limit(4)
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (oldValue, newValue) -> oldValue,
+                        LinkedHashMap::new
+                ));
+
+        // Tính tổng số sách đã mượn
+        int totalIssues = bookCountMap.values().stream().mapToInt(Integer::intValue).sum();
+
+        // Khởi tạo các mảng values, labels và colors
+        double[] values = new double[sortedBookCountMap.size() + 1];
+        String[] labels = new String[sortedBookCountMap.size() + 1];
+        Color[] colors = {
+                new Color(238, 232, 170),
+                new Color(0, 250, 0),
+                new Color(30, 144, 255),
+                new Color(238, 174, 238),
+                new Color(255, 20, 147)
+        };
+
+        int index = 0;
+        int sum = 0;
+        for (Map.Entry<String, Integer> entry : sortedBookCountMap.entrySet()) {
+            String bookName = entry.getKey();
+            int count = entry.getValue();
+            double percentage = (double) count / totalIssues * 100;
+
+            sum += percentage;
+
+            // Chia thành các từ và xuống dòng mỗi 5 từ
+            String[] words = bookName.split(" ");
+            StringBuilder wrappedText = new StringBuilder();
+
+            int wordCount = 0;
+            for (String word : words) {
+                wrappedText.append(word).append(" ");
+                wordCount++;
+
+                // Sau mỗi 5 từ, xuống dòng
+                if (wordCount == 5) {
+                    wrappedText.append("\n"); // Chuyển sang dòng mới
+                    wordCount = 0; // Reset lại đếm từ
+                }
+            }
+
+            // Đính kèm phần trăm vào cuối tên sách
+            wrappedText.append("(").append(String.format("%.2f", percentage)).append("%)");
+
+            labels[index] = wrappedText.toString();
+            values[index] = percentage;
+            index++;
+        }
+
+        // Phần còn lại
+        double otherPercentage = 100 - sum;
+        values[index] = otherPercentage;
+        labels[index] = "Other (" + String.format("%.2f", otherPercentage) + "%)";
+
+        // Vẽ biểu đồ
+        JPanel jPanel = new JPanel();
         jPanel.setLayout(new BorderLayout());
-        double[] values = {30,
-                20,
-                15,
-                10,
-                25};
-        Color[] colors = {new Color(238,232,170),
-                new Color(0,250,0),
-                new Color( 30,144,255),
-                new Color(238 ,174, 238)	,
-                new Color(255,20,147)};
-        String[] labels = {"PHP",
-                "HTML",
-                "CSS",
-                "Java for everyone",
-                "Learn Python"};
         PieChartExample pieChart = new PieChartExample(values, colors, labels);
-        pieChart.setBackground(new Color(230,230,250));
-        jPanel.setBackground(new Color(230,230,250));
-        jPanel.add(pieChart,BorderLayout.CENTER);
+        pieChart.setBackground(new Color(230, 230, 250));
+        jPanel.setBackground(new Color(230, 230, 250));
+        jPanel.add(pieChart, BorderLayout.CENTER);
         jPanel.setVisible(true);
 
-        JLabel jLabel=new JLabel("Issued Book details");
-        jLabel.setFont(new Font("Tahoma",Font.BOLD,20));
+        JLabel jLabel = new JLabel("Popular books");
+        jLabel.setFont(new Font("Tahoma", Font.BOLD, 20));
         jLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        jPanel.add(jLabel,BorderLayout.NORTH);
+        jLabel.setPreferredSize(new Dimension(200, 50));  // Thiết lập kích thước của JLabel
+
+        jPanel.add(jLabel, BorderLayout.NORTH);
         jPanel.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(Color.BLACK, 1), // Viền đen
                 BorderFactory.createEmptyBorder(10, 10, 10, 10) // Khoảng cách bên trong 10px từ viền
         ));
+
         JPanel outerPanel = new JPanel(new BorderLayout());
         outerPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 10)); // Khoảng cách với cạnh JFrame
         outerPanel.add(jPanel, BorderLayout.CENTER); // Đặt jPanel vào giữa outerPanel
-        outerPanel.setBackground(new Color(230,230,250));
+        outerPanel.setBackground(new Color(230, 230, 250));
+
         jPanel.revalidate();
         jPanel.repaint();
         return outerPanel;
-
     }
-
 
 
     public JButton getHamburgerButton() {
