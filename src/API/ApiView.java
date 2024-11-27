@@ -214,6 +214,7 @@ public class ApiView extends JPanel {
 
                                         // Tạo đối tượng Book và lưu vào database
                                         Book bookk = new Book(bookID, bookName, fileName, bookAuthor, bookCategory, bookLanguage, total, current, bookPosition, infolink);
+                                        libraryModelManage.addImageToCache(fileName);
                                         libraryModelManage.addBookToDatabase(bookk);
                                         return null;
                                     }

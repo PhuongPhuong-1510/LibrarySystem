@@ -20,8 +20,7 @@ import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
+import java.nio.file.*;
 import java.util.ArrayList;
 
 public class ManagementBookView extends JPanel {
@@ -43,6 +42,7 @@ public class ManagementBookView extends JPanel {
         this.init();
         this.updateTable(libraryModelManage.getBooksList());
         new ManagementBookController(this);
+
     }
 
     private void init() {
@@ -146,16 +146,14 @@ public class ManagementBookView extends JPanel {
     }
 
 
-    private JLabel createImageLabel(String path) {
-        String relativePath = getRelativeImagePath(path);
-        ImageIcon icon;
+    private JLabel createImageLabel(String imagePath) {
+        // Lấy ImageIcon từ bộ nhớ đệm của LibraryModelManage
+        ImageIcon icon = libraryModelManage.getImageFromCache(imagePath);
 
-        if (relativePath != null && getClass().getResource(relativePath) != null) {
-            icon = new ImageIcon(getClass().getResource(relativePath));
-            icon.setDescription(relativePath);
-        } else {
-            System.out.println("Image not found at path: " + path);
-            icon = new ImageIcon(new BufferedImage(5, 5, BufferedImage.TYPE_INT_ARGB)); // Placeholder ảnh trống
+        if (icon == null) {
+            // Nếu không có trong bộ nhớ đệm, sử dụng ảnh mặc định
+            System.out.println("Image not found in cache for path: " + imagePath);
+            icon = new ImageIcon(new BufferedImage(5, 5, BufferedImage.TYPE_INT_ARGB)); // Ảnh trống
         }
 
         return new JLabel(icon);
@@ -410,6 +408,10 @@ public class ManagementBookView extends JPanel {
     }
 
     private void updateImageForRow(int row, String relativePath) {
+        // Nạp ảnh mới vào bộ nhớ đệm
+        libraryModelManage.loadImageToCache(relativePath);
+
+        // Cập nhật bảng
         DefaultTableModel model = (DefaultTableModel) bookTableView.getTable().getModel();
         JLabel newImageLabel = createImageLabel(relativePath);
         model.setValueAt(newImageLabel, row, 2);
@@ -631,5 +633,7 @@ public class ManagementBookView extends JPanel {
         button.setBounds(x, y, 50, 50); // Size and position of the button
         return button;
     }
+
+
 
 }
