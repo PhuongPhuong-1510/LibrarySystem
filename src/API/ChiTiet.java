@@ -46,10 +46,13 @@ public class ChiTiet extends JPanel {
             JLabel lblImage = new JLabel(new ImageIcon(image));
             imagePanel.add(lblImage);
         } catch (Exception e) {
-            JLabel lblImage = new JLabel("No Image Available");
+            JLabel lblImage = new JLabel("Không tìm thấy ảnh");
+            lblImage.setHorizontalAlignment(SwingConstants.CENTER);
+            lblImage.setVerticalAlignment(SwingConstants.CENTER);
             imagePanel.add(lblImage);
-            e.printStackTrace();
+            System.out.println("Không tải được ảnh từ URL: " + thumbnailUrl);
         }
+
         layeredPane.add(imagePanel,Integer.valueOf(1));
 
         JPanel titlePanel = new JPanel(new BorderLayout());

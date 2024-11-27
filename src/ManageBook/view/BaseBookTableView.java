@@ -14,17 +14,19 @@ public abstract class BaseBookTableView extends JPanel {
     protected int imageColumn;
     protected int rowHeight;
     protected int selectedRow = -1;
+    private String change;
     protected JTable table;
 
 
 
-    public BaseBookTableView(String[] columnNames, Object[][] data,int editColumn,int rowHeight,int imageColumn) {
+    public BaseBookTableView(String[] columnNames, Object[][] data,int editColumn,int rowHeight,int imageColumn, String change) {
         this.imageColumn = imageColumn;
         this.rowHeight = rowHeight;
         this.editColumn = editColumn;
         this.columnNames = columnNames;
         this.setLayout(new BorderLayout());
 
+        this.change = change;
         this.table = createTable(data, columnNames); // Khởi tạo bảng trước khi cấu hình
         configureColumnRenderers(table);
         configureTable(table, rowCount);
@@ -66,7 +68,16 @@ public abstract class BaseBookTableView extends JPanel {
         DefaultTableModel model = new DefaultTableModel(data, columnNames) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return(column == editColumn || row == selectedRow) && column!=imageColumn;
+                if(change.equals("book")){
+                    if (column == 0 || column == 7) {
+                        return false;
+                    }
+                }else{
+                    if (column == 0) {
+                        return false;
+                    }
+                }
+                return (column == editColumn || row == selectedRow) && column != imageColumn;
             }
         };
 

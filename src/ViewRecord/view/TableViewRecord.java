@@ -12,7 +12,7 @@ public class TableViewRecord extends BaseBookTableView {
     private final int imageColumn2;
 
     public TableViewRecord(String[] columnNames, Object[][] data, int rowHeight, int imageColumn1, int imageColumn2) {
-        super(columnNames, data, -1, rowHeight, -1);
+        super(columnNames, data, -1, rowHeight, -1, "v");
         this.imageColumn1 = imageColumn1;
         this.imageColumn2 = imageColumn2;
     }
