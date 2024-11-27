@@ -206,6 +206,7 @@ public class ApiView extends JPanel {
                                             Files.copy(in, Paths.get(fileName), StandardCopyOption.REPLACE_EXISTING);
                                             in.close();
                                             fileName = fileName.replace("src", "");
+                                            System.out.println(fileName+"////////////////");
                                         } catch (IOException ex) {
                                             ex.printStackTrace();
                                             SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(null, "Failed to download book image.", "Error", JOptionPane.ERROR_MESSAGE));
@@ -214,6 +215,7 @@ public class ApiView extends JPanel {
 
                                         // Tạo đối tượng Book và lưu vào database
                                         Book bookk = new Book(bookID, bookName, fileName, bookAuthor, bookCategory, bookLanguage, total, current, bookPosition, infolink);
+                                        libraryModelManage.addImageToCache(fileName);
                                         libraryModelManage.addBookToDatabase(bookk);
                                         return null;
                                     }

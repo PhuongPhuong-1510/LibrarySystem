@@ -1,7 +1,11 @@
 package MainApp.model;
 
 import javax.swing.*;
+import java.io.File;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -14,6 +18,9 @@ public class LibraryModelManage {
     private ArrayList<Reserve> reserveList;
     private ArrayList<Signup> signupList;
 
+    // Bộ nhớ đệm hình ảnh
+    private final Map<String, ImageIcon> imageCache;
+
     public LibraryModelManage() {
         booksList = new ArrayList<>();
         studentsList = new ArrayList<>();
@@ -21,6 +28,11 @@ public class LibraryModelManage {
         issuesList = new ArrayList<>();
         reserveList = new ArrayList<>();
         signupList = new ArrayList<>();
+
+
+        imageCache = new HashMap<>(); // Khởi tạo bộ nhớ đệm
+        preloadImages(); // Tải ảnh khi khởi tạo
+
     }
 
     // Quản lý sách
@@ -327,7 +339,7 @@ public class LibraryModelManage {
         }
 
         boolean isBookStill = bookslist.stream()
-                .anyMatch(book -> book.getBookID().equals(bookID) && ("Still".equals(book.getCurent()) || "Reserved".equals(book.getCurent())));
+                .anyMatch(book -> book.getBookID().equals(bookID) && ("Still".equals(book.getCurent())||"Reserved".equals(book.getCurent())));
         if (!isBookStill) {
             JOptionPane.showMessageDialog(null, "Book is not in 'Still' state.");
             return false;
@@ -373,6 +385,24 @@ public class LibraryModelManage {
         return null; // Return null if the student is not found
     }
 
+    public boolean checkStudentByEmail(String studentEmail) {;
+        for (Student student : studentsList) {
+            if (student.getEmail().equals(studentEmail)) {
+                return true;
+            }
+        }
+        return false; // Return null if the student is not found
+    }
+
+    public boolean checkStudentByPhone(String studentPhone) {;
+        for (Student student : studentsList) {
+            if (student.getPhone().equals(studentPhone)) {
+                return true;
+            }
+        }
+        return false; // Return null if the student is not found
+    }
+
     public ArrayList<Book> searchBooks(String bookId, String bookName, String author, String genre) {
         return booksList.stream()
                 .filter(book -> (bookId.isEmpty() || book.getBookID().contains(bookId)) &&
@@ -395,10 +425,10 @@ public class LibraryModelManage {
     }
 
 
-    public Issue searchIssueByBookStudent(String bookID, String studentID) {
+    public Issue searchIssueByBookStudentStatus(String bookID, String studentID, String status) {
         ArrayList<Issue> issueslist = getIssuesList();
         for (Issue issue : issueslist) {
-            if (issue.getIssueBookID().equals(bookID) && issue.getIssueStudentID().equals(studentID)) {
+            if (issue.getIssueBookID().equals(bookID) && issue.getIssueStudentID().equals(studentID) && issue.getStatus().equals(status)) {
                 return issue;
             }
         }
@@ -533,5 +563,106 @@ public class LibraryModelManage {
 
 
 
+    /**
+     * Tải toàn bộ ảnh từ thư mục /ManageBook/icon
+     */
+    private void preloadImages() {
+        String iconFolderPath = System.getProperty("user.dir") + "/src/ManageBook/icon/";
+        File iconFolder = new File(iconFolderPath);
+
+        if (iconFolder.exists() && iconFolder.isDirectory()) {
+            File[] files = iconFolder.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    if (isImageFile(file)) {
+                        String relativePath = "/ManageBook/icon/" + file.getName();
+                        ImageIcon icon = new ImageIcon(file.getAbsolutePath());
+                        imageCache.put(relativePath, icon);
+                        System.out.println("Cached image: " + relativePath);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Kiểm tra file có phải là ảnh không
+     */
+    private boolean isImageFile(File file) {
+        String[] imageExtensions = {".png", ".jpg", ".jpeg", ".gif"};
+        String fileName = file.getName().toLowerCase();
+        for (String ext : imageExtensions) {
+            if (fileName.endsWith(ext)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Thêm một ảnh vào bộ nhớ đệm
+     */
+    public void addImageToCache(String relativePath) {
+        if (relativePath == null || relativePath.isEmpty()) {
+            System.err.println("Error: Provided relative path is null or empty.");
+            return;
+        }
+
+        if (!imageCache.containsKey(relativePath)) {
+            try {
+                // Chuyển đổi đường dẫn tương đối thành đường dẫn chuẩn hóa
+                String basePath = "src/"; // Đường dẫn gốc của dự án
+                String fullPath = Paths.get(basePath, relativePath).normalize().toString();
+                System.out.println(fullPath);
+
+                ImageIcon icon = new ImageIcon(fullPath); // Tạo ImageIcon từ đường dẫn đầy đủ
+                imageCache.put(relativePath, icon);       // Lưu trữ icon trong cache
+
+                System.out.println("Added image to cache: " + relativePath);
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.err.println("Error: Failed to load image at path: " + relativePath);
+            }
+        } else {
+            System.out.println("Image already exists in cache: " + relativePath);
+        }
+    }
+
+
+    /**
+     * Xóa một ảnh khỏi bộ nhớ đệm
+     */
+    public void removeImageFromCache(String relativePath) {
+        if (imageCache.containsKey(relativePath)) {
+            imageCache.remove(relativePath);
+            System.out.println("Removed image from cache: " + relativePath);
+        } else {
+            System.out.println("Image not found in cache: " + relativePath);
+        }
+    }
+
+    /**
+     * Lấy ảnh từ bộ nhớ đệm
+     */
+    public ImageIcon getImageFromCache(String relativePath) {
+        return imageCache.getOrDefault(relativePath, null);
+    }
+
+    /**
+     * Lấy toàn bộ bộ nhớ đệm (debug hoặc hiển thị danh sách ảnh)
+     */
+    public Map<String, ImageIcon> getImageCache() {
+        return imageCache;
+    }
+    public void loadImageToCache(String imagePath) {
+        if (!imageCache.containsKey(imagePath)) {
+            try {
+                ImageIcon icon = new ImageIcon(getClass().getResource(imagePath));
+                imageCache.put(imagePath, icon);
+            } catch (Exception e) {
+                System.out.println("Failed to load image: " + imagePath);
+            }
+        }
+    }
 
 }

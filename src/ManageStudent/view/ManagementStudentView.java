@@ -301,6 +301,7 @@ public class ManagementStudentView extends JPanel {
         String studentID = model.getValueAt(row, 0).toString();
         String studentName = model.getValueAt(row, 1).toString();
         String genderStr = model.getValueAt(row, 2).toString();
+        Student student = libraryModelManage.searchStudentByID(studentID);
         boolean gender = true;
         if( "Female".equals(genderStr)) gender = false;
         else gender = true;
@@ -313,7 +314,7 @@ public class ManagementStudentView extends JPanel {
         String major = model.getValueAt(row, 7).toString();
         String branch = model.getValueAt(row, 8).toString();
 
-        return new Student(studentID, studentName, email, "", phoneNumber, gender, cardPhoto, dateOfBirth, major, branch);
+        return new Student(studentID, studentName, email, student.getPassword(), phoneNumber, gender, cardPhoto, dateOfBirth, major, branch);
     }
 
     public void updateStudentTable(List<Student> students) {

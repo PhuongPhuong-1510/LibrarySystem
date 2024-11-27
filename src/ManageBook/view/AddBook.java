@@ -9,6 +9,10 @@ import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Objects;
 
 public class AddBook extends JFrame {
@@ -193,12 +197,31 @@ public class AddBook extends JFrame {
         fileDialog.setFile("*.jpg;*.jpeg;*.png;*.gif");
         fileDialog.setVisible(true);
 
-        String filePath = fileDialog.getDirectory() + fileDialog.getFile();
-        if (filePath != null && !filePath.isEmpty()) {
-            imagePath = filePath;
-            displayImage(filePath);
+        String fileName = fileDialog.getFile();
+        String directory = fileDialog.getDirectory();
+
+        if (fileName != null && !fileName.isEmpty()) {
+            String sourcePath = directory + fileName;
+            String destinationPath = "src/ManageBook/icon/" + fileName;
+
+            try {
+                Files.createDirectories(Paths.get("/ManageBook/icon/")); // Tạo thư mục nếu chưa tồn tại
+                Files.copy(Paths.get(sourcePath), Paths.get(destinationPath), StandardCopyOption.REPLACE_EXISTING);
+
+                // Hiển thị ảnh đã chọn
+                imagePath = destinationPath;
+                displayImage(destinationPath);
+
+                fileName = "/ManageBook/icon/"+fileName;
+                libraryModelManage.addImageToCache(fileName);
+                System.out.println(fileName);
+
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(this, "Không thể tải ảnh: " + ex.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
+
 
     private void displayImage(String filePath) {
         ImageIcon imageIcon = new ImageIcon(filePath);
@@ -206,10 +229,11 @@ public class AddBook extends JFrame {
         coverLabel.setIcon(new ImageIcon(image));
     }
 
+
     public Book getBookFromPanel(){
         String id = this.libraryModelManage.creatBookID();
         String title = this.titleField.getText()+"\n"+"( "+ this.descriptionArea.getText()+" )";
-        String imagePath = getImagePath();
+        String imagePath = getImagePath().substring(3);
         String author = this.authorText.getText()+"";
         String language = this.languageText.getText()+"";
         int total = Integer.valueOf(totalText.getText()+"");

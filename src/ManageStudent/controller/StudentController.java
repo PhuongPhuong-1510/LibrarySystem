@@ -3,6 +3,7 @@ package ManageStudent.controller;
 import ManageStudent.view.AddStudentView;
 import ManageStudent.view.ManagementStudentView;
 
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -37,8 +38,17 @@ public class StudentController implements ActionListener, AddStudentListener {
 
     @Override
     public void onStudentAdded() {
-        System.out.println("A new student has been added!");
-        managementStudentView.addStudent(addStudentView.getStudentFromPanel());
+        if(addStudentView.getStudentFromPanel()!=null){
+            System.out.println("A new student has been added!");
+            JOptionPane.showMessageDialog(
+                    addStudentView,
+                    "Add student successfully",
+                    "Success",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+            managementStudentView.addStudent(addStudentView.getStudentFromPanel());
+            addStudentView.libraryModelManage.addStudentToDatabase(addStudentView.getStudentFromPanel());
+        }
         //addStudentView.libraryModelManage.addStudentToDatabase(addStudentView.getStudentFromPanel());
     }
 }

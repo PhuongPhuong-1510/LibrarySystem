@@ -1,6 +1,7 @@
 package MainApp.model;
 
 import java.sql.Date;
+import java.util.Objects;
 
 public class Issue {
     private String issueID;
@@ -63,6 +64,18 @@ public class Issue {
     }
     public void setStatus(String status) {
         this.status = status;
+    }
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Issue issue = (Issue) obj;
+        return Objects.equals(issueID, issue.issueID);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(issueID);
     }
 
 }

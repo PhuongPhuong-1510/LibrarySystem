@@ -241,7 +241,7 @@ public class ReturnBookView extends JPanel {
     public void updateIssue(){
         String bookID = bookIdField.getText()+"";
         String studentID = studentIdField.getText()+"";
-        Issue issue = libraryModelManage.searchIssueByBookStudent(bookID, studentID);
+        Issue issue = libraryModelManage.searchIssueByBookStudentStatus(bookID, studentID, "issued");
 
         if (issue != null) {
             // Populate text fields with Issue details
@@ -273,8 +273,14 @@ public class ReturnBookView extends JPanel {
     public void returnBook() {
         String bookID = bookIdField.getText()+"";
         String studentID = studentIdField.getText()+"";
-        Issue issue = libraryModelManage.searchIssueByBookStudent(bookID, studentID);
-        if (issue != null && !issue.getStatus().equals("Returned")) {
+        String issued = "issued";
+        Issue issue = libraryModelManage.searchIssueByBookStudentStatus(bookID, studentID, issued);
+        if (issue != null) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "return book successfully",
+                    "Success",
+                    JOptionPane.INFORMATION_MESSAGE);
             issue.setStatus("Returned");
             libraryModelManage.editIssueInDatabase(issue);
             Book book = libraryModelManage.searchBookByID(issue.getIssueBookID());

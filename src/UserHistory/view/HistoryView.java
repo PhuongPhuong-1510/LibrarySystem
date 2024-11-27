@@ -20,6 +20,7 @@ public class HistoryView extends JPanel {
     private Student student;
     private LibraryModelManage libraryModelManage;
     private ArrayList<Issue> issueList ;
+    private ArrayList<Issue> issueListFiltered;
     private ArrayList<Reserve> reserveList ;
     //private BaseBookTableView table;
 
@@ -40,10 +41,12 @@ public class HistoryView extends JPanel {
         reservePanel.setBounds(15, 10, 550, 545);
         layeredPane.add(reservePanel, Integer.valueOf(1));
 
+        issueListFiltered = issueLlist(student.getID());
+
         JPanel issuedPanel = createPanel(
                 "List of Issued Books",
                 new String[]{"Book ID", "Book Name", "Issued Date", "Due Date","Action"},
-                issueList
+                issueListFiltered
         );
         issuedPanel.setBounds(635, 10, 550, 545);
         layeredPane.add(issuedPanel, Integer.valueOf(1));
@@ -175,7 +178,6 @@ public class HistoryView extends JPanel {
             } else if (record instanceof Issue) {
                 Issue issue = (Issue) record;
 
-                if (Objects.equals(issue.getIssueStudentID(), student.getID())&&(issue.getStatus().equals("issued"))) {
                     filteredList.add(new Object[]{
                             issue.getIssueBookID(),
                             getBookName(issue.getIssueBookID()),
@@ -183,7 +185,7 @@ public class HistoryView extends JPanel {
                             issue.getDueDate(),
                             createReturnAction()
                     });
-                }
+
             }
         }
 
@@ -214,25 +216,52 @@ public class HistoryView extends JPanel {
             String issueID = getIssueIdFromBookId(bookID);
 
             Issue issue = libraryModelManage.searchIssueByID(issueID);
-            issue.setStatus("returned");
+            issue.setStatus("Returned");
             Book book = libraryModelManage.searchBookByID(bookID);
             book.setCurent("Still");
             libraryModelManage.editBookInDatabase(book);
             libraryModelManage.editIssueInDatabase(issue);
-            issueList.remove(issue);
+            removeIssueByID(issueID);
+
+
+            System.out.println("Return Book"+rowIndex+bookID+issueID+removeIssueByID(issueID));
+
+            DefaultTableModel tableModel = (DefaultTableModel) ((JTable) returnButton.getParent().getParent()).getModel();
+            tableModel.removeRow(rowIndex);
+            JOptionPane.showMessageDialog(this, "Return successfully!", "Return Book", JOptionPane.INFORMATION_MESSAGE);
+
             refreshTableData();
 
-            System.out.println("Return Book"+rowIndex+bookID+issueID);
-            if (rowIndex != -1) {
 
-                JOptionPane.showMessageDialog(this, "Book returned successfully!", "Return Book", JOptionPane.INFORMATION_MESSAGE);
-                refreshTableData();
-            }
         });
 
-        actionPanel.add(returnButton);
+        actionPanel.add(returnButton, BorderLayout.CENTER);
         return actionPanel;
     }
+    public boolean removeIssueByID(String issueID) {
+        for (int i = 0; i < issueListFiltered.size(); i++) {
+            System.out.println("Checking issueID: " + issueID + " against: " + issueListFiltered.get(i).getIssueID());
+            if (issueListFiltered.get(i).getIssueID().equals(issueID)) {
+                issueListFiltered.remove(i);
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    public ArrayList issueLlist(String studentID) {
+        ArrayList issueLlist = new ArrayList();
+        for (int i = 0; i < issueList.size(); i++) {
+            if (issueList.get(i).getIssueStudentID().equals(studentID) && issueList.get(i).getStatus().equals("issued") ) {
+               issueLlist.add(issueList.get(i));
+               System.out.println(issueList.get(i).getIssueID());
+            }
+        }
+        return issueLlist;
+
+    }
+
 
     public JPanel createDeleteAction() {
         JPanel actionPanel = new JPanel(new BorderLayout());
@@ -248,18 +277,22 @@ public class HistoryView extends JPanel {
             book.setCurent("Still");
             libraryModelManage.editBookInDatabase(book);
             reserveList.remove(libraryModelManage.searchReserveByID(reserveId));
-            refreshTableData();
+
+            DefaultTableModel tableModel = (DefaultTableModel) ((JTable) deleteButton.getParent().getParent()).getModel();
+            tableModel.removeRow(rowIndex);
 
             System.out.println("Delete Reservation"+rowIndex+bookID+reserveId);
-            if (rowIndex != -1) {
+
                 JOptionPane.showMessageDialog(this, "Reservation deleted successfully!", "Delete Reservation", JOptionPane.INFORMATION_MESSAGE);
-                refreshTableData();
-            }
+            refreshTableData();
+
         });
 
-        actionPanel.add(deleteButton);
+        actionPanel.add(deleteButton, BorderLayout.CENTER);
         return actionPanel;
     }
+
+
 
     public String getReserveIdFromBookId(String bookID) {
         if (reserveList != null) {
@@ -324,10 +357,12 @@ public class HistoryView extends JPanel {
         );
         reservePanel.setBounds(15, 10, 550, 545);
 
+        issueListFiltered = issueLlist(student.getID());
+
         JPanel issuedPanel = createPanel(
                 "List of Issued Books",
                 new String[]{"Book ID", "Book Name", "Issued Date", "Due Date", "Action"},
-                libraryModelManage.getIssuesList()
+                issueListFiltered
         );
         issuedPanel.setBounds(635, 10, 550, 545);
 

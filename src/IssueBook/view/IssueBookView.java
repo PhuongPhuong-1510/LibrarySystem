@@ -423,6 +423,12 @@ public class IssueBookView extends JPanel {
     private void updateBookStatus(String bookID) {
         Book book = libraryModelManage.searchBookByID(bookID);
         if (book != null) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Add issue successfully",
+                    "Success",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
             book.setCurent("Borrowed");
             libraryModelManage.editBookInDatabase(book);
         }
