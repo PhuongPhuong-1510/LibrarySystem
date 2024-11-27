@@ -35,7 +35,6 @@ public class HomePageController implements ActionListener, MouseListener {
                 new Color(208, 204, 207), new Color(150, 180, 255)));
 
         addMenuHoverEffect(homePageView.getjMenuHomePage());
-        addMenuHoverEffect(homePageView.getjMenuAboutProject());
         addMenuHoverEffect(homePageView.getjMenuLogout());
         addMenuHoverEffect(homePageView.getjMenuIssueBook());
         addMenuHoverEffect(homePageView.getjMenuMGMTSutudents());
