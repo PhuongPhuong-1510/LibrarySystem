@@ -202,19 +202,19 @@ public class AddBook extends JFrame {
 
         if (fileName != null && !fileName.isEmpty()) {
             String sourcePath = directory + fileName;
-            String destinationPath = "/ManageBook/icon/" + fileName; // Thư mục đích
+            String destinationPath = "src/ManageBook/icon/" + fileName;
 
-            // Sao chép file vào thư mục đích
             try {
                 Files.createDirectories(Paths.get("/ManageBook/icon/")); // Tạo thư mục nếu chưa tồn tại
                 Files.copy(Paths.get(sourcePath), Paths.get(destinationPath), StandardCopyOption.REPLACE_EXISTING);
 
                 // Hiển thị ảnh đã chọn
-                imagePath = destinationPath; // Cập nhật đường dẫn ảnh
+                imagePath = destinationPath;
                 displayImage(destinationPath);
 
-                // Thêm ảnh vào cache
+                fileName = "/ManageBook/icon/"+fileName;
                 libraryModelManage.addImageToCache(fileName);
+                System.out.println(fileName);
 
             } catch (IOException ex) {
                 JOptionPane.showMessageDialog(this, "Không thể tải ảnh: " + ex.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
@@ -233,7 +233,7 @@ public class AddBook extends JFrame {
     public Book getBookFromPanel(){
         String id = this.libraryModelManage.creatBookID();
         String title = this.titleField.getText()+"\n"+"( "+ this.descriptionArea.getText()+" )";
-        String imagePath = getImagePath();
+        String imagePath = getImagePath().substring(3);
         String author = this.authorText.getText()+"";
         String language = this.languageText.getText()+"";
         int total = Integer.valueOf(totalText.getText()+"");

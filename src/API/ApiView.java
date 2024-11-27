@@ -206,6 +206,7 @@ public class ApiView extends JPanel {
                                             Files.copy(in, Paths.get(fileName), StandardCopyOption.REPLACE_EXISTING);
                                             in.close();
                                             fileName = fileName.replace("src", "");
+                                            System.out.println(fileName+"////////////////");
                                         } catch (IOException ex) {
                                             ex.printStackTrace();
                                             SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(null, "Failed to download book image.", "Error", JOptionPane.ERROR_MESSAGE));
