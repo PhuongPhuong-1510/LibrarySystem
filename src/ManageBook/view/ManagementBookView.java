@@ -52,7 +52,7 @@ public class ManagementBookView extends JPanel {
         String[] columnNames = createColumnNames();
         Object[][] data = fetchData();  // Phương thức để lấy dữ liệu
 
-        bookTableView = new BaseBookTableView(columnNames, data,9,180,2) {
+        bookTableView = new BaseBookTableView(columnNames, data,9,180,2, "book") {
 
             @Override
             protected void centerTableCells(JTable table) {
@@ -224,7 +224,7 @@ public class ManagementBookView extends JPanel {
         });
 
         imageButton.addActionListener(e -> {
-            toggleImageButton(deleteButton, editButton, row);
+            updateImageForBook(row);
         });
 
         QRcodeButton.addActionListener(e -> {
@@ -360,45 +360,99 @@ public class ManagementBookView extends JPanel {
         editButton.repaint();
     }
 
-    private void toggleImageButton(JButton deleteButton, JButton editButton, int row) {
+    private void updateImageForBook(int row) {
+        // Mở hộp thoại để chọn ảnh
         FileDialog fileDialog = new FileDialog((Frame) SwingUtilities.getWindowAncestor(this), "Choose Image", FileDialog.LOAD);
         fileDialog.setFile("*.jpg;*.jpeg;*.png;*.gif");
         fileDialog.setVisible(true);
 
         String filePath = fileDialog.getDirectory() + fileDialog.getFile();
         if (filePath != null && !filePath.isEmpty()) {
-            String relativePath;
-            if (filePath.contains("/ManageBook/icon/")) {
-                // Nếu file đã nằm trong thư mục icon
-                relativePath = getRelativeImagePath(filePath);
-            } else {
-                // Sao chép file vào thư mục icon
-                relativePath = copyImageToIconFolder(filePath);
-            }
+            // Xử lý đường dẫn ảnh
+            String relativePath = processSelectedImage(filePath);
 
             if (relativePath != null) {
-                System.out.println("Selected relative path: " + relativePath);
-                updateImageForRow(row, relativePath);
+
+                libraryModelManage.loadImageToCache(relativePath);
+
+                // Cập nhật ảnh trong bảng
+                updateImageInTable(row, relativePath);
+
+                // Cập nhật ảnh trong cơ sở dữ liệu
+                Book book = libraryModelManage.getBooksList().get(row);
+                book.setImage(relativePath);
+                libraryModelManage.editBookInDatabase(book);
             } else {
-                System.out.println("Failed to process image: " + filePath);
+                JOptionPane.showMessageDialog(this, "Failed to process the selected image.", "Error", JOptionPane.ERROR_MESSAGE);
             }
+        }
+    }
+    private void updateImageInTable(int row, String relativePath) {
+        JLabel newImageLabel = createImageLabel(relativePath);
+        DefaultTableModel model = (DefaultTableModel) bookTableView.getTable().getModel();
+        model.setValueAt(newImageLabel, row, 2);
+        bookTableView.revalidate();
+        bookTableView.repaint();
+    }
+
+    private String processSelectedImage(String imagePath) {
+        try {
+            String targetDir = System.getProperty("user.dir") + "/src/ManageBook/icon/";
+            File targetDirFile = new File(targetDir);
+
+            if (!targetDirFile.exists()) {
+                if (!targetDirFile.mkdirs()) {
+                    throw new IOException("Failed to create target directory.");
+                }
+            }
+
+            File sourceFile = new File(imagePath);
+            if (!sourceFile.exists() || !sourceFile.isFile()) {
+                throw new IOException("Invalid source file.");
+            }
+
+            File targetFile = new File(targetDir + sourceFile.getName());
+            Files.copy(sourceFile.toPath(), targetFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+            return "/ManageBook/icon/" + sourceFile.getName();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return null;
         }
     }
 
 
+
+
     private String copyImageToIconFolder(String imagePath) {
         try {
-            // Tạo đường dẫn đích cho thư mục `/ManageBook/icon/`
             String targetDir = System.getProperty("user.dir") + "/src/ManageBook/icon/";
-            File sourceFile = new File(imagePath);
-            File targetFile = new File(targetDir + sourceFile.getName());
+            File targetDirFile = new File(targetDir);
 
-            // Kiểm tra nếu file đã tồn tại trong thư mục đích
-            if (!targetFile.exists()) {
-                Files.copy(sourceFile.toPath(), targetFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            if (!targetDirFile.exists()) {
+                boolean created = targetDirFile.mkdirs();
+                if (!created) {
+                    JOptionPane.showMessageDialog(this, "Unable to create target directory.",
+                            "Error", JOptionPane.ERROR_MESSAGE);
+                    return null;
+                }
             }
-            // Trả về đường dẫn tương đối
-            return "/ManageBook/icon/" + sourceFile.getName();
+
+            File sourceFile = new File(imagePath);
+            if (!sourceFile.exists() || !sourceFile.isFile()) {
+                JOptionPane.showMessageDialog(this, "Source file does not exist or is not a file.",
+                        "Error", JOptionPane.ERROR_MESSAGE);
+                return null;
+            }
+
+            File targetFile = new File(targetDir + sourceFile.getName());
+            Files.copy(sourceFile.toPath(), targetFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+            // In ra đường dẫn tuyệt đối
+            System.out.println("Absolute path to copied image: " + targetFile.getAbsolutePath());
+
+            // Trả về đường dẫn tuyệt đối thay vì đường dẫn tương đối
+            return targetFile.getAbsolutePath();
         } catch (IOException ex) {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(this, "Error copying image file: " + ex.getMessage(),
@@ -406,6 +460,7 @@ public class ManagementBookView extends JPanel {
             return null;
         }
     }
+
 
     private void updateImageForRow(int row, String relativePath) {
         // Nạp ảnh mới vào bộ nhớ đệm
@@ -518,14 +573,16 @@ public class ManagementBookView extends JPanel {
 
         Book book = libraryModelManage.searchBookByID(bookID);
         String URL = book.getURL();
-
-        return new Book(bookID, bookName, image, author, category, language, total, curent, position, URL);
+        int startIndex = image.indexOf("\\ManageBook\\icon\\");
+        String result = image.substring(startIndex);
+        result = result.replace("\\", "/");
+        return new Book(bookID, bookName, result, author, category, language, total, curent, position, URL);
     }
 
 
     public void updateTable(ArrayList<Book> books) {
         DefaultTableModel model = (DefaultTableModel) bookTableView.getTable().getModel();
-        model.setRowCount(0);  // Xóa toàn bộ dữ liệu cũ
+        model.setRowCount(0);
 
         for (Book book : books) {
             Object[] rowData = new Object[]{
@@ -633,7 +690,4 @@ public class ManagementBookView extends JPanel {
         button.setBounds(x, y, 50, 50); // Size and position of the button
         return button;
     }
-
-
-
 }

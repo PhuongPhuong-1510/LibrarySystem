@@ -99,7 +99,7 @@ public class HistoryView extends JPanel {
     }
 
     private BaseBookTableView createTable(String[] columns, Object[][] data) {
-        return new BaseBookTableView(columns, data, 4, 150, -1) {
+        return new BaseBookTableView(columns, data, 4, 150, -1, "h") {
             @Override
             protected void centerTableCells(JTable table) {
                 DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();

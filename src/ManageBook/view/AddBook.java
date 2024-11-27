@@ -208,7 +208,6 @@ public class AddBook extends JFrame {
                 Files.createDirectories(Paths.get("/ManageBook/icon/")); // Tạo thư mục nếu chưa tồn tại
                 Files.copy(Paths.get(sourcePath), Paths.get(destinationPath), StandardCopyOption.REPLACE_EXISTING);
 
-                // Hiển thị ảnh đã chọn
                 imagePath = destinationPath;
                 displayImage(destinationPath);
 

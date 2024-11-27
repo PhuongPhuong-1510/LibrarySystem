@@ -47,7 +47,7 @@ public class ManagementStudentView extends JPanel {
         String[] columnNames = createColumnNames();
         Object[][] data = fetchData();  // Phương thức để lấy dữ liệu
 
-        studentTableView = new BaseBookTableView(columnNames, data,9,120,4) {
+        studentTableView = new BaseBookTableView(columnNames, data,9,120,4, "student") {
 
             @Override
             protected void centerTableCells(JTable table) {

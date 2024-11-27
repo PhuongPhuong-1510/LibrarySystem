@@ -244,7 +244,7 @@ public class UserView extends JPanel {
         String[] columnNames = createColumnNames();
         Object[][] data = fetchData();
 
-        bookTableView = new BaseBookTableView(columnNames, data, 7, 150, 2) {
+        bookTableView = new BaseBookTableView(columnNames, data, 7, 150, 2, "u") {
             @Override
             protected void centerTableCells(JTable table) {
                 DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
